@@ -1,0 +1,2 @@
+# ScriptLanguage-Termproject
+Loveyou
