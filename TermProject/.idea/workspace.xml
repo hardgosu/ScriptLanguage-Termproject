@@ -12,11 +12,12 @@
     <session id="-1296695245">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="3" />
+          <entry key="project.closed" value="5" />
+          <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.3" value="2" />
-          <entry key="project.opened" value="4" />
+          <entry key="project.opened" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -56,16 +57,16 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DNFTKInter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="246">
-              <caret line="98" column="8" selection-start-line="98" selection-start-column="8" selection-end-line="98" selection-end-column="8" />
+            <state relative-caret-position="474">
+              <caret line="110" lean-forward="true" selection-start-line="110" selection-end-line="110" />
               <folding>
                 <element signature="e#204#225#0" expanded="true" />
-                <marker date="1557753090925" expanded="true" signature="381:639" ph="..." />
-                <marker date="1557753090925" expanded="true" signature="687:696" ph="..." />
-                <marker date="1557753090925" expanded="true" signature="859:1736" ph="..." />
-                <marker date="1557753090925" expanded="true" signature="2320:2321" ph="..." />
-                <marker date="1557753090925" expanded="true" signature="5221:5459" ph="..." />
-                <marker date="1557753090925" expanded="true" signature="5490:5550" ph="..." />
+                <marker date="1557753111006" expanded="true" signature="381:639" ph="..." />
+                <marker date="1557753111006" expanded="true" signature="687:696" ph="..." />
+                <marker date="1557753111006" expanded="true" signature="859:1736" ph="..." />
+                <marker date="1557753111006" expanded="true" signature="2320:2321" ph="..." />
+                <marker date="1557753111006" expanded="true" signature="5213:5451" ph="..." />
+                <marker date="1557753111006" expanded="true" signature="5482:5542" ph="..." />
               </folding>
             </state>
           </provider>
@@ -75,7 +76,7 @@
         <entry file="file://$PROJECT_DIR$/Treeview.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="589">
-              <caret line="32" column="90" lean-forward="true" selection-start-line="32" selection-start-column="90" selection-end-line="32" selection-end-column="90" />
+              <caret line="32" column="90" selection-start-line="32" selection-start-column="90" selection-end-line="32" selection-end-column="90" />
             </state>
           </provider>
         </entry>
@@ -84,7 +85,7 @@
         <entry file="file://$PROJECT_DIR$/TopLevel.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="418">
-              <caret line="22" column="17" lean-forward="true" selection-start-line="22" selection-start-column="17" selection-end-line="22" selection-end-column="17" />
+              <caret line="22" column="17" selection-start-line="22" selection-start-column="17" selection-end-line="22" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -93,7 +94,7 @@
         <entry file="file://$PROJECT_DIR$/ComboBox.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="266">
-              <caret line="15" column="17" lean-forward="true" selection-start-line="15" selection-start-column="17" selection-end-line="15" selection-end-column="17" />
+              <caret line="15" column="17" selection-start-line="15" selection-start-column="17" selection-end-line="15" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -101,7 +102,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../../../../../../../../../../../../python/pyth/Lib/tkinter/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2266">
+            <state relative-caret-position="47348">
               <caret line="2495" column="8" selection-start-line="2495" selection-start-column="8" selection-end-line="2495" selection-end-column="8" />
             </state>
           </provider>
@@ -110,7 +111,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Notebook.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
+            <state relative-caret-position="285">
               <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
@@ -145,7 +146,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mysmtplib.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="437">
+            <state relative-caret-position="456">
               <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
               <folding>
                 <element signature="e#24#38#0" expanded="true" />
@@ -198,7 +199,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="1">
     <option name="x" value="1041" />
     <option name="y" value="40" />
     <option name="width" value="1367" />
@@ -209,6 +210,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -220,7 +222,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -392,7 +393,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.30802792" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.30802792" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39982504" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -576,9 +577,53 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Notebook.py">
+    <entry file="file://$PROJECT_DIR$/DNFTKInter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="474">
+          <caret line="110" lean-forward="true" selection-start-line="110" selection-end-line="110" />
+          <folding>
+            <element signature="e#204#225#0" expanded="true" />
+            <marker date="1557753111006" expanded="true" signature="381:639" ph="..." />
+            <marker date="1557753111006" expanded="true" signature="687:696" ph="..." />
+            <marker date="1557753111006" expanded="true" signature="859:1736" ph="..." />
+            <marker date="1557753111006" expanded="true" signature="2320:2321" ph="..." />
+            <marker date="1557753111006" expanded="true" signature="5213:5451" ph="..." />
+            <marker date="1557753111006" expanded="true" signature="5482:5542" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Treeview.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="589">
+          <caret line="32" column="90" selection-start-line="32" selection-start-column="90" selection-end-line="32" selection-end-column="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TopLevel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="418">
+          <caret line="22" column="17" selection-start-line="22" selection-start-column="17" selection-end-line="22" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ComboBox.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="266">
+          <caret line="15" column="17" selection-start-line="15" selection-start-column="17" selection-end-line="15" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../../../../../../../../python/pyth/Lib/tkinter/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="47348">
+          <caret line="2495" column="8" selection-start-line="2495" selection-start-column="8" selection-end-line="2495" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Notebook.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
           <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
@@ -605,54 +650,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/mysmtplib.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
+        <state relative-caret-position="456">
           <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
           <folding>
             <element signature="e#24#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../../../../../../../../../python/pyth/Lib/tkinter/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2266">
-          <caret line="2495" column="8" selection-start-line="2495" selection-start-column="8" selection-end-line="2495" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ComboBox.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="15" column="17" lean-forward="true" selection-start-line="15" selection-start-column="17" selection-end-line="15" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TopLevel.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="418">
-          <caret line="22" column="17" lean-forward="true" selection-start-line="22" selection-start-column="17" selection-end-line="22" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Treeview.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="589">
-          <caret line="32" column="90" lean-forward="true" selection-start-line="32" selection-start-column="90" selection-end-line="32" selection-end-column="90" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DNFTKInter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="246">
-          <caret line="98" column="8" selection-start-line="98" selection-start-column="8" selection-end-line="98" selection-end-column="8" />
-          <folding>
-            <element signature="e#204#225#0" expanded="true" />
-            <marker date="1557753090925" expanded="true" signature="381:639" ph="..." />
-            <marker date="1557753090925" expanded="true" signature="687:696" ph="..." />
-            <marker date="1557753090925" expanded="true" signature="859:1736" ph="..." />
-            <marker date="1557753090925" expanded="true" signature="2320:2321" ph="..." />
-            <marker date="1557753090925" expanded="true" signature="5221:5459" ph="..." />
-            <marker date="1557753090925" expanded="true" signature="5490:5550" ph="..." />
           </folding>
         </state>
       </provider>
