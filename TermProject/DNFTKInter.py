@@ -7,6 +7,8 @@ import json
 import os
 from tkinter import *
 from tkinter.ttk import *
+
+from tkinter.font import *
 import http.client
 
 class MainWindow:
@@ -79,18 +81,52 @@ class DNFAPIProcess(Interface):
         self.resetButton = Button(self.tabFrame1,text = "리셋",command = self.ResetCanvas)
         self.resetButton.grid(row = 2,column = 3)
 
+
+
+
+
+
+        self.rarityCategoryList = ["커먼","언커먼","레어","유니크","크로니클","레전더리","에픽"]
+
+        self.emptyCanvas = Canvas(self.tabFrame1,width = 20,height = 15)
+        self.emptyCanvas.grid(row = 2,column = 4)
+
+        self.rarityCombobox = Combobox(self.tabFrame1,height = 15,values = self.rarityCategoryList)
+        self.rarityCombobox.grid(row =2 , column = 5)
+        self.rarityCombobox.set("무기 등급")
+
+
+
+
+        self.weaponCategoryList = ["무기","방어구","악세사리","특수장비"]
+
+        self.emptyCanvas2 = Canvas(self.tabFrame1,width = 20,height = 15)
+        self.emptyCanvas2.grid(row = 2,column = 6)
+
+        self.weaponCategoryCombobox = Combobox(self.tabFrame1,height = 15,values = self.weaponCategoryList)
+        self.weaponCategoryCombobox.grid(row =2 , column = 7)
+        self.weaponCategoryCombobox.set("장비 종류")
+
+
+
+
+
+
         self.innerFrame = Frame(self.tabFrame1)
         self.innerFrame.place(x = 25,y = 100)
-
 
         #self.textBoard = Text(self.innerFrame)
         #self.textBoard.pack()
 
+        self.canvasWidth = 800
+        self.canvasHeight = 600
+        self.canvasScrollbarWidth = 500
+        self.canvasScrollbarHeight = 1000
 
-
-        self.canvas = Canvas(self.innerFrame,bg = "#FFF0F0",relief = "solid",bd = 2,width = 800,height = 300,scrollregion = (0,0,500,500))
-
-
+        self.canvasBackground = PhotoImage(file = "background.png")
+        #self.canvas = Canvas(self.innerFrame,bg = "#FFF0F0",relief = "solid",bd = 2,width = 800,height = 300,scrollregion = (0,0,500,500))
+        self.canvas = Canvas(self.innerFrame, bg="#FFF0F0", relief="solid", bd=2, width=self.canvasWidth, height=self.canvasHeight,scrollregion=(0, 0, self.canvasScrollbarWidth, self.canvasScrollbarHeight))
+        self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
 
         self.scrollbar = Scrollbar(self.innerFrame)
         self.scrollbar.pack(fill = "y",side = RIGHT)
@@ -103,19 +139,22 @@ class DNFAPIProcess(Interface):
         self.scrollbar["command"] = self.canvas.yview
         #self.entry.lower()
 
-        self.textCurrentX = 400
-        self.textCurrentY = 120
-        self.textHeight = 100
-        self.textMaxHeight = 500
+        self.textCurrentX = self.canvasWidth/2
+        self.textCurrentY = self.canvasHeight*0.12
+        self.textHeight = self.canvasHeight*0.24
+        self.textMaxHeight = self.canvasScrollbarHeight
 
         self.count = 0
 
+
+
+
         pass
     def ResetCanvas(self):
-        self.textCurrentX = 400
-        self.textCurrentY = 120
+        self.textCurrentX = self.canvasWidth/2
+        self.textCurrentY = self.canvasHeight*0.12
         self.canvas.delete(ALL)
-
+        self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
     def ShowItemSearchResult(self):
         output = ""
         #output +=
@@ -134,8 +173,12 @@ class DNFAPIProcess(Interface):
         image = PhotoImage(file =  outfile)
 
 
-        self.canvas.create_image(self.textCurrentX - 200,self.textCurrentY,image = image)
-        self.canvas.create_text(self.textCurrentX,self.textCurrentY,text = str(args))
+        self.canvas.create_image(self.textCurrentX - 300,self.textCurrentY,image = image)
+
+        boldFont = Font(family="Helvetica", size=12, weight="bold")
+
+        self.canvas.create_rectangle(self.textCurrentX-350,self.textCurrentY - 50,self.textCurrentX -250,self.textCurrentY+ 50)
+        self.canvas.create_text(self.textCurrentX,self.textCurrentY,text = str(args),font = boldFont)
         self.textCurrentY += self.textHeight
 
         self.window.mainloop()

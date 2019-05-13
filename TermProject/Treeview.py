@@ -11,7 +11,7 @@ def cc(self):
     treeview.tag_configure("tag2", background="red")
 
 
-treeview = tkinter.ttk.Treeview(window, columns=["one", "two","Three"], displaycolumns=["two", "one","Three"])
+treeview = tkinter.ttk.Treeview(window, columns=["one", "two"], displaycolumns=["two", "one"])
 treeview.pack()
 
 treeview.column("#0", width=70)
