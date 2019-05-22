@@ -72,10 +72,12 @@ class DNFAPIProcess(Interface):
         self.imageLabel = Label(self.tabFrame1,image = self.image)
         self.imageLabel.grid(row = 2,column = 0)
 
-        self.entry = Entry(self.tabFrame1,width = 50)
-        self.entry.grid(row = 2,column = 1)
+        TempFont = Font(window, size=15, weight='bold', family='Consolas')
 
-        self.searchButton = Button(self.tabFrame1,text = "검색",command = lambda  : self.GetItemInfoFromMarket(str(self.entry.get())))
+        self.searchEntry = Entry(self.tabFrame1,font = TempFont, width = 50)
+        self.searchEntry.grid(row = 2, column = 1)
+
+        self.searchButton = Button(self.tabFrame1, text = "검색", command = lambda  : self.GetItemInfoFromMarket(str(self.searchEntry.get())))
         self.searchButton.grid(row = 2,column = 2)
 
         self.resetButton = Button(self.tabFrame1,text = "리셋",command = self.ResetCanvas)
