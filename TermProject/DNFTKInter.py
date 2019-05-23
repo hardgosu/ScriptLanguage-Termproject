@@ -79,9 +79,9 @@ class DNFMarketProcess(Interface):
         self.imageLabel = Label(self.tabFrame1,image = self.image)
         self.imageLabel.grid(row = 2,column = 0)
 
-        TempFont = Font(mainWindow.window, size=15, weight='bold', family='Consolas')
+        tempFont = Font(mainWindow.window, size=15, weight='bold', family='Consolas')
 
-        self.searchEntry = Entry(self.tabFrame1,font = TempFont, width = 50,relief = 'ridge',borderwidth = 5)
+        self.searchEntry = Entry(self.tabFrame1,font = tempFont, width = 50,relief = 'ridge',borderwidth = 5)
         self.searchEntry.grid(row = 2, column = 1)
 
         self.searchButton = Button(self.tabFrame1, text = "검색", command = lambda  : self.GetItemInfoFromDatabase(str(self.searchEntry.get())))
@@ -97,12 +97,50 @@ class DNFMarketProcess(Interface):
         self.sortButtonText = ["정렬↑","정렬↓"]
         self.sortButtonTextIndex = 0
         self.sortButton = Button(self.tabFrame1,text = self.sortButtonText[self.sortButtonTextIndex],width = 15,relief = 'groove')
-        self.sortButton.grid(row = 3,column =  1)
+        self.sortButton.grid(row = 5,column =  5)
 
-        self.sortCategory = ["이름 순","가격 순"]
-        self.rarityCombobox = ttk.Combobox(self.tabFrame1,height = 15,values = self.sortCategory)
-        self.rarityCombobox.grid(row =2 , column = 5)
-        self.rarityCombobox.set("정렬 기준")
+
+
+
+
+        self.emptyCanvas = Canvas(self.tabFrame1,width = 20,height = 15)
+        self.emptyCanvas.grid(row = 2,column = 4)
+
+        self.sortCategory = ["이름 순","가격 순","레벨 순"]
+        self.sortCategoryCombobox = ttk.Combobox(self.tabFrame1, height = 15, values = self.sortCategory)
+        self.sortCategoryCombobox.grid(row =2, column = 5)
+        self.sortCategoryCombobox.set("정렬 기준")
+        #랜덤으로 최근에 올라온 아이템 20개씩 보여주는 기능
+
+
+###
+        self.rarityCategoryList = ["커먼","언커먼","레어","유니크","크로니클","레전더리","에픽"]
+
+        self.emptyCanvas2 = Canvas(self.tabFrame1,width = 20,height = 15)
+        self.emptyCanvas2.grid(row = 2,column = 6)
+
+        self.rarityCombobox = ttk.Combobox(self.tabFrame1,height = 15,values = self.rarityCategoryList)
+        self.rarityCombobox.grid(row =2 , column = 7)
+        self.rarityCombobox.set("무기 등급")
+
+
+
+###
+
+        self.emptyCanvas3 = Canvas(self.tabFrame1,width = 10,height = 15)
+        self.emptyCanvas3.grid(row = 2,column = 8)
+
+        self.levelLabel = Label(self.tabFrame1,text = "레벨")
+        self.levelLabel.grid(row =2 , column = 9)
+
+        self.levelEntry = Entry(self.tabFrame1,width = 3)
+        self.levelEntry.grid(row = 2,column = 10)
+
+        self.levelLabel2 = Label(self.tabFrame1,text = "~")
+        self.levelLabel2.grid(row =2 , column = 11)
+
+        self.levelEntry2 = Entry(self.tabFrame1,width = 3)
+        self.levelEntry2.grid(row = 2,column = 12)
 
 
     def ResetCanvas(self):
@@ -111,6 +149,8 @@ class DNFMarketProcess(Interface):
         self.canvas.delete(ALL)
         self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
 
+    class SomeClass:
+        pass
 
 #503 시스템 점검
 class DNFAPIProcess(Interface):
@@ -244,6 +284,10 @@ class DNFAPIProcess(Interface):
         self.canvas.create_text(self.textCurrentX,self.textCurrentY,text = str(args),font = boldFont)
         self.textCurrentY += self.textHeight
 
+
+        #trie 자료구조를 만들어야
+        #검색 자동완성기능을 만들수있음
+        #그건 패스
 
         self.mainWindowClass.window.mainloop()
 
