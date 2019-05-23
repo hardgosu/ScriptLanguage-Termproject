@@ -18,4 +18,7 @@ button2 = tk.Button(root, text="Click to show label", command=show_label)
 button1.pack(in_=frame1)
 button2.pack(in_=frame1)
 
+entry = tk.Entry(root,relief = 'ridge',borderwidth = 12)
+entry.pack()
+
 root.mainloop()

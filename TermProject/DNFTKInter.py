@@ -6,7 +6,7 @@ import urllib.parse
 import json
 import os
 from tkinter import *
-from tkinter.ttk import *
+import tkinter.ttk as ttk
 
 from tkinter.font import *
 import http.client
@@ -18,6 +18,10 @@ class MainWindow:
         self.window.geometry("1280x800+100+100")
         self.window.wm_iconbitmap('DNF.ico')
         self.window.title("useful")
+
+
+        self.notebook = ttk.Notebook(self.window,width = 1230,height = 750)
+        self.notebook.pack()
         #self.window.mainloop()
 
 class Interface:
@@ -52,32 +56,45 @@ class ParsingDataOfItems:
         return " [아이템 고유코드 : " + self.itemID + "]\n [아이템이름 : " + self.itemName + "]\n [아이템 레어도 : " + self.itemRarity + "]\n [아이템 타입 : " + self.itemType + "]\n [아이템 타입상세 : " + self.itemDetail + "]\n [아이템 착용레벨 : " + self.itemAvailableLevel + "]\n"
 
 
+class LeagueOfLegendSearchProcess(Interface):
+    pass
+
+class DNFMarketProcess(Interface):
+    def __init__(self,mainWindow):
+        self.mainWindowClass = mainWindow
+        self.tabFrame = Frame(mainWindow.window)
+        self.notebook = mainWindow.notebook
+        self.notebook.add(self.tabFrame,text = "던파 경매장")
+
+
+
+#503 시스템 점검
 class DNFAPIProcess(Interface):
-    def __init__(self,window):
-        self.window = window
+    def __init__(self, mainWindow):
+        self.mainWindowClass = mainWindow
 
-        self.notebook = Notebook(window,width = 1230,height = 750)
-        self.notebook.pack()
+        self.notebook = mainWindow.notebook
 
-        self.tabFrame1 = Frame(window)
-        self.tabFrame2 = Frame(window)
-        self.tabFrame3 = Frame(window)
-        self.tabFrame4 = Frame(window)
+
+        self.tabFrame1 = Frame(mainWindow.window)
+        #self.tabFrame2 = Frame(window)
+        #self.tabFrame3 = Frame(window)
+        #self.tabFrame4 = Frame(window)
         self.notebook.add(self.tabFrame1,text = "던파 아이템 정보검색")
-        self.notebook.add(self.tabFrame2,text = "던파 경매장")
-        self.notebook.add(self.tabFrame3,text = "네이버 도서검색")
-        self.notebook.add(self.tabFrame4,text = "롤 전적검색")
+        #self.notebook.add(self.tabFrame2,text = "던파 경매장")
+        #self.notebook.add(self.tabFrame3,text = "네이버 도서검색")
+        #self.notebook.add(self.tabFrame4,text = "롤 전적검색")
 
         self.image = PhotoImage(file = "search2.png").subsample(6,6)
         self.imageLabel = Label(self.tabFrame1,image = self.image)
         self.imageLabel.grid(row = 2,column = 0)
 
-        TempFont = Font(window, size=15, weight='bold', family='Consolas')
+        TempFont = Font(mainWindow.window, size=15, weight='bold', family='Consolas')
 
-        self.searchEntry = Entry(self.tabFrame1,font = TempFont, width = 50)
+        self.searchEntry = Entry(self.tabFrame1,font = TempFont, width = 50,relief = 'ridge',borderwidth = 5)
         self.searchEntry.grid(row = 2, column = 1)
 
-        self.searchButton = Button(self.tabFrame1, text = "검색", command = lambda  : self.GetItemInfoFromMarket(str(self.searchEntry.get())))
+        self.searchButton = Button(self.tabFrame1, text = "검색", command = lambda  : self.GetItemInfoFromDatabase(str(self.searchEntry.get())))
         self.searchButton.grid(row = 2,column = 2)
 
         self.resetButton = Button(self.tabFrame1,text = "리셋",command = self.ResetCanvas)
@@ -93,7 +110,7 @@ class DNFAPIProcess(Interface):
         self.emptyCanvas = Canvas(self.tabFrame1,width = 20,height = 15)
         self.emptyCanvas.grid(row = 2,column = 4)
 
-        self.rarityCombobox = Combobox(self.tabFrame1,height = 15,values = self.rarityCategoryList)
+        self.rarityCombobox = ttk.Combobox(self.tabFrame1,height = 15,values = self.rarityCategoryList)
         self.rarityCombobox.grid(row =2 , column = 5)
         self.rarityCombobox.set("무기 등급")
 
@@ -105,7 +122,7 @@ class DNFAPIProcess(Interface):
         self.emptyCanvas2 = Canvas(self.tabFrame1,width = 20,height = 15)
         self.emptyCanvas2.grid(row = 2,column = 6)
 
-        self.weaponCategoryCombobox = Combobox(self.tabFrame1,height = 15,values = self.weaponCategoryList)
+        self.weaponCategoryCombobox = ttk.Combobox(self.tabFrame1,height = 15,values = self.weaponCategoryList)
         self.weaponCategoryCombobox.grid(row =2 , column = 7)
         self.weaponCategoryCombobox.set("장비 종류")
 
@@ -149,7 +166,7 @@ class DNFAPIProcess(Interface):
         self.count = 0
 
 
-
+        self.detailButtonList = []
 
         pass
     def ResetCanvas(self):
@@ -183,13 +200,14 @@ class DNFAPIProcess(Interface):
         self.canvas.create_text(self.textCurrentX,self.textCurrentY,text = str(args),font = boldFont)
         self.textCurrentY += self.textHeight
 
-        self.window.mainloop()
+
+        self.mainWindowClass.mainloop()
 
         pass
 
     def get(self,str):
         print(str)
-    def GetItemInfoFromMarket(self,itemName):
+    def GetItemInfoFromDatabase(self, itemName):
 
         if (itemName == ""):
             print("비어있는입력")
@@ -218,7 +236,7 @@ class DNFAPIProcess(Interface):
 
 
         result = response.read(int(cLen)).decode('utf-8')
-
+        print(result)
         jsonData = ParsingDataOfItems(result)
 
 
@@ -264,8 +282,8 @@ def Test():
 bool = True
 mainWindow = MainWindow()
 
-gol = DNFAPIProcess(mainWindow.window)
-
+gol = DNFAPIProcess(mainWindow)
+asd = DNFMarketProcess(mainWindow)
 
 
 #a = DNFAPIProcess(mainWindow.window)
