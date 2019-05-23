@@ -62,7 +62,7 @@ class LeagueOfLegendSearchProcess(Interface):
         self.tabFrame = Frame(mainWindow.window)
         self.notebook = mainWindow.notebook
         self.notebook.add(self.tabFrame,text = "롤 전적검색")
-
+        #   오름차순,내림차순 정렬
 
 
 
@@ -75,7 +75,7 @@ class DNFMarketProcess(Interface):
         self.notebook = mainWindow.notebook
         self.notebook.add(self.tabFrame1,text = "던파 경매장")
 
-        self.image = PhotoImage(file = "mapleGold.png").subsample(8,8)
+        self.image = PhotoImage(file = "mapleGold.png").subsample(6,6)
         self.imageLabel = Label(self.tabFrame1,image = self.image)
         self.imageLabel.grid(row = 2,column = 0)
 
@@ -91,18 +91,13 @@ class DNFMarketProcess(Interface):
         self.resetButton.grid(row = 2,column = 3)
 
 
+        self.sortCategory = ["이름 순","가격 순"]
 
 
-        #   오름차순,내림차순 정렬
         self.sortButtonText = ["정렬↑","정렬↓"]
         self.sortButtonTextIndex = 0
         self.sortButton = Button(self.tabFrame1,text = self.sortButtonText[self.sortButtonTextIndex],width = 15,relief = 'groove')
         self.sortButton.grid(row = 3,column =  1)
-
-        self.sortCategory = ["이름 순","가격 순"]
-        self.rarityCombobox = ttk.Combobox(self.tabFrame1,height = 15,values = self.sortCategory)
-        self.rarityCombobox.grid(row =2 , column = 5)
-        self.rarityCombobox.set("정렬 기준")
 
 
     def ResetCanvas(self):
@@ -245,7 +240,7 @@ class DNFAPIProcess(Interface):
         self.textCurrentY += self.textHeight
 
 
-        self.mainWindowClass.window.mainloop()
+        self.mainWindowClass.mainloop()
 
         pass
 
