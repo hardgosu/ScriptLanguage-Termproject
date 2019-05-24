@@ -56,8 +56,41 @@ class ParsingDataOfItems:
         return " [아이템 고유코드 : " + self.itemID + "]\n [아이템이름 : " + self.itemName + "]\n [아이템 레어도 : " + self.itemRarity + "]\n [아이템 타입 : " + self.itemType + "]\n [아이템 타입상세 : " + self.itemDetail + "]\n [아이템 착용레벨 : " + self.itemAvailableLevel + "]\n"
 
 
+
+class ParsingDataOfItems2:
+    def __init__(self,JSON):
+        self.jsonData = json.loads(JSON)
+        if len(self.jsonData["rows"]) == 0:
+            return
+
+        self.itemID = self.jsonData["itemId"]
+        self.itemName = self.jsonData["itemName"]
+        self.itemRarity = self.jsonData["itemRarity"]
+        self.itemType = self.jsonData["itemType"]
+        self.itemTypeDetail = str(self.jsonData["itemTypeDetail"])
+        self.itemAvailableLevel = str(self.jsonData["itemAvailableLevel"])
+        self.itemObtainInfo = self.jsonData["itemObtainInfo"]
+        self.itemExplain = self.jsonData["itemExplain"]
+        self.itemExplainDetail = self.jsonData["itemExplainDetail"]
+        self.itemFlavorText = self.jsonData["itemFlavorText"]
+        self.setItemId = str(self.jsonData["setItemId"])
+        self.setItemName = str(self.jsonData["setItemName"])
+        self.itemStatus = self.jsonData["itemStatus"]
+        print(type(self.itemStatus))
+        self.itemReinforceSkill = self.jsonData["itemReinforceSkill"]
+        print(type(self.itemReinforceSkill))
+
+
+
+    def __str__(self):
+        if len(self.jsonData["rows"]) == 0:
+            return ""
+        return " [아이템 고유코드 : " + self.itemID + "]\n [아이템이름 : " + self.itemName + "]\n [아이템 레어도 : " + self.itemRarity + "]\n [아이템 타입 : " + self.itemType + "]\n [아이템 타입상세 : " + self.itemTypeDetail + "]\n [아이템 착용레벨 : " + self.itemAvailableLevel + "]\n"
+
+
 class LeagueOfLegendSearchProcess(Interface):
     def __init__(self,mainWindow):
+        super(LeagueOfLegendSearchProcess, self).__init__(mainWindow)
         self.mainWindowClass = mainWindow
         self.tabFrame = Frame(mainWindow.window)
         self.notebook = mainWindow.notebook
@@ -113,7 +146,8 @@ class DNFMarketProcess(Interface):
         #랜덤으로 최근에 올라온 아이템 20개씩 보여주는 기능
 
 
-###
+###     combobox
+
         self.rarityCategoryList = ["커먼","언커먼","레어","유니크","크로니클","레전더리","에픽"]
 
         self.emptyCanvas2 = Canvas(self.tabFrame1,width = 20,height = 15)
@@ -122,10 +156,10 @@ class DNFMarketProcess(Interface):
         self.rarityCombobox = ttk.Combobox(self.tabFrame1,height = 15,values = self.rarityCategoryList)
         self.rarityCombobox.grid(row =2 , column = 7)
         self.rarityCombobox.set("무기 등급")
-
-
-
 ###
+
+
+###     levelEntry
 
         self.emptyCanvas3 = Canvas(self.tabFrame1,width = 10,height = 15)
         self.emptyCanvas3.grid(row = 2,column = 8)
@@ -141,6 +175,46 @@ class DNFMarketProcess(Interface):
 
         self.levelEntry2 = Entry(self.tabFrame1,width = 3)
         self.levelEntry2.grid(row = 2,column = 12)
+###
+
+###     canvas
+        self.innerFrame = Frame(self.tabFrame1)
+        self.innerFrame.place(x = 25,y = 150)
+
+        #self.textBoard = Text(self.innerFrame)
+        #self.textBoard.pack()
+        self.canvasWidth = 1150
+        self.canvasHeight = 500
+        self.canvasScrollbarWidth = 500
+        self.canvasScrollbarHeight = 1000
+
+        self.canvasBackground = PhotoImage(file="background.png")
+        # self.canvas = Canvas(self.innerFrame,bg = "#FFF0F0",relief = "solid",bd = 2,width = 800,height = 300,scrollregion = (0,0,500,500))
+        self.canvas = Canvas(self.innerFrame, bg="#FFF0F0", relief="solid", bd=2, width=self.canvasWidth,
+                             height=self.canvasHeight,
+                             scrollregion=(0, 0, self.canvasScrollbarWidth, self.canvasScrollbarHeight))
+        self.canvas.create_image(self.canvasWidth / 2, self.canvasHeight / 2, image=self.canvasBackground)
+
+        self.scrollbar = Scrollbar(self.innerFrame)
+        self.scrollbar.pack(fill="y", side=RIGHT)
+        self.scrollbar.config(command=self.canvas.yview)
+
+        self.canvas.config(yscrollcommand=self.scrollbar.set)
+        self.canvas.pack(side=LEFT)
+
+        self.scrollbar["command"] = self.canvas.yview
+        # self.entry.lower()
+
+        self.textCurrentX = self.canvasWidth / 2
+        self.textCurrentY = self.canvasHeight * 0.12
+        self.textHeight = self.canvasHeight * 0.24
+        self.textMaxHeight = self.canvasScrollbarHeight
+
+###
+
+### parsingDataList
+        self.parsingDataList = []
+
 
 
     def ResetCanvas(self):
@@ -154,6 +228,45 @@ class DNFMarketProcess(Interface):
 
 
         pass
+
+    def InsertCanvas(self,args):
+
+        self.ResetCanvas()
+        self.parsingDataList.append(args)
+
+        images = []
+
+        for i in self.parsingDataList:
+            if (self.textCurrentY > self.textMaxHeight):
+                print("캔버스 높이 초과")
+                self.parsingDataList.pop()
+                self.mainWindowClass.window.mainloop()
+                return
+
+            outfile = "images/" + "image_" + i.itemName + ".png"
+            print(outfile)
+            images.append(PhotoImage(file=outfile))
+
+            self.canvas.create_image(self.textCurrentX - 300, self.textCurrentY, image=images[-1])
+
+            boldFont = Font(family="Helvetica", size=12, weight="bold")
+
+            self.canvas.create_rectangle(self.textCurrentX - 350, self.textCurrentY - 50, self.textCurrentX - 250,
+                                         self.textCurrentY + 50)
+            self.canvas.create_text(self.textCurrentX, self.textCurrentY, text=str(i), font=boldFont)
+            self.textCurrentY += self.textHeight
+
+
+        #trie 자료구조를 만들어야
+        #검색 자동완성기능을 만들수있음
+        #그건 패스
+        self.mainWindowClass.window.mainloop()
+
+
+        pass
+
+
+
 
 #503 시스템 점검
 class DNFAPIProcess(Interface):
@@ -215,15 +328,12 @@ class DNFAPIProcess(Interface):
 
 
 
-
-
-
+###     canvas
         self.innerFrame = Frame(self.tabFrame1)
         self.innerFrame.place(x = 25,y = 100)
 
         #self.textBoard = Text(self.innerFrame)
         #self.textBoard.pack()
-
         self.canvasWidth = 800
         self.canvasHeight = 600
         self.canvasScrollbarWidth = 500
@@ -233,16 +343,17 @@ class DNFAPIProcess(Interface):
         #self.canvas = Canvas(self.innerFrame,bg = "#FFF0F0",relief = "solid",bd = 2,width = 800,height = 300,scrollregion = (0,0,500,500))
         self.canvas = Canvas(self.innerFrame, bg="#FFF0F0", relief="solid", bd=2, width=self.canvasWidth, height=self.canvasHeight,scrollregion=(0, 0, self.canvasScrollbarWidth, self.canvasScrollbarHeight))
         self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
+        self.canvas.grid(row=0, column=0, sticky="news")
 
-        self.scrollbar = Scrollbar(self.innerFrame)
-        self.scrollbar.pack(fill = "y",side = RIGHT)
-        self.scrollbar.config(command = self.canvas.yview)
+
+        self.scrollbar = Scrollbar(self.innerFrame,orient="vertical", command=self.canvas.yview)
+        self.scrollbar.grid(row=0, column=1, sticky='ns')
 
         self.canvas.config(yscrollcommand = self.scrollbar.set)
-        self.canvas.pack(side = LEFT)
 
 
-        self.scrollbar["command"] = self.canvas.yview
+
+        #self.scrollbar["command"] = self.canvas.yview
         #self.entry.lower()
 
         self.textCurrentX = self.canvasWidth/2
@@ -250,12 +361,25 @@ class DNFAPIProcess(Interface):
         self.textHeight = self.canvasHeight*0.24
         self.textMaxHeight = self.canvasScrollbarHeight
 
-        self.count = 0
-
-
         self.detailButtonList = []
 
+###
+
+
+
+
         self.parsingDataList = []
+        self.parsingDataList2 = []
+
+### sideCanvas
+        self.sideCanvasWidth = 400
+        self.sideCanvasHeight = 800
+        self.sideFrame = Frame(self.tabFrame1)
+        self.sideFrame.place(x = 850,y = 100)
+        self.sideCanvas = Canvas(self.sideFrame, relief="groove", bd=2, width=self.sideCanvasWidth,
+                                 height=self.sideCanvasHeight)
+        self.sideCanvas.pack(side = LEFT)
+
 
         pass
     def ResetCanvas(self):
@@ -265,11 +389,10 @@ class DNFAPIProcess(Interface):
         self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
 
     def ClearCanvas(self):
+        self.parsingDataList.clear()
+        for i in self.detailButtonList:
+            i.destroy()
         self.ResetCanvas()
-        self.textCurrentX = self.canvasWidth/2
-        self.textCurrentY = self.canvasHeight*0.12
-        self.canvas.delete(ALL)
-        self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
 
     def ShowItemSearchResult(self):
         output = ""
@@ -277,7 +400,7 @@ class DNFAPIProcess(Interface):
 
         pass
 
-    def InsertCanvas2(self,args):
+    def InsertSideCanvas(self,args):
 
         if(self.textCurrentY > self.textMaxHeight):
             print("캔버스 높이 초과")
@@ -288,12 +411,12 @@ class DNFAPIProcess(Interface):
         image = PhotoImage(file =  outfile)
 
 
-        self.canvas.create_image(self.textCurrentX - 300,self.textCurrentY,image = image)
+        self.sideCanvas.create_image(self.textCurrentX - 300,self.textCurrentY,image = image)
 
         boldFont = Font(family="Helvetica", size=12, weight="bold")
 
-        self.canvas.create_rectangle(self.textCurrentX-350,self.textCurrentY - 50,self.textCurrentX -250,self.textCurrentY+ 50)
-        self.canvas.create_text(self.textCurrentX,self.textCurrentY,text = str(args),font = boldFont)
+        self.sideCanvas.create_rectangle(self.textCurrentX-350,self.textCurrentY - 50,self.textCurrentX -250,self.textCurrentY+ 50)
+        self.sideCanvas.create_text(self.textCurrentX,self.textCurrentY,text = str(args),font = boldFont)
         self.textCurrentY += self.textHeight
 
 
@@ -332,7 +455,8 @@ class DNFAPIProcess(Interface):
                                          self.textCurrentY + 50)
             self.canvas.create_text(self.textCurrentX, self.textCurrentY, text=str(i), font=boldFont)
             self.textCurrentY += self.textHeight
-
+            #self.detailButtonList.append(Button(self.innerFrame,text = "상세보기"))
+            #self.detailButtonList[-1].pack()
 
         #trie 자료구조를 만들어야
         #검색 자동완성기능을 만들수있음
@@ -344,6 +468,43 @@ class DNFAPIProcess(Interface):
 
     def get(self,str):
         print(str)
+
+
+
+    def GetItemDetailInfoFromDatabase(self,itemId):
+        if (itemId == ""):
+            print("비어있는입력")
+            return
+        itemId = urllib.parse.quote(itemId)
+        server = "api.neople.co.kr"  # 물음표까지 다써도됌
+        client_id = ""
+        client_secret = "su795WU14mjFeoFzOitaqgPYKXzXF5BI"
+        conn = http.client.HTTPSConnection(server)
+        conn.request("GET","/df/items/" + itemId  + "?apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
+        response = conn.getresponse()
+        cLen = response.getheader("Content-Length")  # 헤더에서 Content-Length 즉 얼만큼 읽었는지 추출
+        result = response.read(int(cLen)).decode('utf-8')
+        #파싱
+        jsonData = ParsingDataOfItems2(result)
+
+        if len(jsonData.jsonData["rows"]) == 0:
+            return
+
+        url = "https://img-api.neople.co.kr/df/items/" + jsonData.itemID
+        outpath = "images/"
+        outfile = "image_" +jsonData.itemName + ".png"
+
+        if not os.path.isdir(outpath):
+            os.makedirs(outpath)
+
+        urllib.request.urlretrieve(url, outpath + outfile)
+
+
+
+    def ShowDetailInfomationOnSideCanvas(self):
+        pass
+
+
     def GetItemInfoFromDatabase(self, itemName):
 
         if (itemName == ""):
@@ -370,12 +531,9 @@ class DNFAPIProcess(Interface):
 
         cLen = response.getheader("Content-Length")  # 헤더에서 Content-Length 즉 얼만큼 읽었는지 추출
 
-
-
         result = response.read(int(cLen)).decode('utf-8')
         print(result)
         jsonData = ParsingDataOfItems(result)
-
 
         #print(type(result)) #<class 'bytes'>
         #self.canvas.create_text()
@@ -394,8 +552,6 @@ class DNFAPIProcess(Interface):
 
         print(jsonData)
         self.InsertCanvas(jsonData)
-
-
 
         pass
 
