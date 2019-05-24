@@ -37,30 +37,82 @@ class Interface:
 
     pass
 
+class ButtonFunction:
+    def __init__(self,itemID,process):
+        self.itemID = itemID
+        self.jsonData = None
+        self.process = process
+        pass
+    def GetItemDetailInfoFromDatabase(self):
+        if (self.itemID == ""):
+            print("비어있는입력")
+            return
+        itemId = urllib.parse.quote(self.itemID)
+        server = "api.neople.co.kr"  # 물음표까지 다써도됌
+        client_id = ""
+        client_secret = "su795WU14mjFeoFzOitaqgPYKXzXF5BI"
+        conn = http.client.HTTPSConnection(server)
+        conn.request("GET","/df/items/" + itemId  + "?apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
+        response = conn.getresponse()
+        cLen = response.getheader("Content-Length")  # 헤더에서 Content-Length 즉 얼만큼 읽었는지 추출
+        result = response.read(int(cLen)).decode('utf-8')
+        #파싱
+        jsonData = ParsingData2(result)
+
+        if len(jsonData.jsonData) == 0:
+            return
+
+        url = "https://img-api.neople.co.kr/df/items/" + jsonData.itemID
+        outpath = "images/"
+        outfile = "image_" +jsonData.itemName + ".png"
+
+        if not os.path.isdir(outpath):
+            os.makedirs(outpath)
+
+        urllib.request.urlretrieve(url, outpath + outfile)
+
+        self.jsonData = jsonData
+        self.process.InsertSideCanvas(self.jsonData)
+
+class ParsingData:
+    def __init__(self):
+        self.itemID = None
+        self.itemName = None
+        self.itemRarity = None
+        self.itemType = None
+        self.itemDetail = None
+        self.itemAvailableLevel = None
+
+    def __str__(self):
+
+        return " [아이템 고유코드 : " + self.itemID + "]\n [아이템이름 : " + self.itemName + "]\n [아이템 레어도 : " + self.itemRarity + "]\n [아이템 타입 : " + self.itemType + "]\n [아이템 타입상세 : " + self.itemDetail + "]\n [아이템 착용레벨 : " + self.itemAvailableLevel + "]\n"
+
 class ParsingDataOfItems:
     def __init__(self,JSON):
         self.jsonData = json.loads(JSON)
         if len(self.jsonData["rows"]) == 0:
             return
 
-        self.itemID = self.jsonData["rows"][0]["itemId"]
-        self.itemName = self.jsonData["rows"][0]["itemName"]
-        self.itemRarity = self.jsonData["rows"][0]["itemRarity"]
-        self.itemType = self.jsonData["rows"][0]["itemType"]
-        self.itemDetail = str(self.jsonData["rows"][0]["itemTypeDetail"])
-        self.itemAvailableLevel = str(self.jsonData["rows"][0]["itemAvailableLevel"])
+        self.itemList= []
 
-    def __str__(self):
-        if len(self.jsonData["rows"]) == 0:
-            return ""
-        return " [아이템 고유코드 : " + self.itemID + "]\n [아이템이름 : " + self.itemName + "]\n [아이템 레어도 : " + self.itemRarity + "]\n [아이템 타입 : " + self.itemType + "]\n [아이템 타입상세 : " + self.itemDetail + "]\n [아이템 착용레벨 : " + self.itemAvailableLevel + "]\n"
-
+        for i in range(len(self.jsonData["rows"])):
+            self.itemList.append(ParsingData())
+            self.itemList[-1].itemID = self.jsonData["rows"][i]["itemId"]
+            self.itemList[-1].itemName = self.jsonData["rows"][i]["itemName"]
+            self.itemList[-1].itemRarity = self.jsonData["rows"][i]["itemRarity"]
+            self.itemList[-1].itemType = self.jsonData["rows"][i]["itemType"]
+            self.itemList[-1].itemDetail = str(self.jsonData["rows"][i]["itemTypeDetail"])
+            self.itemList[-1].itemAvailableLevel = str(self.jsonData["rows"][i]["itemAvailableLevel"])
 
 
-class ParsingDataOfItems2:
+
+
+
+
+class ParsingData2:
     def __init__(self,JSON):
         self.jsonData = json.loads(JSON)
-        if len(self.jsonData["rows"]) == 0:
+        if len(self.jsonData) == 0:
             return
 
         self.itemID = self.jsonData["itemId"]
@@ -73,19 +125,81 @@ class ParsingDataOfItems2:
         self.itemExplain = self.jsonData["itemExplain"]
         self.itemExplainDetail = self.jsonData["itemExplainDetail"]
         self.itemFlavorText = self.jsonData["itemFlavorText"]
-        self.setItemId = str(self.jsonData["setItemId"])
-        self.setItemName = str(self.jsonData["setItemName"])
+        self.setItemId = self.jsonData["setItemId"]
+        self.setItemName = self.jsonData["setItemName"]
         self.itemStatus = self.jsonData["itemStatus"]
         print(type(self.itemStatus))
-        self.itemReinforceSkill = self.jsonData["itemReinforceSkill"]
-        print(type(self.itemReinforceSkill))
+        #self.itemReinforceSkill = self.jsonData["itemReinforceSkill"]
+#        print(type(self.itemReinforceSkill))
 
 
 
     def __str__(self):
-        if len(self.jsonData["rows"]) == 0:
+
+        newLine =40
+
+        if len(self.jsonData) == 0:
             return ""
-        return " [아이템 고유코드 : " + self.itemID + "]\n [아이템이름 : " + self.itemName + "]\n [아이템 레어도 : " + self.itemRarity + "]\n [아이템 타입 : " + self.itemType + "]\n [아이템 타입상세 : " + self.itemTypeDetail + "]\n [아이템 착용레벨 : " + self.itemAvailableLevel + "]\n"
+
+        returnString = " [아이템 고유코드 : " + self.itemID + "]\n [아이템이름 : " + self.itemName + "]\n [아이템 레어도 : " + self.itemRarity + "]\n [아이템 타입 : " + self.itemType + "]\n [아이템 타입상세 : " + self.itemTypeDetail + "]\n [아이템 착용레벨 : " + self.itemAvailableLevel + "]\n"
+
+
+        if(self.itemObtainInfo != None):
+            if len(self.itemObtainInfo) // newLine > 0:
+                lst = list(self.itemObtainInfo)
+                temp = len(self.itemObtainInfo) // newLine
+                self.itemObtainInfo = ""
+                for i in range(temp):
+                    lst.insert(newLine * (i + 1),'\n')
+                for i in lst:
+                    self.itemObtainInfo += i
+            returnString += "[" + self.itemObtainInfo + "]\n"
+
+
+        if(self.itemExplain != None):
+
+            if len(self.itemExplain) // newLine > 0:
+                lst = list(self.itemExplain)
+                temp = len(self.itemExplain) // newLine
+                self.itemExplain = ""
+                for i in range(temp):
+                    lst.insert(newLine * (i + 1),'\n')
+                for i in lst:
+                    self.itemExplain += i
+
+            returnString += "[" + self.itemExplain + "]\n"
+
+        if(self.itemExplainDetail != None):
+
+            if len(self.itemExplainDetail) // newLine > 0:
+                lst = list(self.itemExplainDetail)
+                temp = len(self.itemExplainDetail) // newLine
+                self.itemExplainDetail = ""
+                for i in range(temp):
+                    lst.insert(newLine * (i + 1),'\n')
+                for i in lst:
+                    self.itemExplainDetail += i
+
+            returnString += "[" + self.itemExplainDetail + "]\n"
+
+
+        if(self.itemFlavorText != None):
+
+            if len(self.itemFlavorText) // newLine > 0:
+                lst = list(self.itemFlavorText)
+                temp = len(self.itemFlavorText) // newLine
+                self.itemFlavorText = ""
+                for i in range(temp):
+                    lst.insert(newLine * (i + 1),'\n')
+                for i in lst:
+                    self.itemFlavorText += i
+
+            returnString +=  "[" + self.itemFlavorText + "]\n"
+
+        if(self.setItemName != None):
+            returnString += "[" + self.setItemName + "]\n"
+
+        return returnString
 
 
 class LeagueOfLegendSearchProcess(Interface):
@@ -329,27 +443,38 @@ class DNFAPIProcess(Interface):
 
 
 ###     canvas
-        self.innerFrame = Frame(self.tabFrame1)
-        self.innerFrame.place(x = 25,y = 100)
 
-        #self.textBoard = Text(self.innerFrame)
-        #self.textBoard.pack()
         self.canvasWidth = 800
         self.canvasHeight = 600
         self.canvasScrollbarWidth = 500
         self.canvasScrollbarHeight = 1000
 
+        self.innerFrame = Frame(self.tabFrame1,width = self.canvasWidth ,height = self.canvasHeight)
+        self.innerFrame.place(x = 25,y = 100)
+
+        #self.textBoard = Text(self.innerFrame)
+        #self.textBoard.pack()
+
+
+
         self.canvasBackground = PhotoImage(file = "background.png")
         #self.canvas = Canvas(self.innerFrame,bg = "#FFF0F0",relief = "solid",bd = 2,width = 800,height = 300,scrollregion = (0,0,500,500))
-        self.canvas = Canvas(self.innerFrame, bg="#FFF0F0", relief="solid", bd=2, width=self.canvasWidth, height=self.canvasHeight,scrollregion=(0, 0, self.canvasScrollbarWidth, self.canvasScrollbarHeight))
+        self.canvas = Canvas(self.innerFrame, bg="#FFF0F0", relief="solid", bd=1, width=self.canvasWidth, height=self.canvasHeight,scrollregion=(0, 0, self.canvasScrollbarWidth, self.canvasScrollbarHeight))
         self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
-        self.canvas.grid(row=0, column=0, sticky="news")
+        self.canvas.grid(row = 0,column = 1)
+        #self.canvas.grid(row=0, column=0, sticky="news")
 
 
-        self.scrollbar = Scrollbar(self.innerFrame,orient="vertical", command=self.canvas.yview)
-        self.scrollbar.grid(row=0, column=1, sticky='ns')
+
+        self.scrollbar = Scrollbar(self.innerFrame, command=self.canvas.yview)
+        self.scrollbar.grid(row=0, column=2, sticky='ns')
+
+        #self.scrollbar = Scrollbar(self.canvas, command=self.canvas.yview)
+        #self.scrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
 
         self.canvas.config(yscrollcommand = self.scrollbar.set)
+
+
 
 
 
@@ -381,6 +506,10 @@ class DNFAPIProcess(Interface):
         self.sideCanvas.pack(side = LEFT)
 
 
+### buttonFunctionInstance
+
+        self.buttonFunctionInstances = []
+
         pass
     def ResetCanvas(self):
         self.textCurrentX = self.canvasWidth/2
@@ -390,34 +519,31 @@ class DNFAPIProcess(Interface):
 
     def ClearCanvas(self):
         self.parsingDataList.clear()
+        self.buttonFunctionInstances.clear()
         for i in self.detailButtonList:
             i.destroy()
         self.ResetCanvas()
 
-    def ShowItemSearchResult(self):
-        output = ""
-        #output +=
-
+    def ClearSideCanvas(self):
+        self.sideCanvas.delete(ALL)
         pass
 
     def InsertSideCanvas(self,args):
 
-        if(self.textCurrentY > self.textMaxHeight):
-            print("캔버스 높이 초과")
-            return
+        print(args)
+        self.ClearSideCanvas()
 
         outfile = "images/" + "image_" +args.itemName + ".png"
         print(outfile)
         image = PhotoImage(file =  outfile)
 
 
-        self.sideCanvas.create_image(self.textCurrentX - 300,self.textCurrentY,image = image)
+        self.sideCanvas.create_image(50,50,image = image)
 
-        boldFont = Font(family="Helvetica", size=12, weight="bold")
+        boldFont = Font(family="Helvetica", size=8, weight="bold")
 
-        self.sideCanvas.create_rectangle(self.textCurrentX-350,self.textCurrentY - 50,self.textCurrentX -250,self.textCurrentY+ 50)
-        self.sideCanvas.create_text(self.textCurrentX,self.textCurrentY,text = str(args),font = boldFont)
-        self.textCurrentY += self.textHeight
+        self.sideCanvas.create_rectangle(25,25, 75,75, outline = "#FFB400" )
+        self.sideCanvas.create_text( 200,400,text = str(args),font = boldFont)
 
 
         #trie 자료구조를 만들어야
@@ -428,22 +554,34 @@ class DNFAPIProcess(Interface):
 
         pass
 
+    def Test(self,i):
+        print(i)
 
-    def InsertCanvas(self,args):
+
+    def ShowMainCanvas(self):
 
         self.ResetCanvas()
-        self.parsingDataList.append(args)
+
 
         images = []
 
-        for i in self.parsingDataList:
+
+
+        canvasFrames = []
+        #canvasFrame = Frame(self.canvas)
+        # self.canvas.create_window(self.canvasWidth - 100,100,window = canvasFrame)
+        #s = Button(canvasFrame,text = "아!!!")
+        #s.pack()
+        count = 0
+
+        for i in range(len(self.parsingDataList)):
             if (self.textCurrentY > self.textMaxHeight):
                 print("캔버스 높이 초과")
                 self.parsingDataList.pop()
                 self.mainWindowClass.window.mainloop()
                 return
 
-            outfile = "images/" + "image_" + i.itemName + ".png"
+            outfile = "images/" + "image_" + self.parsingDataList[i].itemName + ".png"
             print(outfile)
             images.append(PhotoImage(file=outfile))
 
@@ -453,10 +591,16 @@ class DNFAPIProcess(Interface):
 
             self.canvas.create_rectangle(self.textCurrentX - 350, self.textCurrentY - 50, self.textCurrentX - 250,
                                          self.textCurrentY + 50)
-            self.canvas.create_text(self.textCurrentX, self.textCurrentY, text=str(i), font=boldFont)
+            self.canvas.create_text(self.textCurrentX, self.textCurrentY, text=str(self.parsingDataList[i]), font=boldFont)
             self.textCurrentY += self.textHeight
-            #self.detailButtonList.append(Button(self.innerFrame,text = "상세보기"))
-            #self.detailButtonList[-1].pack()
+
+            canvasFrames.append(Frame(self.canvas))
+            self.canvas.create_window(self.textCurrentX + 250,self.textCurrentY -105,window = canvasFrames[-1])
+
+            self.detailButtonList.append(Button(canvasFrames[-1],text = "상세보기" ,command = self.buttonFunctionInstances[i].GetItemDetailInfoFromDatabase))
+            #self.detailButtonList.append(Button(canvasFrames[-1], text="상세보기", command=lambda: self.GetItemDetailInfoFromDatabase(self.parsingDataList[i])))
+            self.detailButtonList[-1].pack()
+            count +=1
 
         #trie 자료구조를 만들어야
         #검색 자동완성기능을 만들수있음
@@ -485,9 +629,9 @@ class DNFAPIProcess(Interface):
         cLen = response.getheader("Content-Length")  # 헤더에서 Content-Length 즉 얼만큼 읽었는지 추출
         result = response.read(int(cLen)).decode('utf-8')
         #파싱
-        jsonData = ParsingDataOfItems2(result)
+        jsonData = ParsingData2(result)
 
-        if len(jsonData.jsonData["rows"]) == 0:
+        if len(jsonData.jsonData) == 0:
             return
 
         url = "https://img-api.neople.co.kr/df/items/" + jsonData.itemID
@@ -499,6 +643,7 @@ class DNFAPIProcess(Interface):
 
         urllib.request.urlretrieve(url, outpath + outfile)
 
+        self.InsertSideCanvas(jsonData)
 
 
     def ShowDetailInfomationOnSideCanvas(self):
@@ -520,7 +665,7 @@ class DNFAPIProcess(Interface):
         conn = http.client.HTTPSConnection(server)
         # conn.request("GET", "/df/servers/cain/characters?characterName=dog&jobId=<jobId>&jobGrowId=<jobGrowId>&limit=<limit>&wordType=<wordType>&apikey=fS1DhnBRYjp0EIzzj2pMONApSNSkhOYV")
         #conn.request("GET", "/df/servers?apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
-        conn.request("GET","/df/items?itemName=" +itemName +  "&q=minLevel:<minLevel>,maxLevel:<maxLevel>,rarity:<rarity>,trade:<trade>&limit=<limit>&wordType=<wordType>&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
+        conn.request("GET","/df/items?itemName=" +itemName +  "&q=minLevel:<minLevel>,maxLevel:<maxLevel>,rarity:<rarity>,trade:<trade>&limit=<limit>&wordType=front&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
         # 서버에 GET 요청
         # GET은 정보를 달라는것
         # {"X-Naver-Client-Id": client_id, "X-Naver-Client-Secret": client_secret}
@@ -537,21 +682,22 @@ class DNFAPIProcess(Interface):
 
         #print(type(result)) #<class 'bytes'>
         #self.canvas.create_text()
+        print(len(jsonData.itemList))
+        for i in range(len(jsonData.itemList)):
 
-        if len(jsonData.jsonData["rows"]) == 0:
-            return
+            url = "https://img-api.neople.co.kr/df/items/" + jsonData.itemList[i].itemID
+            outpath = "images/"
+            outfile = "image_" +jsonData.itemList[i].itemName + ".png"
 
-        url = "https://img-api.neople.co.kr/df/items/" + jsonData.itemID
-        outpath = "images/"
-        outfile = "image_" +jsonData.itemName + ".png"
+            if not os.path.isdir(outpath):
+                os.makedirs(outpath)
 
-        if not os.path.isdir(outpath):
-            os.makedirs(outpath)
+            urllib.request.urlretrieve(url, outpath + outfile)
 
-        urllib.request.urlretrieve(url, outpath + outfile)
+            self.parsingDataList.append(jsonData.itemList[i])
+            self.buttonFunctionInstances.append(ButtonFunction(jsonData.itemList[i].itemID, self))
 
-        print(jsonData)
-        self.InsertCanvas(jsonData)
+        self.ShowMainCanvas()
 
         pass
 
