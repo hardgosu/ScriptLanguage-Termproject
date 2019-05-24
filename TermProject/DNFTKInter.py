@@ -127,9 +127,13 @@ class ParsingData2:
         self.itemFlavorText = self.jsonData["itemFlavorText"]
         self.setItemId = self.jsonData["setItemId"]
         self.setItemName = self.jsonData["setItemName"]
-        self.itemStatus = self.jsonData["itemStatus"]
-        print(type(self.itemStatus))
-        #self.itemReinforceSkill = self.jsonData["itemReinforceSkill"]
+        self.itemStatus = None
+        if "itemStatus" in self.jsonData.keys():
+            self.itemStatus = self.jsonData["itemStatus"]
+
+        self.itemReinforceSkill = None
+        if "itemReinforceSkill" in self.jsonData.keys():
+            self.itemReinforceSkill = self.jsonData["itemReinforceSkill"]
 #        print(type(self.itemReinforceSkill))
 
 
@@ -408,7 +412,7 @@ class DNFAPIProcess(Interface):
         self.searchEntry = Entry(self.tabFrame1,font = TempFont, width = 50,relief = 'ridge',borderwidth = 5)
         self.searchEntry.grid(row = 2, column = 1)
 
-        self.searchButton = Button(self.tabFrame1, text = "검색", command = lambda  : self.GetItemInfoFromDatabase(str(self.searchEntry.get())))
+        self.searchButton = Button(self.tabFrame1, text = "검색")
         self.searchButton.grid(row = 2,column = 2)
 
         self.resetButton = Button(self.tabFrame1,text = "리셋",command = self.ClearCanvas)
@@ -419,7 +423,7 @@ class DNFAPIProcess(Interface):
 
 
 
-        self.rarityCategoryList = ["커먼","언커먼","레어","유니크","크로니클","레전더리","에픽"]
+        self.rarityCategoryList = ["커먼","언커먼","레어","유니크","크로니클","레전더리","에픽","암거나"]
 
         self.emptyCanvas = Canvas(self.tabFrame1,width = 20,height = 15)
         self.emptyCanvas.grid(row = 2,column = 4)
@@ -431,7 +435,7 @@ class DNFAPIProcess(Interface):
 
 
 
-        self.weaponCategoryList = ["무기","방어구","악세사리","특수장비"]
+        self.weaponCategoryList = ["무기","방어구","악세사리","특수장비","재료","아바타","암거나"]
 
         self.emptyCanvas2 = Canvas(self.tabFrame1,width = 20,height = 15)
         self.emptyCanvas2.grid(row = 2,column = 6)
@@ -509,6 +513,9 @@ class DNFAPIProcess(Interface):
 ### buttonFunctionInstance
 
         self.buttonFunctionInstances = []
+
+###
+        self.searchButton.configure( command = lambda: self.GetItemInfoFromDatabase(str(self.searchEntry.get()),str(0),str(999), str(self.rarityCombobox.get()),str(self.weaponCategoryCombobox.get())))
 
         pass
     def ResetCanvas(self):
@@ -650,14 +657,18 @@ class DNFAPIProcess(Interface):
         pass
 
 
-    def GetItemInfoFromDatabase(self, itemName):
+    def GetItemInfoFromDatabase(self, itemName,minLevel = "0",maxLevel = "999",rarity = "",itemType = "암거나"):
 
         if (itemName == ""):
             print("비어있는입력")
             return
 
-        #파싱 ..
-        itemName = urllib.parse.quote(itemName)
+        #URL인코딩?
+
+
+
+
+        print(itemType)
 
         server = "api.neople.co.kr"  # 물음표까지 다써도됌
         client_id = ""
@@ -665,7 +676,7 @@ class DNFAPIProcess(Interface):
         conn = http.client.HTTPSConnection(server)
         # conn.request("GET", "/df/servers/cain/characters?characterName=dog&jobId=<jobId>&jobGrowId=<jobGrowId>&limit=<limit>&wordType=<wordType>&apikey=fS1DhnBRYjp0EIzzj2pMONApSNSkhOYV")
         #conn.request("GET", "/df/servers?apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
-        conn.request("GET","/df/items?itemName=" +itemName +  "&q=minLevel:<minLevel>,maxLevel:<maxLevel>,rarity:<rarity>,trade:<trade>&limit=<limit>&wordType=front&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
+        conn.request("GET","/df/items?itemName=" +urllib.parse.quote(itemName) +  "&q=minLevel:" + minLevel + ",maxLevel:" + maxLevel + ",rarity:" + urllib.parse.quote(rarity) +",trade:<trade>&limit=<limit>&wordType=front&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
         # 서버에 GET 요청
         # GET은 정보를 달라는것
         # {"X-Naver-Client-Id": client_id, "X-Naver-Client-Secret": client_secret}
@@ -684,6 +695,10 @@ class DNFAPIProcess(Interface):
         #self.canvas.create_text()
         print(len(jsonData.itemList))
         for i in range(len(jsonData.itemList)):
+            if(itemType != "암거나" and jsonData.itemList[i].itemType != itemType):
+                print(jsonData.itemList[i].itemType)
+                print(itemType)
+                continue
 
             url = "https://img-api.neople.co.kr/df/items/" + jsonData.itemList[i].itemID
             outpath = "images/"
