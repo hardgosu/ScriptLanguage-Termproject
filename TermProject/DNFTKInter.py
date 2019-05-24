@@ -149,7 +149,10 @@ class DNFMarketProcess(Interface):
         self.canvas.delete(ALL)
         self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
 
-    class SomeClass:
+
+
+
+
         pass
 
 #503 시스템 점검
@@ -181,7 +184,7 @@ class DNFAPIProcess(Interface):
         self.searchButton = Button(self.tabFrame1, text = "검색", command = lambda  : self.GetItemInfoFromDatabase(str(self.searchEntry.get())))
         self.searchButton.grid(row = 2,column = 2)
 
-        self.resetButton = Button(self.tabFrame1,text = "리셋",command = self.ResetCanvas)
+        self.resetButton = Button(self.tabFrame1,text = "리셋",command = self.ClearCanvas)
         self.resetButton.grid(row = 2,column = 3)
 
 
@@ -252,20 +255,29 @@ class DNFAPIProcess(Interface):
 
         self.detailButtonList = []
 
+        self.parsingDataList = []
+
         pass
     def ResetCanvas(self):
         self.textCurrentX = self.canvasWidth/2
         self.textCurrentY = self.canvasHeight*0.12
         self.canvas.delete(ALL)
         self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
+
+    def ClearCanvas(self):
+        self.ResetCanvas()
+        self.textCurrentX = self.canvasWidth/2
+        self.textCurrentY = self.canvasHeight*0.12
+        self.canvas.delete(ALL)
+        self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
+
     def ShowItemSearchResult(self):
         output = ""
         #output +=
 
         pass
 
-
-    def InsertCanvas(self,args):
+    def InsertCanvas2(self,args):
 
         if(self.textCurrentY > self.textMaxHeight):
             print("캔버스 높이 초과")
@@ -290,6 +302,43 @@ class DNFAPIProcess(Interface):
         #그건 패스
 
         self.mainWindowClass.window.mainloop()
+
+        pass
+
+
+    def InsertCanvas(self,args):
+
+        self.ResetCanvas()
+        self.parsingDataList.append(args)
+
+        images = []
+
+        for i in self.parsingDataList:
+            if (self.textCurrentY > self.textMaxHeight):
+                print("캔버스 높이 초과")
+                self.parsingDataList.pop()
+                self.mainWindowClass.window.mainloop()
+                return
+
+            outfile = "images/" + "image_" + i.itemName + ".png"
+            print(outfile)
+            images.append(PhotoImage(file=outfile))
+
+            self.canvas.create_image(self.textCurrentX - 300, self.textCurrentY, image=images[-1])
+
+            boldFont = Font(family="Helvetica", size=12, weight="bold")
+
+            self.canvas.create_rectangle(self.textCurrentX - 350, self.textCurrentY - 50, self.textCurrentX - 250,
+                                         self.textCurrentY + 50)
+            self.canvas.create_text(self.textCurrentX, self.textCurrentY, text=str(i), font=boldFont)
+            self.textCurrentY += self.textHeight
+
+
+        #trie 자료구조를 만들어야
+        #검색 자동완성기능을 만들수있음
+        #그건 패스
+        self.mainWindowClass.window.mainloop()
+
 
         pass
 
