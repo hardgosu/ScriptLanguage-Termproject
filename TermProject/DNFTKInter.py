@@ -287,6 +287,9 @@ class ParsingData3():
         difference = "%.1f" % difference
 
         return "[ " + str(difference) + "h ]"
+    def GetCount(self):
+
+        return "[ " + str(self.count) + " ]"
 
 class LeagueOfLegendSearchProcess(Interface):
     def __init__(self,mainWindow):
@@ -353,6 +356,7 @@ class DNFMarketProcess(Interface):
         self.labels[3].place(x = self.offsetX + 740,y = self.offsetY)
         self.labels[4].place(x = self.offsetX + 830,y = self.offsetY)
         self.labels[5].place(x=self.offsetX + 660, y=self.offsetY)
+
 ###
 
 
