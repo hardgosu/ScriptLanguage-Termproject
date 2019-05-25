@@ -76,12 +76,15 @@ class ButtonFunction:
 
 class ParsingData:
     def __init__(self):
+        #기본
         self.itemID = None
         self.itemName = None
         self.itemRarity = None
         self.itemType = None
         self.itemDetail = None
         self.itemAvailableLevel = None
+
+
 
     def __str__(self):
 
@@ -90,8 +93,7 @@ class ParsingData:
 class ParsingDataOfItems:
     def __init__(self,JSON):
         self.jsonData = json.loads(JSON)
-        if len(self.jsonData["rows"]) == 0:
-            return
+
 
         self.itemList= []
 
@@ -105,7 +107,31 @@ class ParsingDataOfItems:
             self.itemList[-1].itemAvailableLevel = str(self.jsonData["rows"][i]["itemAvailableLevel"])
 
 
+class ParsingDataOfMarkets:
+    def __init__(self,JSON):
+        self.jsonData = json.loads(JSON)
 
+        self.itemList = []
+        for i in range(len(self.jsonData["rows"])):
+            self.itemList.append(ParsingData3())
+            self.itemList[-1].itemID = self.jsonData["rows"][i]["itemId"]
+            self.itemList[-1].itemName = self.jsonData["rows"][i]["itemName"]
+            self.itemList[-1].itemRarity = self.jsonData["rows"][i]["itemRarity"]
+            self.itemList[-1].itemType = self.jsonData["rows"][i]["itemType"]
+            self.itemList[-1].itemDetail = str(self.jsonData["rows"][i]["itemTypeDetail"])
+            self.itemList[-1].itemAvailableLevel = str(self.jsonData["rows"][i]["itemAvailableLevel"])
+
+            self.itemList[-1].auctionNo = self.jsonData["rows"][i]["auctionNo"]
+            self.itemList[-1].regData = self.jsonData["rows"][i]["regDate"]
+            self.itemList[-1].expireData = self.jsonData["rows"][i]["expireDate"]
+            self.itemList[-1].refine = self.jsonData["rows"][i]["refine"]
+            self.itemList[-1].reinforce = self.jsonData["rows"][i]["reinforce"]
+            self.itemList[-1].amplificationName = self.jsonData["rows"][i]["amplificationName"]
+            self.itemList[-1].count = self.jsonData["rows"][i]["count"]
+            self.itemList[-1].price = self.jsonData["rows"][i]["price"]
+            self.itemList[-1].currentPrice = self.jsonData["rows"][i]["currentPrice"]
+            self.itemList[-1].unitPrice = self.jsonData["rows"][i]["unitPrice"]
+            self.itemList[-1].averagePrice = self.jsonData["rows"][i]["averagePrice"]
 
 
 
@@ -205,6 +231,42 @@ class ParsingData2:
 
         return returnString
 
+class ParsingData3():
+    def __init__(self):
+        #기본
+        self.itemID = None
+        self.itemName = None
+        self.itemRarity = None
+        self.itemType = None
+        self.itemDetail = None
+        self.itemAvailableLevel = None
+
+
+        #경매장
+        self.auctionNo = None
+        self.regData = None
+        self.expireData = None
+        self.refine = None
+        self.reinforce = None
+        self.amplificationName = None
+        self.count = None
+        self.price = None
+        self.currentPrice = None
+        self.unitPrice = None
+        self.averagePrice = None
+    def __str__(self):
+
+        return "[아이템이름 : " + self.itemName + "]\n [아이템 레어도 : " + self.itemRarity + "]\n [아이템 타입 : " + self.itemType + "]\n [아이템 타입상세 : " + self.itemDetail + "]\n [아이템 착용레벨 : " + self.itemAvailableLevel + "]\n"\
+                + "[가격 : " + str(self.currentPrice) +"]\n"
+
+    def GetItemName(self):
+
+        return "[ " + self.itemName + " ]"
+
+    def GetAuctionNo(self):
+
+        return "[ " + self.auctionNo + " ]"
+
 
 class LeagueOfLegendSearchProcess(Interface):
     def __init__(self,mainWindow):
@@ -235,7 +297,7 @@ class DNFMarketProcess(Interface):
         self.searchEntry = Entry(self.tabFrame1,font = tempFont, width = 50,relief = 'ridge',borderwidth = 5)
         self.searchEntry.grid(row = 2, column = 1)
 
-        self.searchButton = Button(self.tabFrame1, text = "검색", command = lambda  : self.GetItemInfoFromDatabase(str(self.searchEntry.get())))
+        self.searchButton = Button(self.tabFrame1, text = "검색")
         self.searchButton.grid(row = 2,column = 2)
 
         self.resetButton = Button(self.tabFrame1,text = "리셋",command = self.ResetCanvas)
@@ -245,13 +307,30 @@ class DNFMarketProcess(Interface):
 
 
         #   오름차순,내림차순 정렬
-        self.sortButtonText = ["정렬↑","정렬↓"]
-        self.sortButtonTextIndex = 0
-        self.sortButton = Button(self.tabFrame1,text = self.sortButtonText[self.sortButtonTextIndex],width = 15,relief = 'groove')
-        self.sortButton.grid(row = 5,column =  5)
+        self.sortButton = Button(self.tabFrame1,text = "정렬",width = 15,relief = 'groove')
+        self.sortButton.grid(row = 4,column =  5)
 
 
+###
 
+
+###     라벨들(아이콘   이름     레벨  마감   가격)
+        font2 = Font(family="배달의민족 주아", size=20)
+
+        self.labelText = ["강화","재련","이름","마감","가격(골드)"]
+        self.labels = [Label(self.tabFrame1,text = self.labelText[i],font = font2) for i in range(len(self.labelText))]
+
+
+        self.offsetX = 140
+        self.offsetY = 120
+
+        self.labels[0].place(x = self.offsetX,y = self.offsetY)
+        self.labels[1].place(x = self.offsetX + 60,y = self.offsetY)
+        self.labels[2].place(x = self.offsetX + 120,y = self.offsetY)
+        self.labels[3].place(x = self.offsetX + 740,y = self.offsetY)
+        self.labels[4].place(x = self.offsetX + 800,y = self.offsetY)
+
+###
 
 
         self.emptyCanvas = Canvas(self.tabFrame1,width = 20,height = 15)
@@ -260,20 +339,20 @@ class DNFMarketProcess(Interface):
         self.sortCategory = ["이름 순","가격 순","레벨 순"]
         self.sortCategoryCombobox = ttk.Combobox(self.tabFrame1, height = 15, values = self.sortCategory)
         self.sortCategoryCombobox.grid(row =2, column = 5)
-        self.sortCategoryCombobox.set("정렬 기준")
+        self.sortCategoryCombobox.set("이름 순")
         #랜덤으로 최근에 올라온 아이템 20개씩 보여주는 기능
 
 
 ###     combobox
 
-        self.rarityCategoryList = ["커먼","언커먼","레어","유니크","크로니클","레전더리","에픽"]
+        self.rarityCategoryList = ["커먼","언커먼","레어","유니크","크로니클","레전더리","에픽","암거나"]
 
         self.emptyCanvas2 = Canvas(self.tabFrame1,width = 20,height = 15)
         self.emptyCanvas2.grid(row = 2,column = 6)
 
         self.rarityCombobox = ttk.Combobox(self.tabFrame1,height = 15,values = self.rarityCategoryList)
         self.rarityCombobox.grid(row =2 , column = 7)
-        self.rarityCombobox.set("무기 등급")
+        self.rarityCombobox.set("암거나")
 ###
 
 
@@ -323,57 +402,114 @@ class DNFMarketProcess(Interface):
         self.scrollbar["command"] = self.canvas.yview
         # self.entry.lower()
 
-        self.textCurrentX = self.canvasWidth / 2
-        self.textCurrentY = self.canvasHeight * 0.12
-        self.textHeight = self.canvasHeight * 0.24
-        self.textMaxHeight = self.canvasScrollbarHeight
 
 ###
 
 ### parsingDataList
         self.parsingDataList = []
+        #self.buttonFunctionInstances = []
 
 
+### 검색버튼 configure
+        self.searchButton.configure(command = lambda  : self.GetItemInfoFromMarket(str(self.searchEntry.get()),self.levelEntry.get(),self.levelEntry2.get(),self.rarityCombobox.get()))
+###
 
+### 경매장 바디 출력 관련 파라미터
+        self.imageOffsetX = 70
+        self.imageOffsetY = 40
+        self.imageIntervalY = 60
+
+        #가격
+        self.priceTextOffsetX = 300
+        self.priceTextOffsetY = 40
+        self.priceTextIntervalY = 60
+
+        #재련
+        self.refineOffsetX = 110
+        self.refineOffsetY = 40
+        self.refineIntervalY = 60
+
+        #강화
+        self.refineOffsetX = 110
+        self.refineOffsetY = 40
+        self.refineIntervalY = 60
+
+             
+
+
+        self.textCurrentX = self.canvasWidth / 2
+        self.textCurrentY = self.canvasHeight * 0.12
+        self.textHeight = self.canvasHeight * 0.24
+        self.textMaxHeight = self.canvasScrollbarHeight
+###
     def ResetCanvas(self):
         self.textCurrentX = self.canvasWidth/2
         self.textCurrentY = self.canvasHeight*0.12
         self.canvas.delete(ALL)
         self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
 
+        pass
 
+    def Sort(self,sortingStandard = "가격 순"):
 
+        #이름
+        if sortingStandard == self.sortCategory[0]:
+            def Temp():
+                return
+            self.parsingDataList.sort( )
+            pass
+        #가격
+        elif sortingStandard == self.sortCategory[1]:
+            pass
+        #레벨
+        elif sortingStandard == self.sortCategory[2]:
+            pass
 
 
         pass
 
-    def InsertCanvas(self,args):
+    def ShowMainCanvas(self):
 
         self.ResetCanvas()
-        self.parsingDataList.append(args)
+
 
         images = []
 
-        for i in self.parsingDataList:
+
+
+        #canvasFrames = []
+        #canvasFrame = Frame(self.canvas)
+        # self.canvas.create_window(self.canvasWidth - 100,100,window = canvasFrame)
+        #s = Button(canvasFrame,text = "아!!!")
+        #s.pack()
+        count = 0
+
+        for i in range(len(self.parsingDataList)):
             if (self.textCurrentY > self.textMaxHeight):
                 print("캔버스 높이 초과")
                 self.parsingDataList.pop()
                 self.mainWindowClass.window.mainloop()
                 return
 
-            outfile = "images/" + "image_" + i.itemName + ".png"
+            outfile = "images/" + "image_" + self.parsingDataList[i].itemName + ".png"
             print(outfile)
             images.append(PhotoImage(file=outfile))
 
-            self.canvas.create_image(self.textCurrentX - 300, self.textCurrentY, image=images[-1])
+            self.canvas.create_image(self.imageOffsetX , self.imageOffsetY+ i*self.imageIntervalY , image=images[-1])
+            self.canvas.create_rectangle(self.imageOffsetX - 20,self.imageOffsetY - 20 + i*self.imageIntervalY,self.imageOffsetX + 20, self.imageOffsetY + 20 + i*self.imageIntervalY , outline = "#FFB400" , width = 3)
 
-            boldFont = Font(family="Helvetica", size=12, weight="bold")
+            boldFont = Font(family="배달의민족 주아", size=12, weight="bold")
 
-            self.canvas.create_rectangle(self.textCurrentX - 350, self.textCurrentY - 50, self.textCurrentX - 250,
-                                         self.textCurrentY + 50)
-            self.canvas.create_text(self.textCurrentX, self.textCurrentY, text=str(i), font=boldFont)
-            self.textCurrentY += self.textHeight
+            self.canvas.create_text(self.priceTextOffsetX, self.priceTextOffsetY+ i * self.priceTextIntervalY, text=self.parsingDataList[i].GetItemName(), font=boldFont)
+            self.textCurrentY += self.imageIntervalY
 
+            #canvasFrames.append(Frame(self.canvas))
+            #self.canvas.create_window(self.textCurrentX + 250,self.textCurrentY -105,window = canvasFrames[-1])
+
+            #self.detailButtonList.append(Button(canvasFrames[-1],text = "상세보기" ,command = self.buttonFunctionInstances[i].GetItemDetailInfoFromDatabase))
+            #self.detailButtonList.append(Button(canvasFrames[-1], text="상세보기", command=lambda: self.GetItemDetailInfoFromDatabase(self.parsingDataList[i])))
+            #self.detailButtonList[-1].pack()
+            count +=1
 
         #trie 자료구조를 만들어야
         #검색 자동완성기능을 만들수있음
@@ -382,6 +518,121 @@ class DNFMarketProcess(Interface):
 
 
         pass
+
+
+        pass
+    def GetItemInfoFromMarket(self,itemName,minLevel = "0",maxLevel = "999",rarity = "암거나",itemType = "암거나"):
+        if (itemName == ""):
+            print("비어있는입력")
+            return
+
+        #URL인코딩?
+
+        #경매장:
+        #https://api.neople.co.kr/df/auction?itemName=<itemName>&q=minLevel:<minLevel>,maxLevel:<maxLevel>,rarity:<rarity>,minReinforce:<minReinforce>,maxReinforce:<maxReinforce>,minRefine:<minRefine>,maxRefine:<maxRefine>&sort=unitPrice:<unitPrice>,reinforce:<reinforce>,auctionNo:<auctionNo>&limit=<limit>&wordType=<wordType>&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI
+
+        server = "api.neople.co.kr"  # 물음표까지 다써도됌
+        client_id = ""
+        client_secret = "su795WU14mjFeoFzOitaqgPYKXzXF5BI"
+        conn = http.client.HTTPSConnection(server)
+        conn.request("GET","/df/auction?itemName=" +urllib.parse.quote(itemName) + "&q=minLevel:" + minLevel + ",maxLevel:" + maxLevel  + ",rarity:" + urllib.parse.quote(rarity) + ",minReinforce:<minReinforce>,maxReinforce:<maxReinforce>,minRefine:<minRefine>,maxRefine:<maxRefine>&sort=unitPrice:<unitPrice>,reinforce:<reinforce>,auctionNo:<auctionNo>&limit=20&wordType=front&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
+        response = conn.getresponse()
+        cLen = response.getheader("Content-Length")  # 헤더에서 Content-Length 즉 얼만큼 읽었는지 추출
+
+        result = response.read(int(cLen)).decode('utf-8')
+
+        jsonData = ParsingDataOfMarkets(result)
+
+        print(result)
+
+        for i in range(len(jsonData.itemList)):
+            if(itemType != "암거나" and jsonData.itemList[i].itemType != itemType):
+                print(jsonData.itemList[i].itemType)
+                print(itemType)
+                continue
+            elif(rarity != "암거나" and jsonData.itemList[i].itemRarity != rarity):
+                print(jsonData.itemList[i].itemType)
+                print(itemType)
+                continue
+
+
+            url = "https://img-api.neople.co.kr/df/items/" + jsonData.itemList[i].itemID
+            outpath = "images/"
+            outfile = "image_" +jsonData.itemList[i].itemName + ".png"
+
+            if not os.path.isdir(outpath):
+                os.makedirs(outpath)
+
+            urllib.request.urlretrieve(url, outpath + outfile)
+
+            self.parsingDataList.append(jsonData.itemList[i])
+            #self.buttonFunctionInstances.append(ButtonFunction(jsonData.itemList[i].itemID, self))
+        self.ShowMainCanvas()
+        pass
+
+    def GetItemInfoFromDatabase(self, itemName,minLevel = "0",maxLevel = "999",rarity = "암거나",itemType = "암거나"):
+
+        if (itemName == ""):
+            print("비어있는입력")
+            return
+
+        #URL인코딩?
+
+
+
+
+        print(itemType)
+
+        server = "api.neople.co.kr"  # 물음표까지 다써도됌
+        client_id = ""
+        client_secret = "su795WU14mjFeoFzOitaqgPYKXzXF5BI"
+        conn = http.client.HTTPSConnection(server)
+        # conn.request("GET", "/df/servers/cain/characters?characterName=dog&jobId=<jobId>&jobGrowId=<jobGrowId>&limit=<limit>&wordType=<wordType>&apikey=fS1DhnBRYjp0EIzzj2pMONApSNSkhOYV")
+        #conn.request("GET", "/df/servers?apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
+        conn.request("GET","/df/items?itemName=" +urllib.parse.quote(itemName) +  "&q=minLevel:" + minLevel + ",maxLevel:" + maxLevel + ",rarity:" + urllib.parse.quote(rarity) +",trade:<trade>&limit=<limit>&wordType=front&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
+        # 서버에 GET 요청
+        # GET은 정보를 달라는것
+        # {"X-Naver-Client-Id": client_id, "X-Naver-Client-Secret": client_secret}
+        # 이거는 http connection 문법인데,헤더에다가 클라이언트 아이디,시크릿을 추가했다
+
+        response = conn.getresponse()
+
+
+        cLen = response.getheader("Content-Length")  # 헤더에서 Content-Length 즉 얼만큼 읽었는지 추출
+
+        result = response.read(int(cLen)).decode('utf-8')
+        print(result)
+        jsonData = ParsingDataOfItems(result)
+
+        #print(type(result)) #<class 'bytes'>
+        #self.canvas.create_text()
+        for i in range(len(jsonData.itemList)):
+            if(itemType != "암거나" and jsonData.itemList[i].itemType != itemType):
+                print(jsonData.itemList[i].itemType)
+                print(itemType)
+                continue
+            elif(rarity != "암거나" and jsonData.itemList[i].itemRarity != rarity):
+                print(jsonData.itemList[i].itemType)
+                print(itemType)
+                continue
+
+
+            url = "https://img-api.neople.co.kr/df/items/" + jsonData.itemList[i].itemID
+            outpath = "images/"
+            outfile = "image_" +jsonData.itemList[i].itemName + ".png"
+
+            if not os.path.isdir(outpath):
+                os.makedirs(outpath)
+
+            urllib.request.urlretrieve(url, outpath + outfile)
+
+            self.parsingDataList.append(jsonData.itemList[i])
+            #self.buttonFunctionInstances.append(ButtonFunction(jsonData.itemList[i].itemID, self))
+
+
+
+        pass
+
 
 
 
@@ -515,7 +766,20 @@ class DNFAPIProcess(Interface):
         self.buttonFunctionInstances = []
 
 ###
-        self.searchButton.configure( command = lambda: self.GetItemInfoFromDatabase(str(self.searchEntry.get()),str(0),str(999), str(self.rarityCombobox.get()),str(self.weaponCategoryCombobox.get())))
+
+
+### searchOptionCombobox
+
+        self.emptyCanvas2 = Canvas(self.tabFrame1,width = 8,height = 15)
+        self.emptyCanvas2.grid(row = 2,column = 9)
+
+        self.searchOptionCategory = ["front","full"]
+        self.searchOptionCombobox = ttk.Combobox(self.tabFrame1,height = 15, values = self.searchOptionCategory )
+        self.searchOptionCombobox.grid(row =2 , column = 10)
+        self.searchOptionCombobox.set("검색 옵션")
+
+
+        self.searchButton.configure( command = lambda: self.GetItemInfoFromDatabase(str(self.searchEntry.get()),str(0),str(999), str(self.rarityCombobox.get()),str(self.weaponCategoryCombobox.get()),str(self.searchOptionCombobox.get())))
 
         pass
     def ResetCanvas(self):
@@ -657,7 +921,7 @@ class DNFAPIProcess(Interface):
         pass
 
 
-    def GetItemInfoFromDatabase(self, itemName,minLevel = "0",maxLevel = "999",rarity = "",itemType = "암거나"):
+    def GetItemInfoFromDatabase(self, itemName,minLevel = "0",maxLevel = "999",rarity = "암거나",itemType = "암거나",searchOption = "full"):
 
         if (itemName == ""):
             print("비어있는입력")
@@ -676,7 +940,7 @@ class DNFAPIProcess(Interface):
         conn = http.client.HTTPSConnection(server)
         # conn.request("GET", "/df/servers/cain/characters?characterName=dog&jobId=<jobId>&jobGrowId=<jobGrowId>&limit=<limit>&wordType=<wordType>&apikey=fS1DhnBRYjp0EIzzj2pMONApSNSkhOYV")
         #conn.request("GET", "/df/servers?apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
-        conn.request("GET","/df/items?itemName=" +urllib.parse.quote(itemName) +  "&q=minLevel:" + minLevel + ",maxLevel:" + maxLevel + ",rarity:" + urllib.parse.quote(rarity) +",trade:<trade>&limit=<limit>&wordType=front&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
+        conn.request("GET","/df/items?itemName=" +urllib.parse.quote(itemName) +  "&q=minLevel:" + minLevel + ",maxLevel:" + maxLevel + ",rarity:" + urllib.parse.quote(rarity) +",trade:<trade>&limit=<limit>&wordType=" + searchOption +"&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
         # 서버에 GET 요청
         # GET은 정보를 달라는것
         # {"X-Naver-Client-Id": client_id, "X-Naver-Client-Secret": client_secret}
@@ -693,12 +957,16 @@ class DNFAPIProcess(Interface):
 
         #print(type(result)) #<class 'bytes'>
         #self.canvas.create_text()
-        print(len(jsonData.itemList))
         for i in range(len(jsonData.itemList)):
             if(itemType != "암거나" and jsonData.itemList[i].itemType != itemType):
                 print(jsonData.itemList[i].itemType)
                 print(itemType)
                 continue
+            elif(rarity != "암거나" and jsonData.itemList[i].itemRarity != rarity):
+                print(jsonData.itemList[i].itemType)
+                print(itemType)
+                continue
+
 
             url = "https://img-api.neople.co.kr/df/items/" + jsonData.itemList[i].itemID
             outpath = "images/"
