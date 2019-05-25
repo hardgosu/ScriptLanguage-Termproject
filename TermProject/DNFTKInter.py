@@ -269,6 +269,13 @@ class ParsingData3():
     def GetRefine(self):
 
         return "[ " + self.refine + " ]"
+
+    def GetReinforce(self):
+
+        return "[ " + self.reinforce + " ]"
+    def GetCurrentPrice(self):
+        return "[ " + self.currentPrice + " ]"
+
 class LeagueOfLegendSearchProcess(Interface):
     def __init__(self,mainWindow):
         super(LeagueOfLegendSearchProcess, self).__init__(mainWindow)
