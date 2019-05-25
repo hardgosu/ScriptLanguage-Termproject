@@ -469,6 +469,12 @@ class DNFMarketProcess(Interface):
         self.remainDateOffsetY = 40
         self.remainDateIntervalY = 60
 
+        #남은기간
+        self.countOffsetX = 800
+        self.countOffsetY = 40
+        self.countIntervalY = 60
+
+
         self.textCurrentX = self.canvasWidth / 2
         self.textCurrentY = self.canvasHeight * 0.12
         self.textHeight = self.canvasHeight * 0.24
