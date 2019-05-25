@@ -340,7 +340,7 @@ class DNFMarketProcess(Interface):
 ###     라벨들(아이콘   이름     레벨  마감   가격)
         font2 = Font(family="배달의민족 주아", size=20)
 
-        self.labelText = ["강화","재련","이름","마감","가격(골드)"]
+        self.labelText = ["강화","재련","이름","마감","가격(골드)","수량"]
         self.labels = [Label(self.tabFrame1,text = self.labelText[i],font = font2) for i in range(len(self.labelText))]
 
 
@@ -352,7 +352,7 @@ class DNFMarketProcess(Interface):
         self.labels[2].place(x = self.offsetX + 140,y = self.offsetY)
         self.labels[3].place(x = self.offsetX + 740,y = self.offsetY)
         self.labels[4].place(x = self.offsetX + 830,y = self.offsetY)
-
+        self.labels[5].place(x=self.offsetX + 660, y=self.offsetY)
 ###
 
 
