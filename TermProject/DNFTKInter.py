@@ -445,7 +445,7 @@ class DNFMarketProcess(Interface):
         self.imageIntervalY = 60
 
         #이름
-        self.itemNameTextOffsetX = 300
+        self.itemNameTextOffsetX = 330
         self.itemNameOffsetY = 40
         self.itemNameIntervalY = 60
 
@@ -554,7 +554,7 @@ class DNFMarketProcess(Interface):
 
 
 
-            boldFont = Font(family="배달의민족 한나체 pro", size=12, weight="bold")
+            boldFont = Font(family="배달의민족 한나체 pro", size=14, weight="bold")
 
             self.canvas.create_text(self.itemNameTextOffsetX, self.itemNameOffsetY + i * self.itemNameIntervalY, text=self.parsingDataList[i].GetItemName(), font=boldFont)
             self.canvas.create_text(self.currentPriceOffsetX,self.currentPriceOffsetY + i*self.currentPriceOffIntervalY,text = self.parsingDataList[i].GetCurrentPrice(),font = boldFont)
