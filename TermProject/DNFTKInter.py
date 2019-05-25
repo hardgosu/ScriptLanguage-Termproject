@@ -266,8 +266,9 @@ class ParsingData3():
     def GetAuctionNo(self):
 
         return "[ " + self.auctionNo + " ]"
+    def GetRefine(self):
 
-
+        return "[ " + self.refine + " ]"
 class LeagueOfLegendSearchProcess(Interface):
     def __init__(self,mainWindow):
         super(LeagueOfLegendSearchProcess, self).__init__(mainWindow)
@@ -434,7 +435,8 @@ class DNFMarketProcess(Interface):
         self.refineOffsetY = 40
         self.refineIntervalY = 60
 
-             
+
+
 
 
         self.textCurrentX = self.canvasWidth / 2
