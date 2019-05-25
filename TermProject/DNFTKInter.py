@@ -276,8 +276,17 @@ class ParsingData3():
     def GetCurrentPrice(self):
         return "[ " + str(self.currentPrice) + " ]"
     def GetRemainDate(self):
+        #시간차를 구한다!
+        import datetime
+        expire = datetime.datetime.strptime(self.expireData,'%Y-%m-%d %H:%M:%S')
+        reg = datetime.datetime.now()
 
-        return "[ " + (self.expireData - self.regData) + " ]"
+        difference = expire - reg
+        difference = difference.total_seconds() / 3600
+
+        difference = "%.1f" % difference
+
+        return "[ " + str(difference) + "h ]"
 
 class LeagueOfLegendSearchProcess(Interface):
     def __init__(self,mainWindow):
@@ -337,9 +346,9 @@ class DNFMarketProcess(Interface):
 
         self.labels[0].place(x = self.offsetX,y = self.offsetY)
         self.labels[1].place(x = self.offsetX + 60,y = self.offsetY)
-        self.labels[2].place(x = self.offsetX + 120,y = self.offsetY)
+        self.labels[2].place(x = self.offsetX + 140,y = self.offsetY)
         self.labels[3].place(x = self.offsetX + 740,y = self.offsetY)
-        self.labels[4].place(x = self.offsetX + 800,y = self.offsetY)
+        self.labels[4].place(x = self.offsetX + 830,y = self.offsetY)
 
 ###
 
@@ -381,6 +390,7 @@ class DNFMarketProcess(Interface):
         self.levelLabel2 = Label(self.tabFrame1,text = "~")
         self.levelLabel2.grid(row =2 , column = 11)
 
+
         self.levelEntry2 = Entry(self.tabFrame1,width = 3)
         self.levelEntry2.grid(row = 2,column = 12)
 ###
@@ -394,14 +404,15 @@ class DNFMarketProcess(Interface):
         self.canvasWidth = 1150
         self.canvasHeight = 500
         self.canvasScrollbarWidth = 500
-        self.canvasScrollbarHeight = 1000
+        self.canvasScrollbarHeight = 2000
 
-        self.canvasBackground = PhotoImage(file="background.png")
+        #self.canvasBackground = PhotoImage(file="background.png")
         # self.canvas = Canvas(self.innerFrame,bg = "#FFF0F0",relief = "solid",bd = 2,width = 800,height = 300,scrollregion = (0,0,500,500))
         self.canvas = Canvas(self.innerFrame, bg="#FFF0F0", relief="solid", bd=2, width=self.canvasWidth,
                              height=self.canvasHeight,
                              scrollregion=(0, 0, self.canvasScrollbarWidth, self.canvasScrollbarHeight))
-        self.canvas.create_image(self.canvasWidth / 2, self.canvasHeight / 2, image=self.canvasBackground)
+        #self.canvas.create_image(self.canvasWidth / 2, self.canvasHeight / 2, image=self.canvasBackground)
+        self.canvas.create_image(self.canvasWidth / 2, self.canvasHeight / 2)
 
         self.scrollbar = Scrollbar(self.innerFrame)
         self.scrollbar.pack(fill="y", side=RIGHT)
@@ -450,7 +461,10 @@ class DNFMarketProcess(Interface):
         self.currentPriceOffsetY = 40
         self.currentPriceOffIntervalY = 60
 
-
+        #남은기간
+        self.remainDateOffsetX = 880
+        self.remainDateOffsetY = 40
+        self.remainDateIntervalY = 60
 
         self.textCurrentX = self.canvasWidth / 2
         self.textCurrentY = self.canvasHeight * 0.12
@@ -461,8 +475,8 @@ class DNFMarketProcess(Interface):
         self.textCurrentX = self.canvasWidth/2
         self.textCurrentY = self.canvasHeight*0.12
         self.canvas.delete(ALL)
-        self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
-
+        #self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
+        self.canvas.create_image(self.canvasWidth / 2, self.canvasHeight / 2)
         pass
 
     def Sort(self,sortingStandard = "가격 순"):
@@ -521,7 +535,7 @@ class DNFMarketProcess(Interface):
             self.canvas.create_text(self.currentPriceOffsetX,self.currentPriceOffsetY + i*self.currentPriceOffIntervalY,text = self.parsingDataList[i].GetCurrentPrice(),font = boldFont)
             self.canvas.create_text(self.refineOffsetX,self.refineOffsetY + i*self.refineIntervalY,text = self.parsingDataList[i].GetRefine(),font = boldFont)
             self.canvas.create_text(self.reinforceOffsetX,self.reinforceOffsetY + i*self.reinforceIntervalY,text = self.parsingDataList[i].GetReinforce(),font = boldFont)
-
+            self.canvas.create_text(self.remainDateOffsetX,self.remainDateOffsetY + i*self.remainDateIntervalY,text = self.parsingDataList[i].GetRemainDate(),font = boldFont)
 
             self.textCurrentY += self.imageIntervalY
 
@@ -557,7 +571,7 @@ class DNFMarketProcess(Interface):
         client_id = ""
         client_secret = "su795WU14mjFeoFzOitaqgPYKXzXF5BI"
         conn = http.client.HTTPSConnection(server)
-        conn.request("GET","/df/auction?itemName=" +urllib.parse.quote(itemName) + "&q=minLevel:" + minLevel + ",maxLevel:" + maxLevel  + ",rarity:" + urllib.parse.quote(rarity) + ",minReinforce:<minReinforce>,maxReinforce:<maxReinforce>,minRefine:<minRefine>,maxRefine:<maxRefine>&sort=unitPrice:<unitPrice>,reinforce:<reinforce>,auctionNo:<auctionNo>&limit=20&wordType=front&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
+        conn.request("GET","/df/auction?itemName=" +urllib.parse.quote(itemName) + "&q=minLevel:" + minLevel + ",maxLevel:" + maxLevel  + ",rarity:" + urllib.parse.quote(rarity) + ",minReinforce:<minReinforce>,maxReinforce:<maxReinforce>,minRefine:<minRefine>,maxRefine:<maxRefine>&sort=unitPrice:<unitPrice>,reinforce:<reinforce>,auctionNo:<auctionNo>&limit=33&wordType=front&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
         response = conn.getresponse()
         cLen = response.getheader("Content-Length")  # 헤더에서 Content-Length 즉 얼만큼 읽었는지 추출
 
@@ -962,7 +976,7 @@ class DNFAPIProcess(Interface):
         conn = http.client.HTTPSConnection(server)
         # conn.request("GET", "/df/servers/cain/characters?characterName=dog&jobId=<jobId>&jobGrowId=<jobGrowId>&limit=<limit>&wordType=<wordType>&apikey=fS1DhnBRYjp0EIzzj2pMONApSNSkhOYV")
         #conn.request("GET", "/df/servers?apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
-        conn.request("GET","/df/items?itemName=" +urllib.parse.quote(itemName) +  "&q=minLevel:" + minLevel + ",maxLevel:" + maxLevel + ",rarity:" + urllib.parse.quote(rarity) +",trade:<trade>&limit=<limit>&wordType=" + searchOption +"&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
+        conn.request("GET","/df/items?itemName=" +urllib.parse.quote(itemName) +  "&q=minLevel:" + urllib.parse.quote(minLevel) + ",maxLevel:" + urllib.parse.quote(maxLevel) + ",rarity:" + urllib.parse.quote(rarity) +",trade:<trade>&limit=<limit>&wordType=" + searchOption +"&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
         # 서버에 GET 요청
         # GET은 정보를 달라는것
         # {"X-Naver-Client-Id": client_id, "X-Naver-Client-Secret": client_secret}
