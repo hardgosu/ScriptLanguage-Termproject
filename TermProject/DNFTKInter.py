@@ -268,13 +268,16 @@ class ParsingData3():
         return "[ " + self.auctionNo + " ]"
     def GetRefine(self):
 
-        return "[ " + self.refine + " ]"
+        return "[ +" + str(self.refine) + " ]"
 
     def GetReinforce(self):
 
-        return "[ " + self.reinforce + " ]"
+        return "[ +" + str(self.reinforce) + " ]"
     def GetCurrentPrice(self):
-        return "[ " + self.currentPrice + " ]"
+        return "[ " + str(self.currentPrice) + " ]"
+    def GetRemainDate(self):
+
+        return "[ " + (self.expireData - self.regData) + " ]"
 
 class LeagueOfLegendSearchProcess(Interface):
     def __init__(self,mainWindow):
@@ -427,22 +430,25 @@ class DNFMarketProcess(Interface):
         self.imageOffsetY = 40
         self.imageIntervalY = 60
 
-        #가격
-        self.priceTextOffsetX = 300
-        self.priceTextOffsetY = 40
-        self.priceTextIntervalY = 60
+        #이름
+        self.itemNameTextOffsetX = 300
+        self.itemNameOffsetY = 40
+        self.itemNameIntervalY = 60
 
         #재련
-        self.refineOffsetX = 110
+        self.refineOffsetX = 200
         self.refineOffsetY = 40
         self.refineIntervalY = 60
 
         #강화
-        self.refineOffsetX = 110
-        self.refineOffsetY = 40
-        self.refineIntervalY = 60
+        self.reinforceOffsetX = 130
+        self.reinforceOffsetY = 40
+        self.reinforceIntervalY = 60
 
-
+        #가격
+        self.currentPriceOffsetX = 1000
+        self.currentPriceOffsetY = 40
+        self.currentPriceOffIntervalY = 60
 
 
 
@@ -507,9 +513,16 @@ class DNFMarketProcess(Interface):
             self.canvas.create_image(self.imageOffsetX , self.imageOffsetY+ i*self.imageIntervalY , image=images[-1])
             self.canvas.create_rectangle(self.imageOffsetX - 20,self.imageOffsetY - 20 + i*self.imageIntervalY,self.imageOffsetX + 20, self.imageOffsetY + 20 + i*self.imageIntervalY , outline = "#FFB400" , width = 3)
 
-            boldFont = Font(family="배달의민족 주아", size=12, weight="bold")
 
-            self.canvas.create_text(self.priceTextOffsetX, self.priceTextOffsetY+ i * self.priceTextIntervalY, text=self.parsingDataList[i].GetItemName(), font=boldFont)
+
+            boldFont = Font(family="배달의민족 한나체 pro", size=12, weight="bold")
+
+            self.canvas.create_text(self.itemNameTextOffsetX, self.itemNameOffsetY + i * self.itemNameIntervalY, text=self.parsingDataList[i].GetItemName(), font=boldFont)
+            self.canvas.create_text(self.currentPriceOffsetX,self.currentPriceOffsetY + i*self.currentPriceOffIntervalY,text = self.parsingDataList[i].GetCurrentPrice(),font = boldFont)
+            self.canvas.create_text(self.refineOffsetX,self.refineOffsetY + i*self.refineIntervalY,text = self.parsingDataList[i].GetRefine(),font = boldFont)
+            self.canvas.create_text(self.reinforceOffsetX,self.reinforceOffsetY + i*self.reinforceIntervalY,text = self.parsingDataList[i].GetReinforce(),font = boldFont)
+
+
             self.textCurrentY += self.imageIntervalY
 
             #canvasFrames.append(Frame(self.canvas))
