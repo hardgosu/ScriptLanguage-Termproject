@@ -561,6 +561,8 @@ class DNFMarketProcess(Interface):
             self.canvas.create_text(self.refineOffsetX,self.refineOffsetY + i*self.refineIntervalY,text = self.parsingDataList[i].GetRefine(),font = boldFont)
             self.canvas.create_text(self.reinforceOffsetX,self.reinforceOffsetY + i*self.reinforceIntervalY,text = self.parsingDataList[i].GetReinforce(),font = boldFont)
             self.canvas.create_text(self.remainDateOffsetX,self.remainDateOffsetY + i*self.remainDateIntervalY,text = self.parsingDataList[i].GetRemainDate(),font = boldFont)
+            self.canvas.create_text(self.countOffsetX,self.countOffsetY + i*self.countIntervalY,text = self.parsingDataList[i].GetCount(),font = boldFont)
+
 
             self.textCurrentY += self.imageIntervalY
 
