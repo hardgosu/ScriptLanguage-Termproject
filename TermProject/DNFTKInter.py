@@ -320,7 +320,10 @@ class DNFMarketProcess(Interface):
         self.searchButton = Button(self.tabFrame1, text = "검색")
         self.searchButton.grid(row = 2,column = 2)
 
-        self.resetButton = Button(self.tabFrame1,text = "리셋",command = self.ResetCanvas)
+
+
+
+        self.resetButton = Button(self.tabFrame1,text = "리셋")
         self.resetButton.grid(row = 2,column = 3)
 
 
@@ -427,10 +430,6 @@ class DNFMarketProcess(Interface):
 
 ###
 
-### parsingDataList
-        self.parsingDataList = []
-        #self.buttonFunctionInstances = []
-
 
 ### 검색버튼 configure
         self.searchButton.configure(command = lambda  : self.GetItemInfoFromMarket(str(self.searchEntry.get()),self.levelEntry.get(),self.levelEntry2.get(),self.rarityCombobox.get()))
@@ -471,6 +470,17 @@ class DNFMarketProcess(Interface):
         self.textHeight = self.canvasHeight * 0.24
         self.textMaxHeight = self.canvasScrollbarHeight
 ###
+
+### parsingDataList
+        self.parsingDataList = []
+        # self.buttonFunctionInstances = []
+###
+
+### 버튼에 묶을 함수들 재설정..
+        self.resetButton.configure(command = self.ClearCanvas)
+
+
+
     def ResetCanvas(self):
         self.textCurrentX = self.canvasWidth/2
         self.textCurrentY = self.canvasHeight*0.12
@@ -478,6 +488,11 @@ class DNFMarketProcess(Interface):
         #self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
         self.canvas.create_image(self.canvasWidth / 2, self.canvasHeight / 2)
         pass
+
+    def ClearCanvas(self):
+        self.parsingDataList.clear()
+        self.ResetCanvas()
+
 
     def Sort(self,sortingStandard = "가격 순"):
 
@@ -562,6 +577,9 @@ class DNFMarketProcess(Interface):
             print("비어있는입력")
             return
 
+
+
+
         #URL인코딩?
 
         #경매장:
@@ -571,7 +589,7 @@ class DNFMarketProcess(Interface):
         client_id = ""
         client_secret = "su795WU14mjFeoFzOitaqgPYKXzXF5BI"
         conn = http.client.HTTPSConnection(server)
-        conn.request("GET","/df/auction?itemName=" +urllib.parse.quote(itemName) + "&q=minLevel:" + minLevel + ",maxLevel:" + maxLevel  + ",rarity:" + urllib.parse.quote(rarity) + ",minReinforce:<minReinforce>,maxReinforce:<maxReinforce>,minRefine:<minRefine>,maxRefine:<maxRefine>&sort=unitPrice:<unitPrice>,reinforce:<reinforce>,auctionNo:<auctionNo>&limit=33&wordType=front&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
+        conn.request("GET","/df/auction?itemName=" +urllib.parse.quote(itemName) + "&q=minLevel:" + minLevel + ",maxLevel:" + maxLevel  + ",rarity:" + urllib.parse.quote(rarity) + ",minReinforce:<minReinforce>,maxReinforce:<maxReinforce>,minRefine:<minRefine>,maxRefine:<maxRefine>&sort=unitPrice:<unitPrice>,reinforce:<reinforce>,auctionNo:<auctionNo>&limit=33&wordType=full&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
         response = conn.getresponse()
         cLen = response.getheader("Content-Length")  # 헤더에서 Content-Length 즉 얼만큼 읽었는지 추출
 
