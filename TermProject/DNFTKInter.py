@@ -563,7 +563,7 @@ class DNFMarketProcess(Interface):
         print(unOverlappedList)
 
 
-        offsetX = self.canvasWidth * 0.4
+        offsetX = self.canvasWidth * 0.48
         offsetY = (self.canvasHeight  + self.canvasScrollbarHeight) * 0.77
 
         graphHeight = 100
@@ -579,7 +579,7 @@ class DNFMarketProcess(Interface):
 
         self.canvas.create_text(offsetX + (len(unOverlappedList) * grapthWidth)/2,offsetY + graphHeight * 0.2, text = "가장 높은 가격 : " + str(maximum))
         self.canvas.create_text(offsetX + (len(unOverlappedList) * grapthWidth)/2,offsetY + graphHeight * 0.4, text = "가장 낮은 가격 : " + str(minimum))
-
+        self.canvas.create_text(offsetX + (len(unOverlappedList) * grapthWidth)/2,offsetY + graphHeight * 0.6, text = "그래프의 구간은" + str(interval))
         pass
     def SendEmail(self,gmailID,password,address):
         pass
