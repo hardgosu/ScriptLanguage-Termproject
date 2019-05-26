@@ -563,8 +563,8 @@ class DNFMarketProcess(Interface):
         print(unOverlappedList)
 
 
-        offsetX = 500
-        offsetY = 500
+        offsetX = self.canvasWidth * 0.4
+        offsetY = (self.canvasHeight  + self.canvasScrollbarHeight) * 0.77
 
         graphHeight = 100
         grapthWidth = 15
@@ -577,6 +577,8 @@ class DNFMarketProcess(Interface):
             self.canvas.create_rectangle(offsetX + i * grapthWidth,offsetY,offsetX +(i + 1) * grapthWidth ,offsetY -(unOverlappedList[i] / maximum) * graphHeight )
             self.canvas.create_text(offsetX + i * grapthWidth + 0.5 * grapthWidth,offsetY -(unOverlappedList[i] / maximum) * graphHeight- graphHeight*0.1,text = str(frequencyList[i]) )
 
+        self.canvas.create_text(offsetX + (len(unOverlappedList) * grapthWidth)/2,offsetY + graphHeight * 0.2, text = "가장 높은 가격 : " + str(maximum))
+        self.canvas.create_text(offsetX + (len(unOverlappedList) * grapthWidth)/2,offsetY + graphHeight * 0.4, text = "가장 낮은 가격 : " + str(minimum))
 
         pass
     def SendEmail(self,gmailID,password,address):
