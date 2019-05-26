@@ -609,6 +609,7 @@ class DNFMarketProcess(Interface):
 
             outfile = "images/" + "image_" + self.parsingDataList[i].itemName + ".png"
             print(outfile)
+            outfile = outfile.replace(":", "-")
             images.append(PhotoImage(file=outfile))
 
             self.canvas.create_image(self.imageOffsetX , self.imageOffsetY+ i*self.imageIntervalY , image=images[-1])
@@ -674,6 +675,7 @@ class DNFMarketProcess(Interface):
 
         print(result)
 
+        from pathlib import Path
         for i in range(len(jsonData.itemList)):
             if(itemType != "암거나" and jsonData.itemList[i].itemType != itemType):
                 print(jsonData.itemList[i].itemType)
@@ -689,10 +691,16 @@ class DNFMarketProcess(Interface):
             outpath = "images/"
             outfile = "image_" +jsonData.itemList[i].itemName + ".png"
 
+            outfile = outfile.replace(":","-")
+
             if not os.path.isdir(outpath):
                 os.makedirs(outpath)
 
-            urllib.request.urlretrieve(url, outpath + outfile)
+
+
+            filePath = Path(outfile)
+            if not filePath.is_file():
+                urllib.request.urlretrieve(url, outpath + outfile)
 
             self.parsingDataList.append(jsonData.itemList[i])
             #self.buttonFunctionInstances.append(ButtonFunction(jsonData.itemList[i].itemID, self))
@@ -735,6 +743,7 @@ class DNFMarketProcess(Interface):
 
         #print(type(result)) #<class 'bytes'>
         #self.canvas.create_text()
+        from pathlib import Path
         for i in range(len(jsonData.itemList)):
             if(itemType != "암거나" and jsonData.itemList[i].itemType != itemType):
                 print(jsonData.itemList[i].itemType)
@@ -750,10 +759,14 @@ class DNFMarketProcess(Interface):
             outpath = "images/"
             outfile = "image_" +jsonData.itemList[i].itemName + ".png"
 
+            outfile = outfile.replace(":","-")
+
             if not os.path.isdir(outpath):
                 os.makedirs(outpath)
 
-            urllib.request.urlretrieve(url, outpath + outfile)
+            filePath = Path(outfile)
+            if not filePath.is_file():
+                urllib.request.urlretrieve(url, outpath + outfile)
 
             self.parsingDataList.append(jsonData.itemList[i])
             #self.buttonFunctionInstances.append(ButtonFunction(jsonData.itemList[i].itemID, self))
@@ -935,6 +948,7 @@ class DNFAPIProcess(Interface):
 
         outfile = "images/" + "image_" +args.itemName + ".png"
         print(outfile)
+        outfile = outfile.replace(":", "-")
         image = PhotoImage(file =  outfile)
 
 
@@ -983,6 +997,7 @@ class DNFAPIProcess(Interface):
 
             outfile = "images/" + "image_" + self.parsingDataList[i].itemName + ".png"
             print(outfile)
+            outfile = outfile.replace(":", "-")
             images.append(PhotoImage(file=outfile))
 
             self.canvas.create_image(self.textCurrentX - 300, self.textCurrentY, image=images[-1])
@@ -1034,14 +1049,20 @@ class DNFAPIProcess(Interface):
         if len(jsonData.jsonData) == 0:
             return
 
+        from pathlib import Path
         url = "https://img-api.neople.co.kr/df/items/" + jsonData.itemID
         outpath = "images/"
         outfile = "image_" +jsonData.itemName + ".png"
+        outfile = outfile.replace(":", "-")
+
+        print(outfile)
 
         if not os.path.isdir(outpath):
             os.makedirs(outpath)
 
-        urllib.request.urlretrieve(url, outpath + outfile)
+        filePath = Path(outfile)
+        if not filePath.is_file():
+            urllib.request.urlretrieve(url, outpath + outfile)
 
         self.InsertSideCanvas(jsonData)
 
@@ -1086,6 +1107,7 @@ class DNFAPIProcess(Interface):
 
         #print(type(result)) #<class 'bytes'>
         #self.canvas.create_text()
+        from pathlib import Path
         for i in range(len(jsonData.itemList)):
             if(itemType != "암거나" and jsonData.itemList[i].itemType != itemType):
                 print(jsonData.itemList[i].itemType)
@@ -1101,10 +1123,16 @@ class DNFAPIProcess(Interface):
             outpath = "images/"
             outfile = "image_" +jsonData.itemList[i].itemName + ".png"
 
+            outfile = outfile.replace(":","-")
+
             if not os.path.isdir(outpath):
                 os.makedirs(outpath)
 
-            urllib.request.urlretrieve(url, outpath + outfile)
+
+
+            filePath = Path(outfile)
+            if not filePath.is_file():
+                urllib.request.urlretrieve(url, outpath + outfile)
 
             self.parsingDataList.append(jsonData.itemList[i])
             self.buttonFunctionInstances.append(ButtonFunction(jsonData.itemList[i].itemID, self))
