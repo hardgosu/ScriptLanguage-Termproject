@@ -488,6 +488,12 @@ class DNFMarketProcess(Interface):
 
 ### 버튼에 묶을 함수들 재설정..
         self.resetButton.configure(command = self.ClearCanvas)
+###
+
+
+### 그래프 그리기를 위한 파라미터
+
+###
 
 
 
@@ -520,6 +526,35 @@ class DNFMarketProcess(Interface):
             pass
 
 
+        pass
+
+    def DrawMarketGraph(self):
+
+        priceList = [int(self.parsingDataList[i].currentPrice) for i in range(len(self.parsingDataList))]
+
+        min = min(priceList)
+        max = max(priceList)
+
+        rate = 0.1
+        difference = max - min
+
+        interval = int(rate * difference)
+
+        priceList2 = [ ( (priceList[i] - min)//interval) * interval  for i in range(len(priceList))]
+
+        offsetX = 200
+        offsetY = 200
+
+        graphHeight = 100
+        grapthWidth = 25
+
+        for i in range(len(priceList)):
+            self.canvas.create_rectangle(offsetX + i * grapthWidth,offsetY,offsetX +(i + 1) * grapthWidth ,offsetY +(priceList2[i] / max) * graphHeight )
+
+
+
+        pass
+    def SendEmail(self,gmailID,password,address):
         pass
 
     def ShowMainCanvas(self):
