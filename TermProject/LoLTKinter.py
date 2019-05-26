@@ -1,10 +1,17 @@
 from tkinter import * # import tkinter
 import tkinter.ttk as ttk
+import urllib.request
 
 import json # import json module
 
 ## 테스트 용도로 만든 py
 
+currentVersionPath = "https://ddragon.leagueoflegends.com/realms/kr.json"
+text_data = urllib.request.urlopen(currentVersionPath).read().decode('utf-8')
+data = json.loads(text_data)
+version_champion = data["n"]["champion"]
+version_profileicon = data["n"]["profileicon"]
+version_language = data["l"]
 
 class MainWindow:
     def __init__(self):
