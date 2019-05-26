@@ -532,24 +532,36 @@ class DNFMarketProcess(Interface):
 
         priceList = [int(self.parsingDataList[i].currentPrice) for i in range(len(self.parsingDataList))]
 
-        min = min(priceList)
-        max = max(priceList)
-
-        rate = 0.1
-        difference = max - min
+        minimum = min(priceList)
+        maximum = max(priceList)
+        print("그려라고")
+        rate = 0.01
+        difference = maximum - minimum
 
         interval = int(rate * difference)
 
-        priceList2 = [ ( (priceList[i] - min)//interval) * interval  for i in range(len(priceList))]
+        priceList2 = [ ( (priceList[i] - minimum)//interval) * interval  for i in range(len(priceList))]
 
-        offsetX = 200
-        offsetY = 200
+        frequencyList = []
+        for i in range(len(priceList2)):
+            if not priceList2[i] in frequencyList:
+                frequencyList.append(priceList2[i])
+
+        print(frequencyList)
+
+
+        offsetX = 400
+        offsetY = 500
 
         graphHeight = 100
-        grapthWidth = 25
+        grapthWidth = 10
 
-        for i in range(len(priceList)):
-            self.canvas.create_rectangle(offsetX + i * grapthWidth,offsetY,offsetX +(i + 1) * grapthWidth ,offsetY +(priceList2[i] / max) * graphHeight )
+        print(minimum)
+        print(maximum)
+        print(interval)
+
+        for i in range(len(frequencyList)):
+            self.canvas.create_rectangle(offsetX + i * grapthWidth,offsetY,offsetX +(i + 1) * grapthWidth ,offsetY -(frequencyList[i] / maximum) * graphHeight )
 
 
 
@@ -612,6 +624,7 @@ class DNFMarketProcess(Interface):
         #trie 자료구조를 만들어야
         #검색 자동완성기능을 만들수있음
         #그건 패스
+        self.DrawMarketGraph()
         self.mainWindowClass.window.mainloop()
 
 
