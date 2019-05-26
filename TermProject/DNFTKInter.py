@@ -445,7 +445,7 @@ class DNFMarketProcess(Interface):
         self.imageIntervalY = 60
 
         #이름
-        self.itemNameTextOffsetX = 330
+        self.itemNameTextOffsetX = 370
         self.itemNameOffsetY = 40
         self.itemNameIntervalY = 60
 
@@ -664,7 +664,7 @@ class DNFMarketProcess(Interface):
         client_id = ""
         client_secret = "su795WU14mjFeoFzOitaqgPYKXzXF5BI"
         conn = http.client.HTTPSConnection(server)
-        conn.request("GET","/df/auction?itemName=" +urllib.parse.quote(itemName) + "&q=minLevel:" + minLevel + ",maxLevel:" + maxLevel  + ",rarity:" + urllib.parse.quote(rarity) + ",minReinforce:<minReinforce>,maxReinforce:<maxReinforce>,minRefine:<minRefine>,maxRefine:<maxRefine>&sort=unitPrice:<unitPrice>,reinforce:<reinforce>,auctionNo:<auctionNo>&limit=33&wordType=full&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
+        conn.request("GET","/df/auction?itemName=" +urllib.parse.quote(itemName) + "&q=minLevel:" + minLevel + ",maxLevel:" + maxLevel  + ",rarity:" + urllib.parse.quote(rarity) + ",minReinforce:<minReinforce>,maxReinforce:<maxReinforce>,minRefine:<minRefine>,maxRefine:<maxRefine>&sort=unitPrice:<unitPrice>,reinforce:<reinforce>,auctionNo:<auctionNo>&limit=33&wordType=front&apikey=su795WU14mjFeoFzOitaqgPYKXzXF5BI")
         response = conn.getresponse()
         cLen = response.getheader("Content-Length")  # 헤더에서 Content-Length 즉 얼만큼 읽었는지 추출
 
