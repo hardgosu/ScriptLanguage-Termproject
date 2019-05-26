@@ -540,29 +540,42 @@ class DNFMarketProcess(Interface):
 
         interval = int(rate * difference)
 
-        priceList2 = [ ( (priceList[i] - minimum)//interval) * interval  for i in range(len(priceList))]
+        priceList2 = [ ((priceList[i] - minimum)//interval) * interval  for i in range(len(priceList))]
 
-        frequencyList = []
+        unOverlappedList = []
+
+
+
+
         for i in range(len(priceList2)):
-            if not priceList2[i] in frequencyList:
-                frequencyList.append(priceList2[i])
+            if not priceList2[i] in unOverlappedList:
+                unOverlappedList.append(priceList2[i])
+
+
+        frequencyList = [0] * len(unOverlappedList)
+        #중복횟수 세기
+        for i in range(len(frequencyList)):
+            frequencyList[i] += priceList2.count(unOverlappedList[i])
+
 
         print(frequencyList)
 
+        print(unOverlappedList)
 
-        offsetX = 400
+
+        offsetX = 500
         offsetY = 500
 
         graphHeight = 100
-        grapthWidth = 10
+        grapthWidth = 15
 
         print(minimum)
         print(maximum)
         print(interval)
 
-        for i in range(len(frequencyList)):
-            self.canvas.create_rectangle(offsetX + i * grapthWidth,offsetY,offsetX +(i + 1) * grapthWidth ,offsetY -(frequencyList[i] / maximum) * graphHeight )
-
+        for i in range(len(unOverlappedList)):
+            self.canvas.create_rectangle(offsetX + i * grapthWidth,offsetY,offsetX +(i + 1) * grapthWidth ,offsetY -(unOverlappedList[i] / maximum) * graphHeight )
+            self.canvas.create_text(offsetX + i * grapthWidth + 0.5 * grapthWidth,offsetY -(unOverlappedList[i] / maximum) * graphHeight- graphHeight*0.1,text = str(frequencyList[i]) )
 
 
         pass
