@@ -15,10 +15,6 @@ version_champion = data["n"]["champion"]
 version_profileicon = data["n"]["profileicon"]
 version_language = data["l"]
 
-
-
-
-
 class MainWindow:
     global newimg
     def __init__(self):
@@ -31,15 +27,36 @@ class MainWindow:
         self.notebook = ttk.Notebook(self.mainWindow, width=1230, height=750)
         self.notebook.pack()
 
-        self.tabFrame = Frame(self.mainWindow)
+        self.tabFrame = Frame(self.mainWindow) # 이곳에 배치한다.
         self.notebook.add(self.tabFrame, text = "롤 전적검색")
 
-        with urllib.request.urlopen("http://ddragon.leagueoflegends.com/cdn/img/champion/loading/Aatrox_1.jpg") as u:
-            rawData = u.read()
-        im = Image.open(BytesIO(rawData))
-        image = ImageTk.PhotoImage(im)
-        label = Label(self.tabFrame, image = image, height = 400, width = 200 )
-        label.pack()
+        self.TopFrame = Frame(self.tabFrame)
+        self.BottomFrame = Frame(self.tabFrame)
+
+        self.TopFrame.pack(side="top")
+        self.BottomFrame.pack(side="bottom")
+
+        self.profileFrame = Frame(self.TopFrame, width = 640, height = 400, relief = "raised", bd = 5)
+        self.RankingFrame = Frame(self.TopFrame, width = 640, height = 400, relief = "raised", bd = 5)
+        self.RotationFrame = Frame(self.BottomFrame, width = 1280, height = 400, relief = "raised", bd = 5)
+        self.profileFrame.pack(side="left", fill="both")
+        self.RankingFrame.pack(side="top", fill="both")
+        self.RotationFrame.pack(side="left", fill="both")
+
+        #Button(self.profileFrame, text="버튼프레임").pack()
+        #Button(self.RankingFrame, text="랭킹프레임").pack()
+
+
+        ##with urllib.request.urlopen("http://ddragon.leagueoflegends.com/cdn/img/champion/loading/Aatrox_0.jpg") as u:
+        ##    rawData = u.read()
+        ##im = Image.open(BytesIO(rawData))
+        ##resize_im = im.resize((100,200))
+        ##image = ImageTk.PhotoImage(resize_im)
+
+
+        ##label = Label(self.tabFrame, image = image)
+        ##label.pack()
+
 
 
         self.mainWindow.mainloop()
