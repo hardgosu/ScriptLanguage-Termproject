@@ -5,6 +5,7 @@ from io import BytesIO
 from PIL import Image, ImageTk
 import json # import json module
 import http.client
+from tkinter.font import *
 
 ## 테스트 용도로 만든 py
 
@@ -26,6 +27,53 @@ recentData_Champion_url = "http://ddragon.leagueoflegends.com/cdn/" + version_ch
 recentData_Champion = URLdataDecode(recentData_Champion_url)
 Champion_List = list(recentData_Champion['data'].keys()) # 현재 챔피언 리스트
 ##############################################################################################
+
+class SummonerData:
+    # 검색한 소환사를 출력하기 위한 클래스
+    def __init__(self, _Name, _EncrytedID, _AccountID, _ProfileIconID, _SummonerLevel):
+        self.name = _Name
+        self.id_Encryted = _EncrytedID
+        self.id_Account = _AccountID
+        self.id_Profile = _ProfileIconID
+        self.level = _SummonerLevel
+
+        self.getLeagueInfo()
+        pass
+
+    def getLeagueInfo(self):
+        self.win = 0
+        self.loss = 0
+        self.total = 0
+        self.tier = ""
+        self.rank = ""
+        self.lp = 0
+        self.id_League = ""
+
+        server = "kr.api.riotgames.com"
+        apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
+        conn = http.client.HTTPSConnection(server)
+        conn.request("GET",
+                     "/lol/league/v4/entries/by-summoner/" + self.id_Encryted + "?api_key=" + apiKey)
+
+        request = conn.getresponse()
+        print("Summoner Info Response Code:" + str(request.status))
+        if int(request.status) == 200:  # 정상 응답코드는 200
+            response_body = request.read().decode('utf-8')
+        jsonData = json.loads(response_body)
+        print(jsonData)
+    pass
+
+class RankingSummoner:
+    # 챌린저 리그 소환사 객체를 위한 정보 클래스
+    def __init__(self, _Name, _LeaguePoints, _Wins, _Losses, _EncrytedID):
+        self.name = _Name
+        self.lp = _LeaguePoints
+        self.win = _Wins
+        self.loss = _Losses
+        self.id_Encryted = _EncrytedID
+        pass
+    pass
+
 
 def findChampionName(champID):
     # json으로 읽어온 챔피언 리스트에서 입력받은 챔피언 ID값과 일치하는 챔피언 이름을 리턴한다.
@@ -61,6 +109,9 @@ class MainWindow:
 
         for idx in range(n_Champion):
             self.LabelList[idx].place(x=idx * 85, y=40)
+
+    def ResetCanvas(self):
+        pass
 
     def __init__(self):
         self.mainWindow = Tk()
@@ -102,14 +153,30 @@ class MainWindow:
         self.nameLabel_Ranking.place(x=self.offset_x, y=self.offset_y)
         ########################################################################
 
-        ## 로테이션 정보를 가져와 라벨을 생성하고 로테이션 챔피언 그림들을 라벨에 할당한다 ###################
+        ## 로테이션 정보를 가져와 라벨을 생성하고 로테이션 챔피언 그림들을 라벨에 할당한다 #
         self.GetChampionRotation()
         self.MakeChampionLabels()
 
         ########################################################################
+        ## 검색 엔트리, 검색 버튼, 리셋 버튼 #######################################
 
+        self.search_Image = PhotoImage(file="search2.png").subsample(6, 6)
+        self.search_Image_Label = Label(self.profileFrame, image=self.search_Image)
+        self.search_Image_Label.grid(row=2, column=0)
 
-        self.SearchSummonerName("므글쁘글")
+        TempFont = Font(self.profileFrame, size=15, weight='bold', family='Consolas')
+
+        self.search_Entry = Entry(self.profileFrame, font=TempFont, width=50, relief='ridge', borderwidth=5)
+        self.search_Entry.grid(row=2, column=1)
+
+        self.search_Button = Button(self.profileFrame, text="검색",
+                                   command=lambda: self.SearchSummonerName(str(self.search_Entry.get())))
+        self.search_Button.grid(row=2, column=2)
+
+        self.search_ResetButton = Button(self.profileFrame, text="리셋", command=self.ResetCanvas)
+        self.search_ResetButton.grid(row=2, column=3)
+
+        #########################################################################
 
         self.mainWindow.mainloop()
         pass
@@ -129,11 +196,14 @@ class MainWindow:
                      "/lol/summoner/v4/summoners/by-name/" + encText + "?api_key=" + apiKey)
 
         request = conn.getresponse()
-        print("Searching Response Code:" + str(request.status))
+        print("First Searching Response Code:" + str(request.status))
         if int(request.status) == 200: # 정상 응답코드는 200
             response_body = request.read().decode('utf-8')
         jsonData = json.loads(response_body)
-        print(jsonData['name'])
+        print("검색 소환사명:" + jsonData['name'])
+
+        self.data_Search_Summoner = SummonerData(jsonData['name'], jsonData['id'], jsonData['accountId'], jsonData['profileIconId'], jsonData['summonerLevel'] )
+
 
     def GetChampionRotation(self):
         # url과 api-key를 이용해서 챔피언 id 리스트를 가져옵니다.
