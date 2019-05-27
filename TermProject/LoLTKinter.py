@@ -49,6 +49,19 @@ class MainWindow:
     offset_x = 10
     offset_y = 10
 
+    def MakeChampionLabels(self):
+        # 이미지 리스트와 라벨 리스트를 형성하고 라벨 리스트에 라벨 객체들을 적절하게 생성한다.
+        # 사이즈 조절 필요성이 있다. ##################################################
+        self.LabelList = list()
+        self.imageList = list()
+        n_Champion = self.rotation_NumberOfChampions
+        for idx in range(n_Champion):
+            self.imageList.append(drawChampionImage(self.rotation_FileNameList[idx], 85, 200))
+            self.LabelList.append(Label(self.RotationFrame, image=self.imageList[idx]))
+
+        for idx in range(n_Champion):
+            self.LabelList[idx].place(x=idx * 85, y=40)
+
     def __init__(self):
         self.mainWindow = Tk()
         self.mainWindow.resizable(False, False)
@@ -91,15 +104,7 @@ class MainWindow:
 
         ## 로테이션 정보를 가져와 라벨을 생성하고 로테이션 챔피언 그림들을 라벨에 할당한다 ###################
         self.GetChampionRotation()
-        self.LabelList = list()
-        self.imageList = list()
-        n_Champion = self.rotation_NumberOfChampions
-        for idx in range(n_Champion):
-            self.imageList.append(drawChampionImage(self.rotation_FileNameList[idx], 85, 200))
-            self.LabelList.append(Label(self.RotationFrame, image = self.imageList[idx]))
-
-        for idx in range(n_Champion):
-            self.LabelList[idx].place(x= idx * 85, y=40)
+        self.MakeChampionLabels()
 
         ########################################################################
 
