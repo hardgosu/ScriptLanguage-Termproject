@@ -4,6 +4,7 @@ import urllib.request
 from io import BytesIO
 from PIL import Image, ImageTk
 import json # import json module
+import http.client
 
 ## 테스트 용도로 만든 py
 
@@ -14,6 +15,7 @@ data = json.loads(text_data)
 version_champion = data["n"]["champion"]
 version_profileicon = data["n"]["profileicon"]
 version_language = data["l"]
+
 
 class MainWindow:
     global newimg
@@ -57,10 +59,34 @@ class MainWindow:
         ##label = Label(self.tabFrame, image = image)
         ##label.pack()
 
+        self.GetData("므글쁘글")
 
 
         self.mainWindow.mainloop()
         pass
+
+    def GetData(self, summonerName):
+        if (summonerName == ""):
+            print("비어있는입력")
+            return
+
+        # 한글 -> utf-8 인코딩
+        encText = urllib.parse.quote(summonerName)
+
+        server = "kr.api.riotgames.com"
+        apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
+        conn = http.client.HTTPSConnection(server)
+        conn.request("GET",
+                     "/lol/summoner/v4/summoners/by-name/" + encText + "?api_key=" + apiKey)
+
+        request = conn.getresponse()
+        print(request.status)
+        if int(request.status) == 200: # 정상 응답코드는 200
+            response_body = request.read().decode('utf-8')
+        jsonData = json.loads(response_body)
+        print(jsonData['name'])
+
+
 
 object = MainWindow()
 
