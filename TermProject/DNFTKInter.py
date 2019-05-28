@@ -812,7 +812,7 @@ class DNFAPIProcess(Interface):
 
         self.resetButton = Button(self.tabFrame1,text = "리셋",command = self.ClearCanvas)
 
-        self.resetButton = Button(self.tabFrame1,text = "리셋", command = self.ResetCanvas)
+        #self.resetButton = Button(self.tabFrame1,text = "리셋", command = self.ResetCanvas)
 
         self.resetButton.grid(row = 2,column = 3)
 
