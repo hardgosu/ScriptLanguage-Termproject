@@ -821,7 +821,7 @@ class DNFAPIProcess(Interface):
 
         TempFont = Font(mainWindow.window, size=15, weight='bold', family='Consolas')
 
-        self.searchEntry = Entry(self.tabFrame1,font = TempFont, width = 50,relief = 'ridge',borderwidth = 5)
+        self.searchEntry = Entry(self.tabFrame1,font = TempFont, width = 50,relief = 'solid',borderwidth = 5)
         self.searchEntry.grid(row = 2, column = 1)
 
         self.searchButton = Button(self.tabFrame1, text = "검색")
@@ -942,6 +942,81 @@ class DNFAPIProcess(Interface):
 
         self.searchButton.configure( command = lambda: self.GetItemInfoFromDatabase(str(self.searchEntry.get()),str(0),str(999), str(self.rarityCombobox.get()),str(self.weaponCategoryCombobox.get()),str(self.searchOptionCombobox.get())))
 
+
+###
+
+### 메일전송
+
+        self.gmailFrame = Frame(self.tabFrame1)
+        self.gmailFrame.grid(row = 4,column = 1)
+
+        self.gmailLabel = Label(self.gmailFrame,text = "메일주소")
+        self.gmailLabel.pack(side = LEFT)
+
+        self.gmailEntry = Entry(self.gmailFrame)
+        self.gmailEntry.pack(side = LEFT)
+
+        self.gmailSendButton = Button(self.gmailFrame,text = "메일전송",command = lambda : self.SendEmail(self.gmailEntry.get()))
+        self.gmailSendButton.pack(side = LEFT)
+        #self.
+
+        pass
+
+    def SendEmail(self,address):
+
+        import mimetypes
+        import mysmtplib
+        from email.mime.multipart import MIMEMultipart
+        from email.mime.base import MIMEBase
+        from email.mime.text import MIMEText
+        from email.mime.image import MIMEImage
+        from pathlib import Path
+        from email.message import EmailMessage
+        # global value
+        host = "smtp.gmail.com"  # Gmail STMP 서버 주소.
+        port = "587"
+        htmlFileName = "logo.html"
+
+        senderAddr = "deven0425@gmail.com"  # 보내는 사람 email 주소.
+        recipientAddr = address # 받는 사람 email 주소.
+
+        # msg = MIMEBase("multipart", "alternative")
+
+        s = ""
+        name = "제목 : "
+        imageName = ""
+        for i in range(len(self.parsingDataList2)):
+            s += str(self.parsingDataList2[i])
+            s += '\n'
+            name += self.parsingDataList2[i].itemName
+            imageName = "images/image_" + self.parsingDataList2[i].itemName + ".png"
+
+
+        msg = MIMEText(s, _charset='UTF-8')
+        msg['Subject'] = name
+        msg['From'] = senderAddr
+        msg['To'] = recipientAddr
+
+
+
+        # MIME 문서를 생성합니다.
+        # htmlFD = open(htmlFileName, 'rb')
+        # HtmlPart = MIMEText(htmlFD.read(),'html', _charset = 'UTF-8' )
+        # htmlFD.close()
+
+        # 만들었던 mime을 MIMEBase에 첨부 시킨다.
+        # msg.attach(HtmlPart)
+
+        # 메일을 발송한다.
+        s = mysmtplib.MySMTP(host, port)
+        # s.set_debuglevel(1)        # 디버깅이 필요할 경우 주석을 푼다.
+        s.ehlo()
+        s.starttls()
+        s.ehlo()
+        s.login(senderAddr, "xhzkxk0425%")
+        s.sendmail(senderAddr, [recipientAddr], msg.as_string())
+        s.close()
+        print("메일 전송 완료")
         pass
     def ResetCanvas(self):
         self.textCurrentX = self.canvasWidth/2
@@ -962,6 +1037,8 @@ class DNFAPIProcess(Interface):
 
     def InsertSideCanvas(self,args):
 
+        self.parsingDataList2.clear()
+        self.parsingDataList2.append(args)
         print(args)
         self.ClearSideCanvas()
 
