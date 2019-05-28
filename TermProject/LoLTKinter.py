@@ -392,8 +392,8 @@ class MainWindow:
 
         #########################################################################
         ## 캔버스 할당 ###########################################################
-        self.info_Canvas = Canvas(self.profileFrame)
-
+        self.info_Canvas = Canvas(self.profileFrame, width = 200, height = 200)
+        self.info_Canvas.place(x = 350, y= 170)
         #########################################################################
 
         pass
@@ -465,7 +465,12 @@ class MainWindow:
         self.DrawGraph()
 
     def DrawGraph(self):
-        self.info_Canvas.create_arc(220, 50, 320, 150, start = 0, extent = 360, fill="red", tags = 'info')
+        self.WinRate = self.data_Search_Summoner.win * 360 / self.data_Search_Summoner.total
+        self.LossRate = 360 - self.WinRate
+        print("{0},{1}".format(self.WinRate,self.LossRate))
+        self.info_Canvas.create_arc(5, 5, 195, 195, start = 0, extent = self.WinRate, fill="blue", tags ='info')
+        self.info_Canvas.create_arc(5, 5, 195, 195, start = self.WinRate, extent = self.LossRate , fill="red", tags='info')
+        self.info_Canvas.create_oval(65, 65, 135, 135, fill = "white", width = 0)
 
 
     def GetChampionRotation(self):
