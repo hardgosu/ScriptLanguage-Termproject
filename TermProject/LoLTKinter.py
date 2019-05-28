@@ -186,12 +186,12 @@ class MainWindow:
 
 
         self.info_Label_profileIcon = Label(self.profileFrame, relief = "sunken")
-        self.info_Label_Name = Label(self.profileFrame, text = "")
+        self.info_Label_Name = Label(self.profileFrame, text = "소환사 명")
         self.info_Label_Level = Label(self.profileFrame, text = "소환사 레벨:")
         self.info_Label_WinRate = Label(self.profileFrame, text = "전 승 패")
         self.info_Label_Emblem = Label(self.profileFrame, relief = "sunken")
-        self.info_Label_Queuetype = Label(self.profileFrame, text = "")
-        self.info_Label_LeagueName = Label(self.profileFrame, text="")
+        self.info_Label_Queuetype = Label(self.profileFrame, text = "큐 정보")
+        self.info_Label_LeagueName = Label(self.profileFrame, text="리그 정보")
         self.info_Label_LeaguePoints = Label(self.profileFrame, text = "LP")
 
 
@@ -239,7 +239,7 @@ class MainWindow:
         self.info_Label_Level.config(text="소환사 레벨: " + str(self.data_Search_Summoner.level))
         # 전적 텍스트 출력
         if self.data_Search_Summoner.isActive:
-            self.info_Label_WinRate.config(text = str(self.data_Search_Summoner.total) + "전 " + str(self.data_Search_Summoner.win) + "승 " + str(self.data_Search_Summoner.loss) + "패")
+            self.info_Label_WinRate.config(text = str(self.data_Search_Summoner.total) + "전 " + str(self.data_Search_Summoner.win) + "승 " + str(self.data_Search_Summoner.loss) + "패 승률:" + "{0:.1f}%".format(self.data_Search_Summoner.win * 100 / self.data_Search_Summoner.total))
             self.info_Label_Queuetype.config(text = self.data_Search_Summoner.queue)
             self.info_Label_LeagueName.config(text = self.data_Search_Summoner.tier + " " + self.data_Search_Summoner.rank)
             self.info_Label_LeaguePoints.config(text = str(self.data_Search_Summoner.lp) + " LP")
