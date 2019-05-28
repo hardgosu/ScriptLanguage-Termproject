@@ -318,8 +318,8 @@ class MainWindow:
         self.TopFrame.pack(side="top")
         self.BottomFrame.pack(side="bottom")
 
-        self.profileFrame = Frame(self.TopFrame, width = 640, height = 400, relief = "raised", bd = 5)
-        self.RankingFrame = Frame(self.TopFrame, width = 640, height = 400, relief = "raised", bd = 5)
+        self.profileFrame = Frame(self.TopFrame, width = 590, height = 400, relief = "raised", bd = 5)
+        self.RankingFrame = Frame(self.TopFrame, width = 690, height = 400, relief = "raised", bd = 5)
         self.RotationFrame = Frame(self.BottomFrame, width = 1280, height = 400, relief = "raised", bd = 5)
         self.profileFrame.pack(side="left", fill="both")
         self.RankingFrame.pack(side="top", fill="both")
@@ -371,7 +371,7 @@ class MainWindow:
 
         self.sendGmail_Button = Button(self.profileFrame, text="Gmail 전송",
                                        command = self.SendGmail, width = 10)
-        self.sendGmail_Button.place(x = 640 - 100, y= 10)
+        self.sendGmail_Button.place(x = 640 - 150, y= 10)
 
         self.info_Label_profileIcon = Label(self.profileFrame, relief = "sunken")
         self.info_Label_Name = Label(self.profileFrame, text = "소환사 명")
