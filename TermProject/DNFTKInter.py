@@ -11,6 +11,10 @@ import tkinter.ttk as ttk
 from tkinter.font import *
 import http.client
 
+## 송민수 코드 추가, 19.05.28 ##
+import LoLTKinter
+##############################
+
 class MainWindow:
     def __init__(self):
         self.window = Tk()
@@ -291,19 +295,20 @@ class ParsingData3():
 
         return "[ " + str(self.count) + " ]"
 
-class LeagueOfLegendSearchProcess(Interface):
-
-    def __init__(self,mainWindow):
-        super(LeagueOfLegendSearchProcess, self).__init__(mainWindow)
-
-    def __init__(self, mainWindow):
-
-        self.mainWindowClass = mainWindow
-        self.tabFrame = Frame(mainWindow.window)
-        self.notebook = mainWindow.notebook
-        self.notebook.add(self.tabFrame, text = "롤 전적검색")
-
-    pass
+# 민욱이가 제공한 LOL 기본 프로세스 클래스, 현재 사용 안하고 LoLTKinter 모듈을 받아서 객체로 인스턴싱하였음.
+#class LeagueOfLegendSearchProcess(Interface):
+#
+#    def __init__(self,mainWindow):
+#        super(LeagueOfLegendSearchProcess, self).__init__(mainWindow)
+#
+#    def __init__(self, mainWindow):
+#
+#        self.mainWindowClass = mainWindow
+#        self.tabFrame = Frame(mainWindow.window)
+#        self.notebook = mainWindow.notebook
+#        self.notebook.add(self.tabFrame, text = "롤 전적검색")
+#
+#    pass#
 
 class DNFMarketProcess(Interface):
     def __init__(self,mainWindow):
@@ -1179,7 +1184,8 @@ mainWindow = MainWindow()
 
 gol = DNFAPIProcess(mainWindow)
 asd = DNFMarketProcess(mainWindow)
-lol = LeagueOfLegendSearchProcess(mainWindow)
+#lol = LeagueOfLegendSearchProcess(mainWindow)
+lol = LoLTKinter.MainWindow(mainWindow)
 
 #a = DNFAPIProcess(mainWindow.window)
 

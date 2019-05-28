@@ -291,7 +291,7 @@ class MainWindow:
         self.rank_Label_Fifth_WinRate.place(x=450, y=190 + 20 + 80 + 20)
         #########################################################################
 
-    def __init__(self, in_mainWindow):
+    def __init__(self):
         self.rawRankingList = list() # 가공 전 리스트
         self.TopRankingList = list() # 정렬용 리스트
         self.rank_img_profileIcon = list() # 프로필 아이콘 이미지 리스트
@@ -300,14 +300,16 @@ class MainWindow:
         self.isAnimationing = True # 그래프 애니메이션 중인가?
 
 
-        self.mainWindow = in_mainWindow
-        #self.mainWindow.resizable(False, False)
-        #self.mainWindow.geometry("1280x800+100+100")
-        #self.mainWindow.wm_iconbitmap('DNF.ico')
-        #self.mainWindow.title("useful")
+        self.mainWindow = Tk()
+        self.mainWindow.resizable(False, False)
+        self.mainWindow.geometry("1280x800+100+100")
+        self.mainWindow.wm_iconbitmap('DNF.ico')
+        self.mainWindow.title("useful")
 
-        self.tabFrame = Frame(in_mainWindow.window)  # 이곳에 배치한다.
-        self.notebook = in_mainWindow.notebook
+        self.notebook = ttk.Notebook(self.mainWindow, width=1230, height=750)
+        self.notebook.pack()
+
+        self.tabFrame = Frame(self.mainWindow) # 이곳에 배치한다.
         self.notebook.add(self.tabFrame, text = "롤 전적검색")
 
         self.TopFrame = Frame(self.tabFrame)
@@ -396,6 +398,7 @@ class MainWindow:
 
         #########################################################################
 
+        self.mainWindow.mainloop()
         pass
 
     def SearchSummonerName(self, summonerName):
@@ -492,4 +495,7 @@ class MainWindow:
             self.rotation_FileNameList.append(findChampionName(ID))
         self.rotation_NumberOfChampions = len(self.rotation_FileNameList)
         print(self.rotation_FileNameList) # 검증 용도. 챔피언 리스트를 프린팅합니다.
+
+
+object = MainWindow()
 
