@@ -188,8 +188,13 @@ class MainWindow:
 
         self.info_Label_profileIcon = Label(self.profileFrame, relief = "sunken")
         self.info_Label_Name = Label(self.profileFrame, text = "")
+        self.info_Label_Level = Label(self.profileFrame, text = "소환사 레벨:")
+        self.info_Label_WinRate = Label(self.profileFrame, text = "전 승 패")
+
         self.info_Label_profileIcon.place(x = 10, y= 70)
         self.info_Label_Name.place(x = 10 + 100 + 10, y= 70)
+        self.info_Label_Level.place(x = 10 + 100 + 10, y = 90)
+        self.info_Label_WinRate.place(x= 10 + 100 + 10, y = 110)
 
         #########################################################################
 
@@ -223,6 +228,9 @@ class MainWindow:
         # 이름 출력
         self.info_Label_Name.config(text=self.data_Search_Summoner.name)
         # 레벨 출력
+        self.info_Label_Level.config(text="소환사 레벨: " + str(self.data_Search_Summoner.level))
+        # 전적 텍스트 출력
+        self.info_Label_WinRate.config(text = str(self.data_Search_Summoner.total) + "전 " + str(self.data_Search_Summoner.win) + "승 " + str(self.data_Search_Summoner.loss) + "패")
         # ..
 
         # 프로필 아이콘 출력
@@ -231,10 +239,13 @@ class MainWindow:
             rawData = url.read()
         imgData = Image.open(BytesIO(rawData))
         imgData_resize = imgData.resize((100, 100))
-        self.profileIconImage = ImageTk.PhotoImage(imgData_resize)
-        self.info_Label_profileIcon.config(image = self.profileIconImage, relief = "raised", bd = 3)
+        self.img_profileIcon = ImageTk.PhotoImage(imgData_resize)
+        self.info_Label_profileIcon.config(image = self.img_profileIcon, relief = "raised", bd = 3)
 
         # 리그 아이콘 출력
+
+
+
 
 
     def GetChampionRotation(self):
