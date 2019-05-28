@@ -15,6 +15,21 @@ import http.client
 import LoLTKinter
 ##############################
 
+# 민욱이가 제공한 LOL 기본 프로세스 클래스, 현재 사용 안하고 LoLTKinter 모듈을 받아서 객체로 인스턴싱하였음.
+#class LeagueOfLegendSearchProcess(Interface):
+#
+#    def __init__(self,mainWindow):
+#        super(LeagueOfLegendSearchProcess, self).__init__(mainWindow)
+#
+#    def __init__(self, mainWindow):
+#
+#        self.mainWindowClass = mainWindow
+#        self.tabFrame = Frame(mainWindow.window)
+#        self.notebook = mainWindow.notebook
+#        self.notebook.add(self.tabFrame, text = "롤 전적검색")
+#
+#    pass#
+
 class MainWindow:
     def __init__(self):
         self.window = Tk()
@@ -24,7 +39,7 @@ class MainWindow:
         self.window.title("useful")
 
 
-        self.notebook = ttk.Notebook(self.window, width = 1230, height = 750)
+        self.notebook = ttk.Notebook(self.window,width = 1230,height = 750)
         self.notebook.pack()
         #self.window.mainloop()
 
@@ -295,20 +310,18 @@ class ParsingData3():
 
         return "[ " + str(self.count) + " ]"
 
-# 민욱이가 제공한 LOL 기본 프로세스 클래스, 현재 사용 안하고 LoLTKinter 모듈을 받아서 객체로 인스턴싱하였음.
-#class LeagueOfLegendSearchProcess(Interface):
-#
-#    def __init__(self,mainWindow):
-#        super(LeagueOfLegendSearchProcess, self).__init__(mainWindow)
-#
-#    def __init__(self, mainWindow):
-#
-#        self.mainWindowClass = mainWindow
-#        self.tabFrame = Frame(mainWindow.window)
-#        self.notebook = mainWindow.notebook
-#        self.notebook.add(self.tabFrame, text = "롤 전적검색")
-#
-#    pass#
+class LeagueOfLegendSearchProcess(Interface):
+    def __init__(self,mainWindow):
+        super(LeagueOfLegendSearchProcess, self).__init__(mainWindow)
+        self.mainWindowClass = mainWindow
+        self.tabFrame = Frame(mainWindow.window)
+        self.notebook = mainWindow.notebook
+        self.notebook.add(self.tabFrame,text = "롤 전적검색")
+
+
+
+
+    pass
 
 class DNFMarketProcess(Interface):
     def __init__(self,mainWindow):
@@ -814,11 +827,7 @@ class DNFAPIProcess(Interface):
         self.searchButton = Button(self.tabFrame1, text = "검색")
         self.searchButton.grid(row = 2,column = 2)
 
-
         self.resetButton = Button(self.tabFrame1,text = "리셋",command = self.ClearCanvas)
-
-        #self.resetButton = Button(self.tabFrame1,text = "리셋", command = self.ResetCanvas)
-
         self.resetButton.grid(row = 2,column = 3)
 
 
@@ -934,18 +943,11 @@ class DNFAPIProcess(Interface):
         self.searchButton.configure( command = lambda: self.GetItemInfoFromDatabase(str(self.searchEntry.get()),str(0),str(999), str(self.rarityCombobox.get()),str(self.weaponCategoryCombobox.get()),str(self.searchOptionCombobox.get())))
 
         pass
-
     def ResetCanvas(self):
         self.textCurrentX = self.canvasWidth/2
         self.textCurrentY = self.canvasHeight*0.12
         self.canvas.delete(ALL)
         self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
-
-
-    def ShowItemSearchResult(self):
-        output = ""
-        #output +=
-
 
     def ClearCanvas(self):
         self.parsingDataList.clear()
@@ -1147,7 +1149,6 @@ class DNFAPIProcess(Interface):
 
 
 
-
             filePath = Path(outfile)
             if not filePath.is_file():
                 urllib.request.urlretrieve(url, outpath + outfile)
@@ -1157,11 +1158,8 @@ class DNFAPIProcess(Interface):
 
         self.ShowMainCanvas()
 
-
-        print(jsonData)
-        self.InsertCanvas(jsonData)
-
         pass
+
 
     #사실 이미 Run을 하고있음
     def Run(self):
@@ -1184,7 +1182,6 @@ mainWindow = MainWindow()
 
 gol = DNFAPIProcess(mainWindow)
 asd = DNFMarketProcess(mainWindow)
-#lol = LeagueOfLegendSearchProcess(mainWindow)
 lol = LoLTKinter.MainWindow(mainWindow)
 
 #a = DNFAPIProcess(mainWindow.window)
