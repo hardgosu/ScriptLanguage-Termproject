@@ -37,18 +37,10 @@ class SummonerData:
         self.id_Profile = _ProfileIconID
         self.level = _SummonerLevel
 
-        self.getLeagueInfo()
+        self.GetLeagueInfo()
         pass
 
-    def getLeagueInfo(self):
-        self.win = 0
-        self.loss = 0
-        self.total = 0
-        self.tier = ""
-        self.rank = ""
-        self.lp = 0
-        self.id_League = ""
-
+    def GetLeagueInfo(self):
         server = "kr.api.riotgames.com"
         apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
         conn = http.client.HTTPSConnection(server)
@@ -59,9 +51,25 @@ class SummonerData:
         print("Summoner Info Response Code:" + str(request.status))
         if int(request.status) == 200:  # 정상 응답코드는 200
             response_body = request.read().decode('utf-8')
-        jsonData = json.loads(response_body)
-        print(jsonData)
-    pass
+
+        if response_body == "[]":
+            # 리그 정보가 없을 때
+            print("검색된 소환사의 리그정보가 없습니다.")
+            self.isActive = False
+        else:
+            # 리그 정보가 있을 때
+            jsonData = json.loads(response_body)[0]  # list에 0번 인덱스에 존재하기 때문에.
+            print(jsonData)
+            self.win = int(jsonData['wins'])
+            self.queue = jsonData['queueType']
+            self.loss = int(jsonData['losses'])
+            self.total = self.win + self.loss
+            self.tier = jsonData['tier']
+            self.rank = jsonData['rank']
+            self.lp = jsonData['leaguePoints']
+            self.id_League = jsonData['leagueId']
+            self.isActive = True
+
 
 class RankingSummoner:
     # 챌린저 리그 소환사 객체를 위한 정보 클래스
@@ -71,8 +79,6 @@ class RankingSummoner:
         self.win = _Wins
         self.loss = _Losses
         self.id_Encryted = _EncrytedID
-        pass
-    pass
 
 
 def findChampionName(champID):
@@ -104,16 +110,19 @@ class MainWindow:
         self.imageList = list()
         n_Champion = self.rotation_NumberOfChampions
         for idx in range(n_Champion):
-            self.imageList.append(drawChampionImage(self.rotation_FileNameList[idx], 85, 200))
+            self.imageList.append(drawChampionImage(self.rotation_FileNameList[idx], 86, 200))
             self.LabelList.append(Label(self.RotationFrame, image=self.imageList[idx]))
 
         for idx in range(n_Champion):
-            self.LabelList[idx].place(x=idx * 85, y=40)
+            self.LabelList[idx].place(x=idx * 86, y=40)
 
     def ResetCanvas(self):
+        # 검색 엔트리 초기화
+        self.search_Entry.delete(0, len(self.search_Entry.get()))
         pass
 
     def __init__(self):
+
         self.mainWindow = Tk()
         self.mainWindow.resizable(False, False)
         self.mainWindow.geometry("1280x800+100+100")
@@ -142,7 +151,7 @@ class MainWindow:
         ## frame 이름 라벨  #####################################################
         self.nameLabel_profile = Label(self.profileFrame, text = "Summoner Info.")
         self.nameLabel_profile.pack()
-        self.nameLabel_profile.place(x = self.offset_x, y = self.offset_y)
+        self.nameLabel_profile.place(x = self.offset_x, y = self.offset_y + 40)
 
         self.nameLabel_ChampionRotation = Label(self.RotationFrame, text = "Champion Rotation")
         self.nameLabel_ChampionRotation.pack()
@@ -162,19 +171,25 @@ class MainWindow:
 
         self.search_Image = PhotoImage(file="search2.png").subsample(6, 6)
         self.search_Image_Label = Label(self.profileFrame, image=self.search_Image)
-        self.search_Image_Label.grid(row=2, column=0)
+        self.search_Image_Label.grid(row = 2, column = 0)
 
         TempFont = Font(self.profileFrame, size=15, weight='bold', family='Consolas')
 
         self.search_Entry = Entry(self.profileFrame, font=TempFont, width=50, relief='ridge', borderwidth=5)
-        self.search_Entry.grid(row=2, column=1)
+        self.search_Entry.grid(row = 2, column = 1)
 
         self.search_Button = Button(self.profileFrame, text="검색",
-                                   command=lambda: self.SearchSummonerName(str(self.search_Entry.get())))
-        self.search_Button.grid(row=2, column=2)
+                                   command = lambda: self.SearchSummonerName(str(self.search_Entry.get())))
+        self.search_Button.grid(row = 2, column = 2)
 
         self.search_ResetButton = Button(self.profileFrame, text="리셋", command=self.ResetCanvas)
-        self.search_ResetButton.grid(row=2, column=3)
+        self.search_ResetButton.grid(row = 2, column = 3)
+
+
+        self.info_Label_profileIcon = Label(self.profileFrame, relief = "sunken")
+        self.info_Label_Name = Label(self.profileFrame, text = "")
+        self.info_Label_profileIcon.place(x = 10, y= 70)
+        self.info_Label_Name.place(x = 10 + 100 + 10, y= 70)
 
         #########################################################################
 
@@ -182,6 +197,7 @@ class MainWindow:
         pass
 
     def SearchSummonerName(self, summonerName):
+        global version_profileicon
         if (summonerName == ""):
             print("비어있는입력")
             return
@@ -200,9 +216,25 @@ class MainWindow:
         if int(request.status) == 200: # 정상 응답코드는 200
             response_body = request.read().decode('utf-8')
         jsonData = json.loads(response_body)
+        print(jsonData)
         print("검색 소환사명:" + jsonData['name'])
 
         self.data_Search_Summoner = SummonerData(jsonData['name'], jsonData['id'], jsonData['accountId'], jsonData['profileIconId'], jsonData['summonerLevel'] )
+        # 이름 출력
+        self.info_Label_Name.config(text=self.data_Search_Summoner.name)
+        # 레벨 출력
+        # ..
+
+        # 프로필 아이콘 출력
+        filepath = "http://ddragon.leagueoflegends.com/cdn/"+version_profileicon+"/img/profileicon/" + str(self.data_Search_Summoner.id_Profile) + ".png"
+        with urllib.request.urlopen(filepath) as url:
+            rawData = url.read()
+        imgData = Image.open(BytesIO(rawData))
+        imgData_resize = imgData.resize((100, 100))
+        self.profileIconImage = ImageTk.PhotoImage(imgData_resize)
+        self.info_Label_profileIcon.config(image = self.profileIconImage, relief = "raised", bd = 3)
+
+        # 리그 아이콘 출력
 
 
     def GetChampionRotation(self):
