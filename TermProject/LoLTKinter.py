@@ -112,7 +112,6 @@ class MainWindow:
         for idx in range(n_Champion):
             self.imageList.append(drawChampionImage(self.rotation_FileNameList[idx], 86, 200))
             self.LabelList.append(Label(self.RotationFrame, image=self.imageList[idx]))
-
         for idx in range(n_Champion):
             self.LabelList[idx].place(x=idx * 86, y=40)
 
@@ -190,11 +189,20 @@ class MainWindow:
         self.info_Label_Name = Label(self.profileFrame, text = "")
         self.info_Label_Level = Label(self.profileFrame, text = "소환사 레벨:")
         self.info_Label_WinRate = Label(self.profileFrame, text = "전 승 패")
+        self.info_Label_Emblem = Label(self.profileFrame, relief = "sunken")
+        self.info_Label_Queuetype = Label(self.profileFrame, text = "")
+        self.info_Label_LeagueName = Label(self.profileFrame, text="")
+        self.info_Label_LeaguePoints = Label(self.profileFrame, text = "LP")
+
 
         self.info_Label_profileIcon.place(x = 10, y= 70)
         self.info_Label_Name.place(x = 10 + 100 + 10, y= 70)
         self.info_Label_Level.place(x = 10 + 100 + 10, y = 90)
         self.info_Label_WinRate.place(x= 10 + 100 + 10, y = 110)
+        self.info_Label_Emblem.place(x = 10, y = 180)
+        self.info_Label_Queuetype.place(x = 10 + 140, y = 180 + 20)
+        self.info_Label_LeagueName.place(x= 10 + 140, y= 180 + 40)
+        self.info_Label_LeaguePoints.place(x= 10 + 140, y= 180 + 60)
 
         #########################################################################
 
@@ -230,7 +238,16 @@ class MainWindow:
         # 레벨 출력
         self.info_Label_Level.config(text="소환사 레벨: " + str(self.data_Search_Summoner.level))
         # 전적 텍스트 출력
-        self.info_Label_WinRate.config(text = str(self.data_Search_Summoner.total) + "전 " + str(self.data_Search_Summoner.win) + "승 " + str(self.data_Search_Summoner.loss) + "패")
+        if self.data_Search_Summoner.isActive:
+            self.info_Label_WinRate.config(text = str(self.data_Search_Summoner.total) + "전 " + str(self.data_Search_Summoner.win) + "승 " + str(self.data_Search_Summoner.loss) + "패")
+            self.info_Label_Queuetype.config(text = self.data_Search_Summoner.queue)
+            self.info_Label_LeagueName.config(text = self.data_Search_Summoner.tier + " " + self.data_Search_Summoner.rank)
+            self.info_Label_LeaguePoints.config(text = str(self.data_Search_Summoner.lp) + " LP")
+        else:
+            self.info_Label_WinRate.config(text="승률 정보 없음")
+            self.info_Label_Queuetype.config(text="큐 정보 없음")
+            self.info_Label_LeagueName.config(text="배치 리그 정보 없음")
+            self.info_Label_LeaguePoints.config(text="리그 포인트 정보 없음")
         # ..
 
         # 프로필 아이콘 출력
@@ -243,6 +260,14 @@ class MainWindow:
         self.info_Label_profileIcon.config(image = self.img_profileIcon, relief = "raised", bd = 3)
 
         # 리그 아이콘 출력
+        if self.data_Search_Summoner.isActive:
+            Emblemfilepath = "./lol_images/Emblem_" + str(self.data_Search_Summoner.tier) + ".png"
+        else:
+            Emblemfilepath = "./lol_images/Emblem_" + "UNRANKED" + ".png"
+        imgData = Image.open(Emblemfilepath)
+        imgData_resize = imgData.resize((140, 159))
+        self.img_Emblem = ImageTk.PhotoImage(imgData_resize)
+        self.info_Label_Emblem.config(image = self.img_Emblem, relief = "flat")
 
 
 
