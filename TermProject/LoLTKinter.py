@@ -13,7 +13,6 @@ def URLdataDecode(urlpath):
     # json 객체로 리턴하는 스태틱 함수
     return json.loads(urllib.request.urlopen(urlpath).read().decode('utf-8'))
 
-
 #############################################################################################
 # 사전 처리 부분
 # 현재 롤 클라이언트 버전을 확인하기 위해 데이터 드래곤 url의 한국서버 json 파일을 받아온다.
@@ -75,10 +74,12 @@ class RankingSummoner:
     # 챌린저 리그 소환사 객체를 위한 정보 클래스
     def __init__(self, _Name, _LeaguePoints, _Wins, _Losses, _EncrytedID):
         self.name = _Name
-        self.lp = _LeaguePoints
-        self.win = _Wins
-        self.loss = _Losses
+        self.lp = int(_LeaguePoints)
+        self.win = int(_Wins)
+        self.loss = int(_Losses)
         self.id_Encryted = _EncrytedID
+
+
 
 
 def findChampionName(champID):
@@ -115,12 +116,35 @@ class MainWindow:
         for idx in range(n_Champion):
             self.LabelList[idx].place(x=idx * 86, y=40)
 
+    def GetRankingInfo(self):
+        # 랭킹 정보를 가져옵니다.
+        server = "kr.api.riotgames.com"
+        apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
+        conn = http.client.HTTPSConnection(server)
+        conn.request("GET",
+                     "/lol/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5?api_key=" + apiKey)
+        request = conn.getresponse()
+        print("Ranking Data Response Code:" + str(request.status))
+        if int(request.status) == 200:  # 정상 응답코드는 200
+            response_body = request.read().decode('utf-8')
+        jsonData = json.loads(response_body)
+        print(jsonData)
+        self.rawRankingList = jsonData['entries']
+        for idx in range(len(self.rawRankingList)):
+            self.TopRankingList.append(RankingSummoner(self.rawRankingList[idx]['summonerName'], self.rawRankingList[idx]['leaguePoints'], self.rawRankingList[idx]['wins'], self.rawRankingList[idx]['losses'], self.rawRankingList[idx]['summonerId']))
+
+    def SortRankingInfo(self):
+        self.TopRankingList = sorted(self.TopRankingList, key = lambda val : val.lp)
+        print("Sorting Complete")
+
     def ResetCanvas(self):
         # 검색 엔트리 초기화
         self.search_Entry.delete(0, len(self.search_Entry.get()))
         pass
 
     def __init__(self):
+        self.rawRankingList = list() # 가공 전 리스트
+        self.TopRankingList = list() # 정렬용 리스트
 
         self.mainWindow = Tk()
         self.mainWindow.resizable(False, False)
@@ -164,6 +188,9 @@ class MainWindow:
         ## 로테이션 정보를 가져와 라벨을 생성하고 로테이션 챔피언 그림들을 라벨에 할당한다 #
         self.GetChampionRotation()
         self.MakeChampionLabels()
+
+        self.GetRankingInfo()
+        self.SortRankingInfo()
 
         ########################################################################
         ## 검색 엔트리, 검색 버튼, 리셋 버튼 #######################################
@@ -268,9 +295,6 @@ class MainWindow:
         imgData_resize = imgData.resize((140, 159))
         self.img_Emblem = ImageTk.PhotoImage(imgData_resize)
         self.info_Label_Emblem.config(image = self.img_Emblem, relief = "flat")
-
-
-
 
 
     def GetChampionRotation(self):
