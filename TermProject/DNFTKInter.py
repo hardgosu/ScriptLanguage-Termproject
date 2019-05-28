@@ -20,7 +20,7 @@ class MainWindow:
         self.window.title("useful")
 
 
-        self.notebook = ttk.Notebook(self.window,width = 1230,height = 750)
+        self.notebook = ttk.Notebook(self.window, width = 1230, height = 750)
         self.notebook.pack()
         #self.window.mainloop()
 
@@ -292,15 +292,16 @@ class ParsingData3():
         return "[ " + str(self.count) + " ]"
 
 class LeagueOfLegendSearchProcess(Interface):
+<<<<<<< HEAD
     def __init__(self,mainWindow):
         super(LeagueOfLegendSearchProcess, self).__init__(mainWindow)
+=======
+    def __init__(self, mainWindow):
+>>>>>>> 993f21907a0c103ab2d930164ae08e4306507ff3
         self.mainWindowClass = mainWindow
         self.tabFrame = Frame(mainWindow.window)
         self.notebook = mainWindow.notebook
-        self.notebook.add(self.tabFrame,text = "롤 전적검색")
-
-
-
+        self.notebook.add(self.tabFrame, text = "롤 전적검색")
 
     pass
 
@@ -808,7 +809,11 @@ class DNFAPIProcess(Interface):
         self.searchButton = Button(self.tabFrame1, text = "검색")
         self.searchButton.grid(row = 2,column = 2)
 
+<<<<<<< HEAD
         self.resetButton = Button(self.tabFrame1,text = "리셋",command = self.ClearCanvas)
+=======
+        self.resetButton = Button(self.tabFrame1,text = "리셋", command = self.ResetCanvas)
+>>>>>>> 993f21907a0c103ab2d930164ae08e4306507ff3
         self.resetButton.grid(row = 2,column = 3)
 
 
@@ -924,11 +929,19 @@ class DNFAPIProcess(Interface):
         self.searchButton.configure( command = lambda: self.GetItemInfoFromDatabase(str(self.searchEntry.get()),str(0),str(999), str(self.rarityCombobox.get()),str(self.weaponCategoryCombobox.get()),str(self.searchOptionCombobox.get())))
 
         pass
+
     def ResetCanvas(self):
         self.textCurrentX = self.canvasWidth/2
         self.textCurrentY = self.canvasHeight*0.12
         self.canvas.delete(ALL)
         self.canvas.create_image(self.canvasWidth/2,self.canvasHeight/2,image = self.canvasBackground)
+<<<<<<< HEAD
+=======
+
+    def ShowItemSearchResult(self):
+        output = ""
+        #output +=
+>>>>>>> 993f21907a0c103ab2d930164ae08e4306507ff3
 
     def ClearCanvas(self):
         self.parsingDataList.clear()
@@ -1130,6 +1143,7 @@ class DNFAPIProcess(Interface):
 
 
 
+<<<<<<< HEAD
             filePath = Path(outfile)
             if not filePath.is_file():
                 urllib.request.urlretrieve(url, outpath + outfile)
@@ -1139,8 +1153,11 @@ class DNFAPIProcess(Interface):
 
         self.ShowMainCanvas()
 
+=======
+        print(jsonData)
+        self.InsertCanvas(jsonData)
+>>>>>>> 993f21907a0c103ab2d930164ae08e4306507ff3
         pass
-
 
     #사실 이미 Run을 하고있음
     def Run(self):
