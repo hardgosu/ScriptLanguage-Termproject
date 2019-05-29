@@ -1,13 +1,11 @@
 from tkinter import * # import tkinter
-import tkinter.ttk as ttk
 import urllib.request
 from io import BytesIO
 from PIL import Image, ImageTk
 import json # import json module
 import http.client
 from tkinter.font import *
-
-## 테스트 용도로 만든 py
+import time
 
 def URLdataDecode(urlpath):
     # json 객체로 리턴하는 스태틱 함수
@@ -323,6 +321,11 @@ class MainWindow:
         self.RankingFrame.pack(side="top", fill="both")
         self.RotationFrame.pack(side="left", fill="both")
 
+        ## 캔버스 할당 ###########################################################
+        self.info_Canvas = Canvas(self.profileFrame, width=200, height=200)
+        self.info_Canvas.place(x=350, y=170)
+        #########################################################################
+
         ## frame 이름 라벨  #####################################################
         self.nameLabel_profile = Label(self.profileFrame, text = "Summoner Info.")
         self.nameLabel_profile.pack()
@@ -391,10 +394,7 @@ class MainWindow:
         self.info_Label_LeaguePoints.place(x= 10 + 140, y= 180 + 60)
 
         #########################################################################
-        ## 캔버스 할당 ###########################################################
-        self.info_Canvas = Canvas(self.profileFrame, width = 200, height = 200)
-        self.info_Canvas.place(x = 350, y= 170)
-        #########################################################################
+
 
         pass
 
@@ -462,15 +462,36 @@ class MainWindow:
         self.img_Emblem = ImageTk.PhotoImage(imgData_resize)
         self.info_Label_Emblem.config(image = self.img_Emblem, relief = "flat")
 
-        self.DrawGraph()
+        if self.data_Search_Summoner.isActive:
+            self.isAnimationing = True
+            self.DrawGraph()
 
     def DrawGraph(self):
         self.WinRate = self.data_Search_Summoner.win * 360 / self.data_Search_Summoner.total
         self.LossRate = 360 - self.WinRate
-        print("{0},{1}".format(self.WinRate,self.LossRate))
-        self.info_Canvas.create_arc(5, 5, 195, 195, start = 0, extent = self.WinRate, fill="blue", tags ='info')
-        self.info_Canvas.create_arc(5, 5, 195, 195, start = self.WinRate, extent = self.LossRate , fill="red", tags='info')
-        self.info_Canvas.create_oval(65, 65, 135, 135, fill = "white", width = 0)
+        self.currWinRate = 0.0
+        self.currLossRate = 0.0
+        while self.isAnimationing:
+            self.info_Canvas.create_arc(5, 5, 195, 195, start=0, extent=self.currWinRate, fill="blue",
+                                        tags='info')
+            self.info_Canvas.create_arc(5, 5, 195, 195, start=self.WinRate, extent=self.currLossRate, fill="red",
+                                        tags='info')
+            self.info_Canvas.create_oval(65, 65, 135, 135, fill="white", width=0, tags='info')
+            self.info_Canvas.update()
+            if ((self.currWinRate < self.WinRate) & (self.currLossRate < self.LossRate)):
+                time.sleep(0.0025)
+                self.currWinRate += float(self.WinRate) * 0.0025
+                self.currLossRate += float(self.LossRate) * 0.0025
+                self.info_Canvas.delete('info')
+            else:
+                self.currWinRate = self.WinRate
+                self.currLossRate = self.LossRate
+                self.isAnimationing = False
+                self.currWinRate = 0.0
+                self.currLossRate = 0.0
+
+
+
 
 
     def GetChampionRotation(self):
