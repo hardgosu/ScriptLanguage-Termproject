@@ -7,21 +7,21 @@ import http.client
 from tkinter.font import *
 import time
 
-def URLdataDecode(urlpath):
+def URLtoJSONDecode(urlpath):
     # json 객체로 리턴하는 스태틱 함수
     return json.loads(urllib.request.urlopen(urlpath).read().decode('utf-8'))
 
 #############################################################################################
-# 사전 처리 부분
+# 사전 처리 부분 - 가장 먼저 실행되어야 한다.
 # 현재 롤 클라이언트 버전을 확인하기 위해 데이터 드래곤 url의 한국서버 json 파일을 받아온다.
 recentData_url = "https://ddragon.leagueoflegends.com/realms/kr.json"
-data = URLdataDecode(recentData_url)
+data = URLtoJSONDecode(recentData_url)
 version_champion = data["n"]["champion"]
 version_profileicon = data["n"]["profileicon"]
 version_language = data["l"]
 
 recentData_Champion_url = "http://ddragon.leagueoflegends.com/cdn/" + version_champion + "/data/" + version_language + "/champion.json"
-recentData_Champion = URLdataDecode(recentData_Champion_url)
+recentData_Champion = URLtoJSONDecode(recentData_Champion_url)
 Champion_List = list(recentData_Champion['data'].keys()) # 현재 챔피언 리스트
 ##############################################################################################
 
@@ -89,8 +89,7 @@ class RankingSummoner:
         server = "kr.api.riotgames.com"
         apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
         conn = http.client.HTTPSConnection(server)
-        conn.request("GET",
-                     "/lol/summoner/v4/summoners/by-name/" + encText + "?api_key=" + apiKey)
+        conn.request("GET","/lol/summoner/v4/summoners/by-name/" + encText + "?api_key=" + apiKey)
 
         request = conn.getresponse()
         print("Top 5 Ranker Searching Response Code[{0}]:".format(idx) + str(request.status))
@@ -489,9 +488,6 @@ class MainWindow:
                 self.isAnimationing = False
                 self.currWinRate = 0.0
                 self.currLossRate = 0.0
-
-
-
 
 
     def GetChampionRotation(self):
