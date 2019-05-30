@@ -6,6 +6,7 @@ import json # import json module
 import http.client
 from tkinter.font import *
 import time
+import LOL_ParseJson
 
 def URLtoJSONDecode(urlpath):
     # json 객체로 리턴하는 스태틱 함수
@@ -23,10 +24,15 @@ version_language = data["l"]
 recentData_Champion_url = "http://ddragon.leagueoflegends.com/cdn/" + version_champion + "/data/" + version_language + "/champion.json"
 recentData_Champion = URLtoJSONDecode(recentData_Champion_url)
 Champion_List = list(recentData_Champion['data'].keys()) # 현재 챔피언 리스트
+
+server = "kr.api.riotgames.com"
+apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
+parser = LOL_ParseJson.Parser(server, apiKey)
 ##############################################################################################
 
 class SummonerData:
     # 검색한 소환사를 출력하기 위한 클래스
+    global parser
     def __init__(self, _Name, _EncrytedID, _AccountID, _ProfileIconID, _SummonerLevel):
         self.name = _Name
         self.id_Encryted = _EncrytedID
@@ -38,25 +44,30 @@ class SummonerData:
         pass
 
     def GetLeagueInfo(self):
-        server = "kr.api.riotgames.com"
-        apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
-        conn = http.client.HTTPSConnection(server)
-        conn.request("GET",
-                     "/lol/league/v4/entries/by-summoner/" + self.id_Encryted + "?api_key=" + apiKey)
+        data = parser.Get_API_League_ofSummoner(self.id_Encryted)
+        self.isActive = data[0]
+        #server = "kr.api.riotgames.com"
+        #apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
+        #conn = http.client.HTTPSConnection(server)
+        #conn.request("GET",
+        #             "/lol/league/v4/entries/by-summoner/" + self.id_Encryted + "?api_key=" + apiKey)
 
-        request = conn.getresponse()
-        print("Summoner Info Response Code:" + str(request.status))
-        if int(request.status) == 200:  # 정상 응답코드는 200
-            response_body = request.read().decode('utf-8')
+        #request = conn.getresponse()
+        #print("Summoner Info Response Code:" + str(request.status))
+        #if int(request.status) == 200:  # 정상 응답코드는 200
+        #    response_body = request.read().decode('utf-8')
 
-        if response_body == "[]":
-            # 리그 정보가 없을 때
-            print("검색된 소환사의 리그정보가 없습니다.")
-            self.isActive = False
-        else:
-            # 리그 정보가 있을 때
-            jsonData = json.loads(response_body)[0]  # list에 0번 인덱스에 존재하기 때문에.
-            print(jsonData)
+        #if response_body == "[]":
+        #    # 리그 정보가 없을 때
+        #    print("검색된 소환사의 리그정보가 없습니다.")
+        #    self.isActive = False
+        #else:
+        #    # 리그 정보가 있을 때
+        #    jsonData = json.loads(response_body)[0]  # list에 0번 인덱스에 존재하기 때문에.
+        #    print(jsonData)
+        #    self.isActive = True
+        if self.isActive:
+            jsonData = data[1]
             self.win = int(jsonData['wins'])
             self.queue = jsonData['queueType']
             self.loss = int(jsonData['losses'])
@@ -65,10 +76,11 @@ class SummonerData:
             self.rank = jsonData['rank']
             self.lp = jsonData['leaguePoints']
             self.id_League = jsonData['leagueId']
-            self.isActive = True
+
 
 
 class RankingSummoner:
+    global parser
     # 챌린저 리그 소환사 객체를 위한 정보 클래스
     def __init__(self, _Name, _LeaguePoints, _Wins, _Losses, _EncrytedID):
         self.name = _Name
@@ -84,28 +96,36 @@ class RankingSummoner:
         else:
             self.iconSize = (60, 60)
 
+        {
         # 소환사 이름을 통해 프로필 아이콘 ID를 가져옵니다.
-        encText = urllib.parse.quote(self.name)
-        server = "kr.api.riotgames.com"
-        apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
-        conn = http.client.HTTPSConnection(server)
-        conn.request("GET","/lol/summoner/v4/summoners/by-name/" + encText + "?api_key=" + apiKey)
+        #encText = urllib.parse.quote(self.name)
+        #server = "kr.api.riotgames.com"
+        #apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
+        #conn = http.client.HTTPSConnection(server)
+        #conn.request("GET","/lol/summoner/v4/summoners/by-name/" + encText + "?api_key=" + apiKey)
 
-        request = conn.getresponse()
-        print("Top 5 Ranker Searching Response Code[{0}]:".format(idx) + str(request.status))
-        if int(request.status) == 200:  # 정상 응답코드는 200
-            response_body = request.read().decode('utf-8')
-        jsonData = json.loads(response_body)
+        #request = conn.getresponse()
+        #print("Top 5 Ranker Searching Response Code[{0}]:".format(idx) + str(request.status))
+        #if int(request.status) == 200:  # 정상 응답코드는 200
+        #    response_body = request.read().decode('utf-8')
+        #jsonData = json.loads(response_body)
+        }
+
+        jsonData = parser.Get_API_Search_byName(self.name)
+
         self.id_Profile = jsonData['profileIconId']
         self.level = jsonData['summonerLevel']
         # 프로필 아이콘 이미지를 리턴합니다.
-        filepath = "http://ddragon.leagueoflegends.com/cdn/" + version_profileicon + "/img/profileicon/" + str(
-            self.id_Profile) + ".png"
-        with urllib.request.urlopen(filepath) as url:
-            rawData = url.read()
-        imgData = Image.open(BytesIO(rawData))
-        imgData_resize = imgData.resize(self.iconSize)
-        image = ImageTk.PhotoImage(imgData_resize)
+        image = parser.Get_ProfileIcon(version_profileicon, self.id_Profile, self.iconSize)
+        {
+        #filepath = "http://ddragon.leagueoflegends.com/cdn/" + version_profileicon + "/img/profileicon/" + str(
+        #    self.id_Profile) + ".png"
+        #with urllib.request.urlopen(filepath) as url:
+        #    rawData = url.read()
+        #imgData = Image.open(BytesIO(rawData))
+        #imgData_resize = imgData.resize(self.iconSize)
+        #image = ImageTk.PhotoImage(imgData_resize)
+        }
         return image
 
 
@@ -119,17 +139,19 @@ def findChampionName(champID):
 
 def drawChampionImage(champName, img_width, img_height):
     # url로 챔피언 이미지를 가져와 image 객체를 리턴한다.
-    filepath = "http://ddragon.leagueoflegends.com/cdn/img/champion/loading/" + str(champName) + "_0.jpg"
-    with urllib.request.urlopen(filepath) as url:
-        rawData = url.read()
-    imgData = Image.open(BytesIO(rawData))
-    imgData_resize = imgData.resize((img_width, img_height))
-    image = ImageTk.PhotoImage(imgData_resize)
+    global parser
+    url = "http://ddragon.leagueoflegends.com/cdn/img/champion/loading/" + str(champName) + "_0.jpg"
+    image = parser.Decode_ImagefromURL(url, (img_width, img_height))
+    #with urllib.request.urlopen(filepath) as url:
+    #    rawData = url.read()
+    #imgData = Image.open(BytesIO(rawData))
+    #imgData_resize = imgData.resize((img_width, img_height))
+    #image = ImageTk.PhotoImage(imgData_resize)
     return image
 
 
 class MainWindow:
-    global newimg
+    global parser
     offset_x = 10
     offset_y = 10
 
@@ -147,17 +169,20 @@ class MainWindow:
 
     def GetRankingInfo(self):
         # 랭킹 정보를 가져옵니다.
-        server = "kr.api.riotgames.com"
-        apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
-        conn = http.client.HTTPSConnection(server)
-        conn.request("GET",
-                     "/lol/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5?api_key=" + apiKey)
-        request = conn.getresponse()
-        print("Ranking Data Response Code:" + str(request.status))
-        if int(request.status) == 200:  # 정상 응답코드는 200
-            response_body = request.read().decode('utf-8')
-        jsonData = json.loads(response_body)
-        print(jsonData)
+        {
+        #server = "kr.api.riotgames.com"
+        #apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
+        #conn = http.client.HTTPSConnection(server)
+        #conn.request("GET",
+        #             "/lol/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5?api_key=" + apiKey)
+        #request = conn.getresponse()
+        #print("Ranking Data Response Code:" + str(request.status))
+        #if int(request.status) == 200:  # 정상 응답코드는 200
+        #    response_body = request.read().decode('utf-8')
+        #jsonData = json.loads(response_body)
+        #print(jsonData)
+        }
+        jsonData = parser.Get_API_Challengerleagues()
         self.rawRankingList = jsonData['entries']
         for idx in range(len(self.rawRankingList)):
             self.TopRankingList.append(RankingSummoner(self.rawRankingList[idx]['summonerName'], self.rawRankingList[idx]['leaguePoints'], self.rawRankingList[idx]['wins'], self.rawRankingList[idx]['losses'], self.rawRankingList[idx]['summonerId']))
@@ -175,8 +200,11 @@ class MainWindow:
         self.isEmpty = True
         # 검색 엔트리 초기화
 
-        ## 미완성 #
         self.search_Entry.delete(0, len(self.search_Entry.get()))
+        filePath = "./lol_images/NoProfile.png"
+        self.info_img_profileIcon = parser.Get_ImageFromFile(filePath, (100,100))
+        self.info_Label_profileIcon.config(image = self.info_img_profileIcon, relief = "raised", bd = 3)
+
         pass
 
     def SendGmail(self):
@@ -289,6 +317,9 @@ class MainWindow:
         #########################################################################
 
     def __init__(self, in_mainWindow):
+        global server, apiKey
+        self.parser = LOL_ParseJson.Parser(server, apiKey)
+
         self.rawRankingList = list() # 가공 전 리스트
         self.TopRankingList = list() # 정렬용 리스트
         self.rank_img_profileIcon = list() # 프로필 아이콘 이미지 리스트
@@ -400,41 +431,46 @@ class MainWindow:
     def SearchSummonerName(self, summonerName):
         global version_profileicon
 
-        if (summonerName == ""):
-            print("비어있는입력")
-            return
+        #if (summonerName == ""):
+        #    print("비어있는입력")
+        #    return
 
         self.isEmpty = False
         self.info_Canvas.delete('info')
 
         # 한글 -> utf-8 인코딩
-        encText = urllib.parse.quote(summonerName)
+        #encText = urllib.parse.quote(summonerName)
 
-        server = "kr.api.riotgames.com"
-        apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
-        conn = http.client.HTTPSConnection(server)
-        conn.request("GET",
-                     "/lol/summoner/v4/summoners/by-name/" + encText + "?api_key=" + apiKey)
+        #server = "kr.api.riotgames.com"
+        #apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
+        #conn = http.client.HTTPSConnection(server)
+        #conn.request("GET",
+        #             "/lol/summoner/v4/summoners/by-name/" + encText + "?api_key=" + apiKey)
 
-        request = conn.getresponse()
-        print("First Searching Response Code:" + str(request.status))
-        if int(request.status) == 200: # 정상 응답코드는 200
-            response_body = request.read().decode('utf-8')
-        jsonData = json.loads(response_body)
-        print(jsonData)
-        print("검색 소환사명:" + jsonData['name'])
+        #request = conn.getresponse()
+        #print("First Searching Response Code:" + str(request.status))
+        #if int(request.status) == 200: # 정상 응답코드는 200
+        #    response_body = request.read().decode('utf-8')
+        #jsonData = json.loads(response_body)
 
-        self.data_Search_Summoner = SummonerData(jsonData['name'], jsonData['id'], jsonData['accountId'], jsonData['profileIconId'], jsonData['summonerLevel'] )
+        jsonData = self.parser.Get_API_Search_byName(summonerName)
+        if jsonData == None:
+            self.isEmpty = True
+            return
+        #print(jsonData)
+        #print("검색 소환사명:" + jsonData['name'])
+
+        self.data_summoner_searched = SummonerData(jsonData['name'], jsonData['id'], jsonData['accountId'], jsonData['profileIconId'], jsonData['summonerLevel'] )
         # 이름 출력
-        self.info_Label_Name.config(text=self.data_Search_Summoner.name)
+        self.info_Label_Name.config(text=self.data_summoner_searched.name)
         # 레벨 출력
-        self.info_Label_Level.config(text="소환사 레벨: " + str(self.data_Search_Summoner.level))
+        self.info_Label_Level.config(text="소환사 레벨: " + str(self.data_summoner_searched.level))
         # 전적 텍스트 출력
-        if self.data_Search_Summoner.isActive:
-            self.info_Label_WinRate.config(text = str(self.data_Search_Summoner.total) + "전 " + str(self.data_Search_Summoner.win) + "승 " + str(self.data_Search_Summoner.loss) + "패 승률:" + "{0:.1f}%".format(self.data_Search_Summoner.win * 100 / self.data_Search_Summoner.total))
-            self.info_Label_Queuetype.config(text = self.data_Search_Summoner.queue)
-            self.info_Label_LeagueName.config(text = self.data_Search_Summoner.tier + " " + self.data_Search_Summoner.rank)
-            self.info_Label_LeaguePoints.config(text = str(self.data_Search_Summoner.lp) + " LP")
+        if self.data_summoner_searched.isActive:
+            self.info_Label_WinRate.config(text = str(self.data_summoner_searched.total) + "전 " + str(self.data_summoner_searched.win) + "승 " + str(self.data_summoner_searched.loss) + "패 승률:" + "{0:.1f}%".format(self.data_summoner_searched.win * 100 / self.data_summoner_searched.total))
+            self.info_Label_Queuetype.config(text = self.data_summoner_searched.queue)
+            self.info_Label_LeagueName.config(text = self.data_summoner_searched.tier + " " + self.data_summoner_searched.rank)
+            self.info_Label_LeaguePoints.config(text = str(self.data_summoner_searched.lp) + " LP")
         else:
             self.info_Label_WinRate.config(text="승률 정보 없음")
             self.info_Label_Queuetype.config(text="큐 정보 없음")
@@ -443,37 +479,39 @@ class MainWindow:
         # ..
 
         # 프로필 아이콘 출력
-        filepath = "http://ddragon.leagueoflegends.com/cdn/"+version_profileicon+"/img/profileicon/" + str(self.data_Search_Summoner.id_Profile) + ".png"
-        with urllib.request.urlopen(filepath) as url:
-            rawData = url.read()
-        imgData = Image.open(BytesIO(rawData))
-        imgData_resize = imgData.resize((100, 100))
-        self.img_profileIcon = ImageTk.PhotoImage(imgData_resize)
-        self.info_Label_profileIcon.config(image = self.img_profileIcon, relief = "raised", bd = 3)
+        #filepath = "http://ddragon.leagueoflegends.com/cdn/"+version_profileicon+"/img/profileicon/" + str(self.data_summoner_searched.id_Profile) + ".png"
+        #with urllib.request.urlopen(filepath) as url:
+        #    rawData = url.read()
+        #imgData = Image.open(BytesIO(rawData))
+        #imgData_resize = imgData.resize((100, 100))
+        #self.img_profileIcon = ImageTk.PhotoImage(imgData_resize)
+        self.info_img_profileIcon = parser.Get_ProfileIcon(version_profileicon, self.data_summoner_searched.id_Profile, (100,100))
+        self.info_Label_profileIcon.config(image = self.info_img_profileIcon, relief = "raised", bd = 3)
 
         # 리그 아이콘 출력
-        if self.data_Search_Summoner.isActive:
-            Emblemfilepath = "./lol_images/Emblem_" + str(self.data_Search_Summoner.tier) + ".png"
+        if self.data_summoner_searched.isActive:
+            Emblemfilepath = "./lol_images/Emblem_" + str(self.data_summoner_searched.tier) + ".png"
         else:
             Emblemfilepath = "./lol_images/Emblem_" + "UNRANKED" + ".png"
-        imgData = Image.open(Emblemfilepath)
-        imgData_resize = imgData.resize((140, 159))
-        self.img_Emblem = ImageTk.PhotoImage(imgData_resize)
+        #imgData = Image.open(Emblemfilepath)
+        #imgData_resize = imgData.resize((140, 159))
+        #self.img_Emblem = ImageTk.PhotoImage(imgData_resize)
+        self.img_Emblem = parser.Get_ImageFromFile(Emblemfilepath, (140, 159))
         self.info_Label_Emblem.config(image = self.img_Emblem, relief = "flat")
 
-        if self.data_Search_Summoner.isActive:
+        if self.data_summoner_searched.isActive:
             self.isAnimationing = True
             self.DrawGraph()
 
     def DrawGraph(self):
-        self.WinRate = self.data_Search_Summoner.win * 360 / self.data_Search_Summoner.total
+        self.WinRate = self.data_summoner_searched.win * 360 / self.data_summoner_searched.total
         self.LossRate = 360 - self.WinRate
         self.currWinRate = 0.0
         self.currLossRate = 0.0
         while self.isAnimationing:
-            self.info_Canvas.create_arc(5, 5, 195, 195, start=0, extent=self.currWinRate, fill="blue",
+            self.info_Canvas.create_arc(5, 5, 195, 195, start=0, extent=self.currWinRate, fill="RoyalBlue2",
                                         tags='info')
-            self.info_Canvas.create_arc(5, 5, 195, 195, start=self.WinRate, extent=self.currLossRate, fill="red",
+            self.info_Canvas.create_arc(5, 5, 195, 195, start=self.WinRate, extent=self.currLossRate, fill="red3",
                                         tags='info')
             self.info_Canvas.create_oval(65, 65, 135, 135, fill="white", width=0, tags='info')
             self.info_Canvas.update()
@@ -497,17 +535,19 @@ class MainWindow:
         self.rotation_IDList = list()
         self.rotation_NumberOfChampions = 0
 
-        server = "kr.api.riotgames.com"
-        apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
-        conn = http.client.HTTPSConnection(server)
-        conn.request("GET",
-                     "/lol/platform/v3/champion-rotations?api_key=" + apiKey)
+        jsonData = parser.Get_API_ChampionRotations()
 
-        request = conn.getresponse()
-        print("RotationChmps Response Code:" + str(request.status))
-        if int(request.status) == 200:  # 정상 응답코드는 200
-            response_body = request.read().decode('utf-8')
-        jsonData = json.loads(response_body)
+        #server = "kr.api.riotgames.com"
+        #apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
+        #conn = http.client.HTTPSConnection(server)
+        #conn.request("GET",
+        #             "/lol/platform/v3/champion-rotations?api_key=" + apiKey)
+
+        #request = conn.getresponse()
+        #print("RotationChmps Response Code:" + str(request.status))
+        #if int(request.status) == 200:  # 정상 응답코드는 200
+        #    response_body = request.read().decode('utf-8')
+        #jsonData = json.loads(response_body)
         self.rotation_IDList = jsonData["freeChampionIds"]
 
         for ID in self.rotation_IDList:
