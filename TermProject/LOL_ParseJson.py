@@ -26,12 +26,12 @@ class Parser:
 
     def Print_Errors(self, in_errorText = ""):
         # 에러 입력을 출력한다.
-        print("Processing Error : [{0}]".format(in_errorText))
+        print("\x1b[1;91mProcessing Error\x1b[0;m: [{0}]".format(in_errorText))
 
     def Print_ResponseCode(self, in_FuncName, in_number):
         # API가 보내온 응답 코드를 출력한다.
         # 200이 일반적인 정상응답이다.
-        print("■[{0}] Response Code:{1}".format(in_FuncName, in_number))
+        print("■[{0}] Response Code:\x1b[1;32m{1}\x1b[0;m".format(in_FuncName, in_number))
 
     def Check_Validation(self, in_errorCode = ""):
         # 파서가 활성화 되었는가? - 파서가 수행하는 일반 메서드들의 첫 부분에 들어간다.

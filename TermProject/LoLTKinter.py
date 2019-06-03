@@ -1,11 +1,9 @@
 from tkinter import * # import tkinter
 import urllib.request
-from io import BytesIO
-from PIL import Image, ImageTk
 import json # import json module
-import http.client
 from tkinter.font import *
 import time
+
 import LOL_ParseJson
 
 def URLtoJSONDecode(urlpath):
@@ -14,9 +12,15 @@ def URLtoJSONDecode(urlpath):
 
 #############################################################################################
 # 사전 처리 부분 - 가장 먼저 실행되어야 한다.
+
+server = "kr.api.riotgames.com"
+apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
+# 파서 객체 생성, apikey와 server는 정해져 있다.
+parser = LOL_ParseJson.Parser(server, apiKey)
+
 # 현재 롤 클라이언트 버전을 확인하기 위해 데이터 드래곤 url의 한국서버 json 파일을 받아온다.
 recentData_url = "https://ddragon.leagueoflegends.com/realms/kr.json"
-data = URLtoJSONDecode(recentData_url)
+data = parser.Decode_URLtoJson(recentData_url)
 version_champion = data["n"]["champion"]
 version_profileicon = data["n"]["profileicon"]
 version_language = data["l"]
@@ -24,10 +28,6 @@ version_language = data["l"]
 recentData_Champion_url = "http://ddragon.leagueoflegends.com/cdn/" + version_champion + "/data/" + version_language + "/champion.json"
 recentData_Champion = URLtoJSONDecode(recentData_Champion_url)
 Champion_List = list(recentData_Champion['data'].keys()) # 현재 챔피언 리스트
-
-server = "kr.api.riotgames.com"
-apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
-parser = LOL_ParseJson.Parser(server, apiKey)
 ##############################################################################################
 
 class SummonerData:
@@ -46,6 +46,7 @@ class SummonerData:
     def GetLeagueInfo(self):
         data = parser.Get_API_League_ofSummoner(self.id_Encryted)
         self.isActive = data[0]
+        {
         #server = "kr.api.riotgames.com"
         #apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
         #conn = http.client.HTTPSConnection(server)
@@ -66,6 +67,7 @@ class SummonerData:
         #    jsonData = json.loads(response_body)[0]  # list에 0번 인덱스에 존재하기 때문에.
         #    print(jsonData)
         #    self.isActive = True
+        }
         if self.isActive:
             jsonData = data[1]
             self.win = int(jsonData['wins'])
@@ -142,11 +144,13 @@ def drawChampionImage(champName, img_width, img_height):
     global parser
     url = "http://ddragon.leagueoflegends.com/cdn/img/champion/loading/" + str(champName) + "_0.jpg"
     image = parser.Decode_ImagefromURL(url, (img_width, img_height))
+    {
     #with urllib.request.urlopen(filepath) as url:
     #    rawData = url.read()
     #imgData = Image.open(BytesIO(rawData))
     #imgData_resize = imgData.resize((img_width, img_height))
     #image = ImageTk.PhotoImage(imgData_resize)
+    }
     return image
 
 
@@ -154,6 +158,9 @@ class MainWindow:
     global parser
     offset_x = 10
     offset_y = 10
+
+    def ResetSearchData(self):
+        pass
 
     def MakeChampionLabels(self):
         # 이미지 리스트와 라벨 리스트를 형성하고 라벨 리스트에 라벨 객체들을 적절하게 생성한다.
@@ -329,11 +336,6 @@ class MainWindow:
 
 
         self.mainWindow = in_mainWindow
-        #self.mainWindow.resizable(False, False)
-        #self.mainWindow.geometry("1280x800+100+100")
-        #self.mainWindow.wm_iconbitmap('DNF.ico')
-        #self.mainWindow.title("useful")
-
         self.tabFrame = Frame(in_mainWindow.window)  # 이곳에 배치한다.
         self.notebook = in_mainWindow.notebook
         self.notebook.add(self.tabFrame, text = "롤 전적검색")
@@ -352,6 +354,12 @@ class MainWindow:
         self.RotationFrame.pack(side="left", fill="both")
 
         ## 캔버스 할당 ###########################################################
+        self.background = parser.Get_ImageFromFile("./lol_images/background.png", (589, 399))
+        self.background_Canvas = Canvas(self.profileFrame, width=540, height=350, bg="white")
+        self.background_Canvas.pack()
+        self.background_Canvas.create_image(589, 399, image=self.background)
+        self.background_Canvas.place(x=0, y=0)
+
         self.info_Canvas = Canvas(self.profileFrame, width=200, height=200)
         self.info_Canvas.place(x=350, y=170)
         #########################################################################
@@ -384,7 +392,7 @@ class MainWindow:
         ########################################################################
         ## 검색 엔트리, 검색 버튼, 리셋 버튼 #######################################
 
-        self.search_Image = PhotoImage(file="search2.png").subsample(6, 6)
+        self.search_Image = PhotoImage(file="search4.png").subsample(6, 6)
         self.search_Image_Label = Label(self.profileFrame, image=self.search_Image)
         self.search_Image_Label.place(x = 0, y = 0)
 
@@ -425,7 +433,6 @@ class MainWindow:
 
         #########################################################################
 
-
         pass
 
     def SearchSummonerName(self, summonerName):
@@ -437,7 +444,9 @@ class MainWindow:
 
         self.isEmpty = False
         self.info_Canvas.delete('info')
+        self.info_Canvas.update()
 
+        {
         # 한글 -> utf-8 인코딩
         #encText = urllib.parse.quote(summonerName)
 
@@ -452,7 +461,7 @@ class MainWindow:
         #if int(request.status) == 200: # 정상 응답코드는 200
         #    response_body = request.read().decode('utf-8')
         #jsonData = json.loads(response_body)
-
+        }
         jsonData = self.parser.Get_API_Search_byName(summonerName)
         if jsonData == None:
             self.isEmpty = True
@@ -479,12 +488,14 @@ class MainWindow:
         # ..
 
         # 프로필 아이콘 출력
+        {
         #filepath = "http://ddragon.leagueoflegends.com/cdn/"+version_profileicon+"/img/profileicon/" + str(self.data_summoner_searched.id_Profile) + ".png"
         #with urllib.request.urlopen(filepath) as url:
         #    rawData = url.read()
         #imgData = Image.open(BytesIO(rawData))
         #imgData_resize = imgData.resize((100, 100))
         #self.img_profileIcon = ImageTk.PhotoImage(imgData_resize)
+        }
         self.info_img_profileIcon = parser.Get_ProfileIcon(version_profileicon, self.data_summoner_searched.id_Profile, (100,100))
         self.info_Label_profileIcon.config(image = self.info_img_profileIcon, relief = "raised", bd = 3)
 
@@ -498,6 +509,7 @@ class MainWindow:
         #self.img_Emblem = ImageTk.PhotoImage(imgData_resize)
         self.img_Emblem = parser.Get_ImageFromFile(Emblemfilepath, (140, 159))
         self.info_Label_Emblem.config(image = self.img_Emblem, relief = "flat")
+        self.info_Canvas.create_image(200, 200, image=self.background)
 
         if self.data_summoner_searched.isActive:
             self.isAnimationing = True
@@ -509,12 +521,7 @@ class MainWindow:
         self.currWinRate = 0.0
         self.currLossRate = 0.0
         while self.isAnimationing:
-            self.info_Canvas.create_arc(5, 5, 195, 195, start=0, extent=self.currWinRate, fill="RoyalBlue2",
-                                        tags='info')
-            self.info_Canvas.create_arc(5, 5, 195, 195, start=self.WinRate, extent=self.currLossRate, fill="red3",
-                                        tags='info')
-            self.info_Canvas.create_oval(65, 65, 135, 135, fill="white", width=0, tags='info')
-            self.info_Canvas.update()
+
             if ((self.currWinRate < self.WinRate) & (self.currLossRate < self.LossRate)):
                 time.sleep(0.0025)
                 self.currWinRate += float(self.WinRate) * 0.0025
@@ -528,6 +535,14 @@ class MainWindow:
                 self.currLossRate = 0.0
 
 
+            self.info_Canvas.create_arc(5, 5, 195, 195, start=0, extent=self.currWinRate, fill="RoyalBlue2",
+                                        tags='info')
+            self.info_Canvas.create_arc(5, 5, 195, 195, start=self.WinRate, extent=self.currLossRate, fill="red3",
+                                        tags='info')
+            self.info_Canvas.create_oval(65, 65, 135, 135, fill="white", width=0, tags='info')
+            self.info_Canvas.update()
+
+
     def GetChampionRotation(self):
         # url과 api-key를 이용해서 챔피언 id 리스트를 가져옵니다.
         # 이를 통해 챔피언 이름 리스트(파일용으로 사용할 용도)를 생성합니다.
@@ -537,6 +552,7 @@ class MainWindow:
 
         jsonData = parser.Get_API_ChampionRotations()
 
+        {
         #server = "kr.api.riotgames.com"
         #apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
         #conn = http.client.HTTPSConnection(server)
@@ -548,6 +564,7 @@ class MainWindow:
         #if int(request.status) == 200:  # 정상 응답코드는 200
         #    response_body = request.read().decode('utf-8')
         #jsonData = json.loads(response_body)
+        }
         self.rotation_IDList = jsonData["freeChampionIds"]
 
         for ID in self.rotation_IDList:
