@@ -30,26 +30,16 @@ import LoLTKinter
 #
 #    pass#
 
-_WINDOW_WIDTH = 1280
-_WINDOW_HEIGHT = 800
-_FRAME_WIDTH = 1230
-_FRAME_HEIGHT = 750
-
 class MainWindow:
-    global _WINDOW_HEIGHT, _WINDOW_WIDTH, _FRAME_HEIGHT, _FRAME_WIDTH
     def __init__(self):
         self.window = Tk()
-        self.window.resizable(False, False)
-        # 중앙 배치를 위한 오프셋 계산
-        _WINDOW_OFFSET_X = int(self.window.winfo_screenwidth()/2 - _WINDOW_WIDTH/2)
-        _WINDOW_OFFSET_Y = int(self.window.winfo_screenheight()/2 - _WINDOW_HEIGHT/2)
-        # 스크린 중앙 배치
-        setGeometry = "{0}x{1}+{2}+{3}".format(_WINDOW_WIDTH, _WINDOW_HEIGHT, _WINDOW_OFFSET_X, _WINDOW_OFFSET_Y)
-        self.window.geometry(setGeometry)
+        self.window.resizable(False,False)
+        self.window.geometry("1280x800+100+100")
         self.window.wm_iconbitmap('DNF.ico')
         self.window.title("useful")
 
-        self.notebook = ttk.Notebook(self.window, width = _FRAME_WIDTH, height = _FRAME_HEIGHT)
+
+        self.notebook = ttk.Notebook(self.window,width = 1230,height = 750)
         self.notebook.pack()
         #self.window.mainloop()
 
