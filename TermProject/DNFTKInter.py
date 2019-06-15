@@ -13,6 +13,7 @@ import http.client
 
 ## 송민수 코드 추가, 19.06.16 ##
 import LOL_Mainframe
+import math
 ##############################
 
 _WINDOW_WIDTH = 1280
@@ -25,7 +26,6 @@ class MainWindow:
     def __init__(self):
         self.window = Tk()
         self.window.resizable(False, False)
-
         self.frame = 1.0
         self.count = 1
 
@@ -38,7 +38,7 @@ class MainWindow:
         self.window.wm_iconbitmap('DNF.ico')
         self.window.title("useful")
 
-
+        # 밑배경 애니메이션을 위한 캔버스
         self.canvas = Canvas(self.window, bg="gray1", width = _WINDOW_WIDTH, height = _WINDOW_HEIGHT, bd = 0)
         self.canvas.place(x = 0, y = 0)
         self.canvas.after(0, self.frameAnimation)
@@ -47,16 +47,16 @@ class MainWindow:
         self.notebook.pack()
 
     def frameAnimation(self):
-        self.frame += 0.016 * 50
-        if (self.frame > 99.0):
-            self.frame = 1.0
-        self.count = int(self.frame)
+        animSpeed = 1
+        self.frame += 0.016 * animSpeed
+        value = (math.sin(self.frame * 2 * 3.141592) + 1.0) * 0.5 * 99
+
+        self.count = int(value)
         setBackground = "gray" + str(self.count)
-        self.canvas.configure(bg=setBackground, width = _WINDOW_WIDTH, height = _WINDOW_HEIGHT)
-        self.canvas.after(17, self.frameAnimation)
+        self.canvas.configure(bg=setBackground)
+        self.canvas.after(16, self.frameAnimation)
 
 class Interface:
-
     def __init__(self,window):
         #self.window = window
         pass
@@ -65,7 +65,6 @@ class Interface:
         pass
     def Show(self):
         pass
-
     pass
 
 class ButtonFunction:
