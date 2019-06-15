@@ -12,7 +12,7 @@ from tkinter.font import *
 import http.client
 
 ## 송민수 코드 추가, 19.05.28 ##
-import LoLTKinter
+import LOL_Mainframe
 ##############################
 
 # 민욱이가 제공한 LOL 기본 프로세스 클래스, 현재 사용 안하고 LoLTKinter 모듈을 받아서 객체로 인스턴싱하였음.
@@ -1246,7 +1246,7 @@ mainWindow = MainWindow()
 
 gol = DNFAPIProcess(mainWindow)
 asd = DNFMarketProcess(mainWindow)
-lol = LoLTKinter.MainWindow(mainWindow)
+lol = LOL_Mainframe.MainWindow(mainWindow)
 
 #a = DNFAPIProcess(mainWindow.window)
 

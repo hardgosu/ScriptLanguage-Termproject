@@ -11,24 +11,9 @@ import tkinter.ttk as ttk
 from tkinter.font import *
 import http.client
 
-## 송민수 코드 추가, 19.05.28 ##
-import LoLTKinter
+## 송민수 코드 추가, 19.06.16 ##
+import LOL_Mainframe
 ##############################
-
-# 민욱이가 제공한 LOL 기본 프로세스 클래스, 현재 사용 안하고 LoLTKinter 모듈을 받아서 객체로 인스턴싱하였음.
-#class LeagueOfLegendSearchProcess(Interface):
-#
-#    def __init__(self,mainWindow):
-#        super(LeagueOfLegendSearchProcess, self).__init__(mainWindow)
-#
-#    def __init__(self, mainWindow):
-#
-#        self.mainWindowClass = mainWindow
-#        self.tabFrame = Frame(mainWindow.window)
-#        self.notebook = mainWindow.notebook
-#        self.notebook.add(self.tabFrame, text = "롤 전적검색")
-#
-#    pass#
 
 _WINDOW_WIDTH = 1280
 _WINDOW_HEIGHT = 800
@@ -40,6 +25,10 @@ class MainWindow:
     def __init__(self):
         self.window = Tk()
         self.window.resizable(False, False)
+
+        self.frame = 1.0
+        self.count = 1
+
         # 중앙 배치를 위한 오프셋 계산
         _WINDOW_OFFSET_X = int(self.window.winfo_screenwidth()/2 - _WINDOW_WIDTH/2)
         _WINDOW_OFFSET_Y = int(self.window.winfo_screenheight()/2 - _WINDOW_HEIGHT/2)
@@ -49,9 +38,22 @@ class MainWindow:
         self.window.wm_iconbitmap('DNF.ico')
         self.window.title("useful")
 
-        self.notebook = ttk.Notebook(self.window, width = _FRAME_WIDTH, height = _FRAME_HEIGHT)
+
+        self.canvas = Canvas(self.window, bg="gray1", width = _WINDOW_WIDTH, height = _WINDOW_HEIGHT, bd = 0)
+        self.canvas.place(x = 0, y = 0)
+        self.canvas.after(0, self.frameAnimation)
+
+        self.notebook = ttk.Notebook(self.window, width = _FRAME_WIDTH, height = _FRAME_HEIGHT, padding = 0)
         self.notebook.pack()
-        #self.window.mainloop()
+
+    def frameAnimation(self):
+        self.frame += 0.016 * 50
+        if (self.frame > 99.0):
+            self.frame = 1.0
+        self.count = int(self.frame)
+        setBackground = "gray" + str(self.count)
+        self.canvas.configure(bg=setBackground, width = _WINDOW_WIDTH, height = _WINDOW_HEIGHT)
+        self.canvas.after(17, self.frameAnimation)
 
 class Interface:
 
@@ -1256,12 +1258,10 @@ mainWindow = MainWindow()
 
 gol = DNFAPIProcess(mainWindow)
 asd = DNFMarketProcess(mainWindow)
-lol = LoLTKinter.MainWindow(mainWindow)
+lol = LOL_Mainframe.MainWindow(mainWindow)
 
 #a = DNFAPIProcess(mainWindow.window)
 
 #a.Run()
 #Test()
-
 mainWindow.window.mainloop()
-

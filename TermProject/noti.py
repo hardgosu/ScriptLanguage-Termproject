@@ -12,8 +12,8 @@ import re
 from datetime import date, datetime, timedelta
 import traceback
 #################
-import LoLTKinter
-import LOL_ParseJson as LP
+import LOL_Mainframe
+import LOL_Parse as LP
 #################
 key = 'RGAPI-354e7489-f932-4a39-90ab-24069b93c837'
 server = "kr.api.riotgames.com"
