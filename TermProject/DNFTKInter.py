@@ -13,6 +13,7 @@ import http.client
 
 ## 송민수 코드 추가, 19.06.16 ##
 import LOL_Mainframe
+import Animator
 import math
 ##############################
 
@@ -1253,14 +1254,21 @@ def Test():
     mainWindow.window.mainloop()
 
 bool = True
-mainWindow = MainWindow()
-
-gol = DNFAPIProcess(mainWindow)
-asd = DNFMarketProcess(mainWindow)
-lol = LOL_Mainframe.MainWindow(mainWindow)
 
 #a = DNFAPIProcess(mainWindow.window)
 
 #a.Run()
 #Test()
+
+# 인트로 씬 재생
+introscene = Animator.IntroSceneAnimator()
+while introscene.animationFlag == True:
+    introscene.window.mainloop()
+
+# 씬이 끝나야 메인 윈도우 생성
+mainWindow = MainWindow()
+
+gol = DNFAPIProcess(mainWindow)
+asd = DNFMarketProcess(mainWindow)
+lol = LOL_Mainframe.MainWindow(mainWindow)
 mainWindow.window.mainloop()
