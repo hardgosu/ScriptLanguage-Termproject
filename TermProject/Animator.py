@@ -10,7 +10,7 @@ apiKey = "RGAPI-354e7489-f932-4a39-90ab-24069b93c837"
 parser = LOL_Parse.Parser(server, apiKey)
 
 # 인트로 씬을 위한 애니메이터 클래스
-# 씬 전개 순서는 학교 로고 - 학생 로고 - 어플리케이션 이름 순서
+# 씬 전개 순서는 학교 로고 - 개발자 학생 로고 - 어플리케이션 이름 순서
 class IntroSceneAnimator:
     global _WINDOW_HEIGHT, _WINDOW_WIDTH
 
@@ -31,12 +31,8 @@ class IntroSceneAnimator:
         self.window.geometry(setGeometry)
 
         # 블렌딩을 위한 캔버스와 이미지 로딩
-        self.img_background = parser.Get_ImageFromFile("./sceneimage/kpulogo.png", (1000, 500))
-        self.img_logo = parser.Get_ImageFromFile("./sceneimage/logo.png", (1000, 500))
-        self.img_blackbackground = parser.Get_ImageFromFile("./sceneimage/logoblack.png", (1000, 500))
 
         self.canvas = Canvas(self.window, bg = "white", width = _WINDOW_WIDTH, height = _WINDOW_HEIGHT, bd = 0)
-        self.canvas.create_image(500, 250, image = self.img_logo, tags = "introscene")
         self.canvas.place(x = 0, y = 0)
         if self.animationFlag:
             self.canvas.after(0, self.Animate)
@@ -44,21 +40,31 @@ class IntroSceneAnimator:
             return
 
     def Animate(self):
-        if int(self.frame) > 5.0:
+        animSpeed = 3
+        self.frame += 0.016 * animSpeed
+
+        if math.floor(self.frame) == 0:     # 1초
+            self.img_blended = parser.Get_BlendedImageFromFile("./sceneimage/logoblack.png",
+                                                                     "./sceneimage/logo.png",
+                                                                     self.frame - math.floor(self.frame), (1000, 500))
+        elif math.floor(self.frame) == 1:   # 2초
+            self.img_blended = parser.Get_BlendedImageFromFile("./sceneimage/logo.png",
+                                                                     "./sceneimage/minsulogo.png",
+                                                                     self.frame - math.floor(self.frame), (1000, 500))
+        elif math.floor(self.frame) == 2:   # 3초
+            self.img_blended = parser.Get_BlendedImageFromFile("./sceneimage/minsulogo.png",
+                                                                     "./sceneimage/applogo.png",
+                                                                     self.frame - math.floor(self.frame), (1000, 500))
+        elif math.floor(self.frame) == 3:   # 4초
+            img_blended = parser.Get_ImageFromFile("./sceneimage/applogo.png", (1000, 500))
+        else:
             self.animationFlag = False
-            print("IntroScene Ended")
+            print("\x1b[1;32mIntroScene Ended\x1b[0;m")
             self.window.destroy()
             return
 
-        animSpeed = 5
-        self.frame += 0.016 * animSpeed
-        self.img_blended = parser.Get_BlendedImageFromFile("./sceneimage/logo.png", "./sceneimage/logoblack.png", (1 - self.frame/5.0), (1000,500))
-
-        #self.count = int(self.frame)
-        #setBackground = "gray" + str(self.count)
-
         self.canvas.delete("introscene")
+
         self.canvas.create_image(500, 250, image = self.img_blended, tags = "introscene")
-        #self.canvas.update()
 
         self.canvas.after(16, self.Animate)
