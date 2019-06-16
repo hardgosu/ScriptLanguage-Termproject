@@ -127,6 +127,35 @@ class Parser:
             self.Print_Errors("Image Loading Failure")
             return
 
+    def Change_ImageSize(self, in_image, in_ImgSize = tuple()):
+        image = in_image.resize(in_ImgSize)
+        return image
+
+    def Get_BlendedImageFromFile(self, in_img1_filepath = "", in_img2_filepath = "", in_alpha = 0.0, in_ImgSize = tuple()):
+        # 파일 경로에 저장되어 있는 이미지를 불러와 블렌딩한 이미지를 리턴한다.
+        if in_img1_filepath == "" or in_img2_filepath == "":
+            self.Print_Errors("Empty FilePath")
+            return
+
+        if in_ImgSize == ():
+            self.Print_Errors("Empty size")
+            return
+
+        image1 = Image.open(in_img1_filepath)
+        image2 = Image.open(in_img2_filepath)
+        image1_resized = self.Change_ImageSize(image1, in_ImgSize)
+        image2_resized = self.Change_ImageSize(image2, in_ImgSize)
+        image1_converted = image1_resized.convert("RGBA")
+        image2_converted = image2_resized.convert("RGBA")
+
+        blended = Image.blend(image1_converted, image2_converted, in_alpha)
+        image = ImageTk.PhotoImage(blended)
+        if image:
+            return image
+        else:
+            self.Print_Errors("Image Blending Failure")
+            return
+
     def Get_API_ChampionRotations(self):
         # 현재 서버의 챔피언 로테이션 ID 값을 리스트로 반환한다.
 
