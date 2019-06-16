@@ -2,9 +2,21 @@ from tkinter import *
 import math                     # modules for floor()
 from PIL import ImageTk, Image  # modules for Pillow Image
 
+## 변수 선언 ##
+
 _WINDOW_WIDTH = 1000
 _WINDOW_HEIGHT = 500
 _SCENE_SIZE = (_WINDOW_WIDTH, _WINDOW_HEIGHT)
+
+_BUTTON_SEARCH_WIDTH = 30
+_BUTTON_SEARCH_HEIGHT = 20
+_BUTTON_SEARCH_SIZE = (_BUTTON_SEARCH_WIDTH, _BUTTON_SEARCH_HEIGHT)
+
+_BUTTON_SEND_WIDTH = 60
+_BUTTON_SEND_HEIGHT = 20
+_BUTTON_SEND_SIZE = (_BUTTON_SEND_WIDTH, _BUTTON_SEND_HEIGHT)
+
+################
 
 # 인트로 씬을 위한 애니메이터 클래스
 # 씬 전개 순서는 학교 로고 - 개발자 학생 로고 - 어플리케이션 이름 순서
@@ -32,6 +44,7 @@ class IntroSceneAnimator:
 
         # 애니메이션 동안 블렌딩을 위한 캔버스와 이미지 로딩
         self.canvas = Canvas(self.window, bg = "white", width = _WINDOW_WIDTH, height = _WINDOW_HEIGHT, bd = 0)
+        self.canvas.create_image(500, 250, image=self.img_logoblack_raw, tags="introscene")
         self.canvas.place(x = 0, y = 0)
         if self.animationFlag:
             self.canvas.after(0, self.Animate)
@@ -46,12 +59,15 @@ class IntroSceneAnimator:
         if math.floor(self.frame) == 0:     # 1초
             self.img_blended = self.Get_BlendedImageFromImages(self.img_logoblack, self.img_kpulogo, self.frame - math.floor(self.frame))
         elif math.floor(self.frame) == 1:   # 2초
-            self.img_blended = self.Get_BlendedImageFromImages(self.img_kpulogo, self.img_minsulogo, self.frame - math.floor(self.frame))
+            self.img_blended = self.img_kpulogo_raw
         elif math.floor(self.frame) == 2:   # 3초
-            self.img_blended = self.Get_BlendedImageFromImages(self.img_minsulogo, self.img_applogo, self.frame - math.floor(self.frame))
+            self.img_blended = self.Get_BlendedImageFromImages(self.img_kpulogo, self.img_minsulogo, self.frame - math.floor(self.frame))
         elif math.floor(self.frame) == 3:   # 4초
+            self.img_blended = self.img_minsulogo_raw
+        elif math.floor(self.frame) == 4:   # 5초
+            self.img_blended = self.Get_BlendedImageFromImages(self.img_minsulogo, self.img_applogo, self.frame - math.floor(self.frame))
+        elif math.floor(self.frame) == 5:   # 6초
             self.img_blended = self.img_applogo_raw
-            pass
         else:
             self.animationFlag = False
             print("\x1b[1;34mIntroScene Ended\x1b[0;m")
@@ -138,3 +154,58 @@ class IntroSceneAnimator:
         self.img_applogo_raw = self.Get_ImageFromFile_COMPLETE("./sceneimage/applogo.png", _SCENE_SIZE)
 
         print("\x1b[1;32mIntroScene Image Loading COMPLETE\x1b[0;m")
+
+class ButtonDrawer:
+    # 버튼 이미지를 가지고 있는 클래스
+
+    def __init__(self, in_mainWindow):
+        self.window = in_mainWindow
+        self.Load_data()
+        pass
+
+    def Get_ImageFromFile_COMPLETE(self, in_filePath = "", in_ImgSize = tuple()):
+        # 파일 경로에 저장되어 있는 이미지를 읽어와 리사이징하고 RGBA 형식으로 변환해 완전한 PhotoImage 개체로 리턴한다.
+        if in_filePath == "":
+            self.Print_Errors("Empty FilePath")
+            return
+
+        if in_ImgSize == ():
+            self.Print_Errors("Empty size")
+            return
+
+        image = Image.open(in_filePath)
+        image_resized = image.resize(in_ImgSize)
+        #image_converted = image_resized.convert("RGBA")
+        image_result = ImageTk.PhotoImage(image_resized)
+
+        if image_result:
+            return image_result
+        else:
+            self.Print_Errors("Image Loading Failure")
+            return
+
+
+
+    def Load_data(self):
+        global _BUTTON_SEND_SIZE, _BUTTON_SEARCH_SIZE
+        # 이미지 데이터들을 로딩한다.
+
+        # image loading & resizing
+        self.img_button_search = self.Get_ImageFromFile_COMPLETE("./buttonimages/search.png", _BUTTON_SEARCH_SIZE)
+        self.img_button_reset = self.Get_ImageFromFile_COMPLETE("./buttonimages/reset.png", _BUTTON_SEARCH_SIZE)
+        self.img_button_send = self.Get_ImageFromFile_COMPLETE("./buttonimages/send.png", _BUTTON_SEND_SIZE)
+
+        self.img_button_search_over_red = self.Get_ImageFromFile_COMPLETE("./buttonimages/search_over_red.png", _BUTTON_SEARCH_SIZE)
+        self.img_button_reset_over_red = self.Get_ImageFromFile_COMPLETE("./buttonimages/reset_over_red.png", _BUTTON_SEARCH_SIZE)
+        self.img_button_send_over_red = self.Get_ImageFromFile_COMPLETE("./buttonimages/send_over_red.png", _BUTTON_SEND_SIZE)
+
+        self.img_button_search_over_teal = self.Get_ImageFromFile_COMPLETE("./buttonimages/search_over_teal.png", _BUTTON_SEARCH_SIZE)
+        self.img_button_reset_over_teal = self.Get_ImageFromFile_COMPLETE("./buttonimages/reset_over_teal.png", _BUTTON_SEARCH_SIZE)
+        self.img_button_send_over_teal = self.Get_ImageFromFile_COMPLETE("./buttonimages/send_over_teal.png", _BUTTON_SEND_SIZE)
+
+
+        print("\x1b[1;32mButton Image Loading COMPLETE\x1b[0;m")
+
+    def Bind_button(self, in_button):
+        in_button.bind("<Enter>", self.Set_image_button_IN)
+        in_button.bind("<Leave>", self.Set_image_button_OUT)

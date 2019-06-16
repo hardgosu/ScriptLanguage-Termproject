@@ -109,7 +109,7 @@ class Parser:
             return
 
     def Get_ImageFromFile(self, in_filePath = "", in_ImgSize = tuple()):
-        # 파일 경로에 저장되어 있는 이미지를 읽어와 리턴한다.
+        # 파일 경로에 저장되어 있는 이미지를 읽어와 PhotoImage 객체로 리턴한다.
         if in_filePath == "":
             self.Print_Errors("Empty FilePath")
             return
