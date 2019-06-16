@@ -16,6 +16,10 @@ _BUTTON_SEND_WIDTH = 60
 _BUTTON_SEND_HEIGHT = 20
 _BUTTON_SEND_SIZE = (_BUTTON_SEND_WIDTH, _BUTTON_SEND_HEIGHT)
 
+_LOL_INTRO_LABEL_WIDTH = 350
+_LOL_INTRO_LABEL_HEIGHT = 350
+_LOL_INTRO_LABEL_SIZE = (_LOL_INTRO_LABEL_WIDTH, _LOL_INTRO_LABEL_HEIGHT)
+
 ################
 
 # 인트로 씬을 위한 애니메이터 클래스
@@ -32,6 +36,7 @@ class IntroSceneAnimator:
         self.window = Tk()
         self.window.resizable(False, False)
 
+
         self.Load_data()
 
         # 중앙 배치를 위한 오프셋 계산
@@ -41,6 +46,9 @@ class IntroSceneAnimator:
         # 스크린 중앙 배치
         setGeometry = "{0}x{1}+{2}+{3}".format(_WINDOW_WIDTH, _WINDOW_HEIGHT, _WINDOW_OFFSET_X, _WINDOW_OFFSET_Y)
         self.window.geometry(setGeometry)
+
+        self.window.wm_iconbitmap('DNF.ico')
+        self.window.title("useful")
 
         # 애니메이션 동안 블렌딩을 위한 캔버스와 이미지 로딩
         self.canvas = Canvas(self.window, bg = "white", width = _WINDOW_WIDTH, height = _WINDOW_HEIGHT, bd = 0)
@@ -203,6 +211,13 @@ class ButtonDrawer:
         self.img_button_reset_over_teal = self.Get_ImageFromFile_COMPLETE("./buttonimages/reset_over_teal.png", _BUTTON_SEARCH_SIZE)
         self.img_button_send_over_teal = self.Get_ImageFromFile_COMPLETE("./buttonimages/send_over_teal.png", _BUTTON_SEND_SIZE)
 
+        self.img_label_search = self.Get_ImageFromFile_COMPLETE("./sceneimage/lol_search.png", _LOL_INTRO_LABEL_SIZE)
+        self.img_label_rotation = self.Get_ImageFromFile_COMPLETE("./sceneimage/lol_rotation.png", _LOL_INTRO_LABEL_SIZE)
+        self.img_label_challenger = self.Get_ImageFromFile_COMPLETE("./sceneimage/lol_challenger.png", _LOL_INTRO_LABEL_SIZE)
+
+        self.img_label_search_over = self.Get_ImageFromFile_COMPLETE("./sceneimage/lol_search_over.png", _LOL_INTRO_LABEL_SIZE)
+        self.img_label_rotation_over = self.Get_ImageFromFile_COMPLETE("./sceneimage/lol_rotation_over.png", _LOL_INTRO_LABEL_SIZE)
+        self.img_label_challenger_over = self.Get_ImageFromFile_COMPLETE("./sceneimage/lol_challenger_over.png", _LOL_INTRO_LABEL_SIZE)
 
         print("\x1b[1;32mButton Image Loading COMPLETE\x1b[0;m")
 

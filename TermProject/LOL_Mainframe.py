@@ -25,6 +25,8 @@ recentData_Champion = parser.Decode_URLtoJson(recentData_Champion_url)
 Champion_List = list(recentData_Champion['data'].keys())
 ##############################################################################################
 
+
+
 class SearchedSummoner:
     # 검색한 소환사를 출력하기 위한 클래스
     global parser
@@ -267,18 +269,63 @@ class MainWindow:
         # 랭킹 정보창 프레임을 활성화한다.
         pass
 
-    def __init__(self, in_mainWindow):
+    ## 이벤트 함수 정의문 ####
+
+    def Event_search_IN(self, event):
+        self.label_search.configure(image = self.buttondrawer.img_label_search_over)
+    def Event_search_OUT(self, event):
+        self.label_search.configure(image = self.buttondrawer.img_label_search)
+    def Event_search_CLICK(self, event):
+        pass
+    def Event_rotation_IN(self, event):
+        self.label_rotation.configure(image = self.buttondrawer.img_label_rotation_over)
+    def Event_rotation_OUT(self, event):
+        self.label_rotation.configure(image = self.buttondrawer.img_label_rotation)
+    def Event_rotation_CLICK(self, event):
+        pass
+    def Event_challenger_IN(self, event):
+        self.label_challenger.configure(image = self.buttondrawer.img_label_challenger_over)
+    def Event_challenger_OUT(self, event):
+        self.label_challenger.configure(image = self.buttondrawer.img_label_challenger)
+    def Event_challenger_CLICK(self, event):
+        pass
+
+
+    ########################
+
+    def __init__(self, in_mainWindow, in_buttondrawer):
         global parser
 
-        # main frame
-        self.tabFrame = Frame(in_mainWindow.window)
-        self.notebook = in_mainWindow.notebook
-        self.notebook.add(self.tabFrame, text="롤 전적검색")
+        self.buttondrawer = in_buttondrawer
 
-        self.canvas = Canvas(self.tabFrame, width = self.mainWidth, height = self.mainHeight, relief="raised")
-        self.canvas.place(x=0, y=0)
+        # main frame
+        self.main_frame = Frame(in_mainWindow.window)
+        self.notebook = in_mainWindow.notebook
+        self.notebook.add(self.main_frame, text="롤 전적검색")
+
+        self.main_canvas = Canvas(self.main_frame, width = self.mainWidth, height = self.mainHeight, relief="raised")
+        self.main_canvas.place(x=0, y=0)
         self.image_background = parser.Get_ImageFromFile("./lol_images/background/background.png", (1230, 750))
-        self.canvas.create_image(615, 375, image = self.image_background)
+        self.main_canvas.create_image(615, 375, image = self.image_background, tags = "background")
+
+        self.label_search = Label(self.main_canvas, width = 350, height = 350, bd = 0, image = self.buttondrawer.img_label_search)
+        self.label_rotation = Label(self.main_canvas, width = 350, height = 350, bd = 0, image = self.buttondrawer.img_label_rotation)
+        self.label_challenger = Label(self.main_canvas, width = 350, height = 350, bd = 0, image = self.buttondrawer.img_label_challenger)
+
+        self.label_search.place(x=30, y=200)
+        self.label_rotation.place(x=440, y=200)
+        self.label_challenger.place(x=850, y=200)
+
+        # 이벤트 함수 바인딩
+        self.label_search.bind("<Enter>", self.Event_search_IN)
+        self.label_search.bind("<Leave>", self.Event_search_OUT)
+        self.label_search.bind("<Button-1>", self.Event_search_CLICK)
+        self.label_rotation.bind("<Enter>", self.Event_rotation_IN)
+        self.label_rotation.bind("<Leave>", self.Event_rotation_OUT)
+        self.label_rotation.bind("<Button-1>", self.Event_rotation_CLICK)
+        self.label_challenger.bind("<Enter>", self.Event_challenger_IN)
+        self.label_challenger.bind("<Leave>", self.Event_challenger_OUT)
+        self.label_challenger.bind("<Button-1>", self.Event_challenger_CLICK)
 
         # rank 관련 변수 선언
         self.data_rank_rankerlist_raw = list()

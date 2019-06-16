@@ -1327,5 +1327,5 @@ buttondrawer = Animator.ButtonDrawer(mainWindow)
 
 gol = DNFAPIProcess(mainWindow)
 asd = DNFMarketProcess(mainWindow)
-lol = LOL_Mainframe.MainWindow(mainWindow)
+lol = LOL_Mainframe.MainWindow(mainWindow, buttondrawer)
 mainWindow.window.mainloop()
