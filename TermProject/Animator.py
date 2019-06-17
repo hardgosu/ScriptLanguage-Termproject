@@ -1,6 +1,6 @@
 from tkinter import *
-import math                     # modules for floor()
-from PIL import ImageTk, Image  # modules for Pillow Image
+import math                                     # modules for floor()
+from PIL import ImageTk, Image, ImageSequence  # modules for Pillow Image
 
 ## 변수 선언 ##
 
@@ -20,6 +20,10 @@ _LOL_INTRO_LABEL_WIDTH = 350
 _LOL_INTRO_LABEL_HEIGHT = 350
 _LOL_INTRO_LABEL_SIZE = (_LOL_INTRO_LABEL_WIDTH, _LOL_INTRO_LABEL_HEIGHT)
 
+_LOL_SCENE_WIDTH = 1230
+_LOL_SCENE_HEIGHT = 750
+_LOL_SCENE_SIZE = (_LOL_SCENE_WIDTH, _LOL_SCENE_HEIGHT)
+
 ################
 
 # 인트로 씬을 위한 애니메이터 클래스
@@ -35,7 +39,8 @@ class IntroSceneAnimator:
         self.frame = 0.0
         self.window = Tk()
         self.window.resizable(False, False)
-
+        # 드래그바와 닫기 메뉴 가리기
+        self.window.overrideredirect(True)
 
         self.Load_data()
 
@@ -61,20 +66,20 @@ class IntroSceneAnimator:
 
     def Animate(self):
         # 애니메이션 재생 속도 조절
-        animSpeed = 1
+        animSpeed = 3
         self.frame += 0.016 * animSpeed
 
         if math.floor(self.frame) == 0:     # 1초
             self.img_blended = self.Get_BlendedImageFromImages(self.img_logoblack, self.img_kpulogo, self.frame - math.floor(self.frame))
-        elif math.floor(self.frame) == 1:   # 2초
+        elif 1 <= math.floor(self.frame) <= 2:
             self.img_blended = self.img_kpulogo_raw
-        elif math.floor(self.frame) == 2:   # 3초
+        elif math.floor(self.frame) == 3:
             self.img_blended = self.Get_BlendedImageFromImages(self.img_kpulogo, self.img_minsulogo, self.frame - math.floor(self.frame))
-        elif math.floor(self.frame) == 3:   # 4초
+        elif 4 <= math.floor(self.frame) <= 5:
             self.img_blended = self.img_minsulogo_raw
-        elif math.floor(self.frame) == 4:   # 5초
+        elif math.floor(self.frame) == 6:
             self.img_blended = self.Get_BlendedImageFromImages(self.img_minsulogo, self.img_applogo, self.frame - math.floor(self.frame))
-        elif math.floor(self.frame) == 5:   # 6초
+        elif 7 <= math.floor(self.frame) <= 10:
             self.img_blended = self.img_applogo_raw
         else:
             self.animationFlag = False
@@ -171,6 +176,10 @@ class ButtonDrawer:
         self.Load_data()
         pass
 
+    def Print_Errors(self, in_errorText = ""):
+        # 에러 입력을 출력한다.
+        print("\x1b[1;91mProcessing Error\x1b[0;m: [{0}]".format(in_errorText))
+
     def Get_ImageFromFile_COMPLETE(self, in_filePath = "", in_ImgSize = tuple()):
         # 파일 경로에 저장되어 있는 이미지를 읽어와 리사이징하고 RGBA 형식으로 변환해 완전한 PhotoImage 개체로 리턴한다.
         if in_filePath == "":
@@ -183,8 +192,8 @@ class ButtonDrawer:
 
         image = Image.open(in_filePath)
         image_resized = image.resize(in_ImgSize)
-        #image_converted = image_resized.convert("RGBA")
-        image_result = ImageTk.PhotoImage(image_resized)
+        image_converted = image_resized.convert("RGBA")
+        image_result = ImageTk.PhotoImage(image_converted)
 
         if image_result:
             return image_result
@@ -192,13 +201,43 @@ class ButtonDrawer:
             self.Print_Errors("Image Loading Failure")
             return
 
+    def Get_BlendedImageFromImages(self, in_img1, in_img2, in_alpha = 0.0) :
+        # 입력받은 이미지를 블렌딩한다.
+        image_blended = Image.blend(in_img1, in_img2, in_alpha)
+        image_result = ImageTk.PhotoImage(image_blended)
 
+        if image_result:
+            return image_result
+        else:
+            self.Print_Errors("Image Blending Failure")
+            return
+
+    def Get_ImageFromFile(self, in_filePath = "", in_ImgSize = tuple()):
+        # 파일 경로에 저장되어 있는 이미지를 읽어와 리사이징하고 RGBA 형식으로 변환해 리턴한다.
+        if in_filePath == "":
+            self.Print_Errors("Empty FilePath")
+            return
+
+        if in_ImgSize == ():
+            self.Print_Errors("Empty size")
+            return
+
+        image = Image.open(in_filePath)
+        image_resized = image.resize(in_ImgSize)
+        image_converted = image_resized.convert("RGBA")
+        if image_converted:
+            return image_converted
+        else:
+            self.Print_Errors("Image Loading Failure")
+            return
 
     def Load_data(self):
-        global _BUTTON_SEND_SIZE, _BUTTON_SEARCH_SIZE
+        global _BUTTON_SEND_SIZE, _BUTTON_SEARCH_SIZE, _LOL_SCENE_SIZE, _LOL_INTRO_LABEL_SIZE
         # 이미지 데이터들을 로딩한다.
 
         # image loading & resizing
+
+        # 버튼 이미지
         self.img_button_search = self.Get_ImageFromFile_COMPLETE("./buttonimages/search.png", _BUTTON_SEARCH_SIZE)
         self.img_button_reset = self.Get_ImageFromFile_COMPLETE("./buttonimages/reset.png", _BUTTON_SEARCH_SIZE)
         self.img_button_send = self.Get_ImageFromFile_COMPLETE("./buttonimages/send.png", _BUTTON_SEND_SIZE)
@@ -219,8 +258,22 @@ class ButtonDrawer:
         self.img_label_rotation_over = self.Get_ImageFromFile_COMPLETE("./sceneimage/lol_rotation_over.png", _LOL_INTRO_LABEL_SIZE)
         self.img_label_challenger_over = self.Get_ImageFromFile_COMPLETE("./sceneimage/lol_challenger_over.png", _LOL_INTRO_LABEL_SIZE)
 
+        # 탭 버튼 이미지
+        self.img_tab_dnf = self.Get_ImageFromFile_COMPLETE("./buttonimages/tab_dnf.png", (155, 20))
+        self.img_tab_market = self.Get_ImageFromFile_COMPLETE("./buttonimages/tab_market.png", (85, 20))
+        self.img_tab_lol = self.Get_ImageFromFile_COMPLETE("./buttonimages/tab_lol.png", (85, 20))
+
+        # lol 씬 전환을 위한 이미지
+        self.img_background_raw = self.Get_ImageFromFile_COMPLETE("./lol_images/background/background.png", _LOL_SCENE_SIZE)
+        self.img_background = self.Get_ImageFromFile("./lol_images/background/background.png", _LOL_SCENE_SIZE)
+        self.img_blackbackground_raw = self.Get_ImageFromFile_COMPLETE("./lol_images/background/blackbackground.png", _LOL_SCENE_SIZE)
+        self.img_blackbackground = self.Get_ImageFromFile("./lol_images/background/blackbackground.png", _LOL_SCENE_SIZE)
+        self.img_whitebackground_raw = self.Get_ImageFromFile_COMPLETE("./lol_images/background/whitebackground.png", _LOL_SCENE_SIZE)
+        self.img_whitebackground = self.Get_ImageFromFile("./lol_images/background/whitebackground.png", _LOL_SCENE_SIZE)
+
+        # lol 기능 씬을 위한 이미지
+        self.img_background_transparent = self.Get_ImageFromFile_COMPLETE("./lol_images/background/background_transparent.png", _LOL_SCENE_SIZE)
+        self.img_sequence = [ImageTk.PhotoImage(img.resize(_LOL_SCENE_SIZE)) for img in ImageSequence.Iterator(Image.open("./lol_images/background/background_lol.gif"))]
+
         print("\x1b[1;32mButton Image Loading COMPLETE\x1b[0;m")
 
-    def Bind_button(self, in_button):
-        in_button.bind("<Enter>", self.Set_image_button_IN)
-        in_button.bind("<Leave>", self.Set_image_button_OUT)

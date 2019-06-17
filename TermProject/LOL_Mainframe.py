@@ -3,6 +3,7 @@ import urllib.request
 import json # import json module
 from tkinter.font import *
 import time
+import math
 
 import LOL_Parse
 
@@ -25,7 +26,10 @@ recentData_Champion = parser.Decode_URLtoJson(recentData_Champion_url)
 Champion_List = list(recentData_Champion['data'].keys())
 ##############################################################################################
 
-
+_WHITE_IN   = 1
+_WHITE_OUT  = 2
+_BLACK_IN   = 3
+_BLACK_OUT  = 4
 
 class SearchedSummoner:
     # 검색한 소환사를 출력하기 위한 클래스
@@ -97,7 +101,7 @@ def drawChampionImage(champName, img_width, img_height):
 
 
 class MainWindow:
-    global parser
+    global parser, _WHITE_IN, _WHITE_OUT, _BLACK_IN, _BLACK_OUT
     mainWidth = 1230
     mainHeight = 750
     offset_x = 10
@@ -276,6 +280,7 @@ class MainWindow:
     def Event_search_OUT(self, event):
         self.label_search.configure(image = self.buttondrawer.img_label_search)
     def Event_search_CLICK(self, event):
+        self.search_frame.tkraise()
         pass
     def Event_rotation_IN(self, event):
         self.label_rotation.configure(image = self.buttondrawer.img_label_rotation_over)
@@ -290,31 +295,117 @@ class MainWindow:
     def Event_challenger_CLICK(self, event):
         pass
 
+    def Event_tab_Click(self, event):
+        clicked_tab = self.notebook.tk.call(self.notebook._w, "identify", "tab", event.x, event.y)
+        if clicked_tab != 2: # 2번째 인덱스로 더해졌기 때문에
+            return
+        if self.main_animationflag:
+            return
+
+        self.frame = 0.0
+        self.main_animationflag = True
+        self.main_animationtype = _WHITE_OUT
+        self.main_canvas.after(0, self.Animate_mainscene)
+        print("\x1b[1;34mLOL Scene blend Start\x1b[0;m")
 
     ########################
 
+    ## 애니메이션 함수 정의문 ####
+
+    def Animate_mainscene(self):
+        animSpeed = 5
+        self.frame += 0.016 * animSpeed
+
+        if self.main_animationtype == _BLACK_OUT:
+            self.Animate_blackout()
+        elif self.main_animationtype == _BLACK_IN:
+            self.Animate_blackin()
+        elif self.main_animationtype == _WHITE_IN:
+            self.Animate_whitein()
+        elif self.main_animationtype == _WHITE_OUT:
+            self.Animate_whiteout()
+
+        self.main_canvas.delete("background")
+        self.main_canvas.create_image(615, 375, image = self.main_background_blended, tags="background")
+        if self.main_animationflag:
+            self.main_canvas.after(16, self.Animate_mainscene)
+        else:
+            print("\x1b[1;34mLOL Scene blend Ended\x1b[0;m")
+            self.Enable_mainlabels()
+
+    def Animate_whitein(self):
+        if math.floor(self.frame) <= 2:
+            self.main_background_blended = self.buttondrawer.Get_BlendedImageFromImages(self.buttondrawer.img_background,
+                                                                                        self.buttondrawer.img_whitebackground,
+                                                                                        self.frame/3.0)
+        else:
+            self.main_background_blended = self.buttondrawer.img_background_raw
+            self.main_animationflag = False
+
+    def Animate_whiteout(self):
+        #
+        if math.floor(self.frame) <= 2:
+            self.main_background_blended = self.buttondrawer.Get_BlendedImageFromImages(self.buttondrawer.img_whitebackground,
+                                                                                        self.buttondrawer.img_background,
+                                                                                        self.frame/3.0)
+        else:
+            self.main_background_blended = self.buttondrawer.img_background_raw
+            self.main_animationflag = False
+
+    def Animate_blackin(self):
+        if math.floor(self.frame) <= 2:
+            self.main_background_blended = self.buttondrawer.Get_BlendedImageFromImages(self.buttondrawer.img_background,
+                                                                                        self.buttondrawer.img_blackbackground,
+                                                                                        self.frame/3.0)
+        else:
+            self.main_background_blended = self.buttondrawer.img_blackbackground_raw
+            self.main_animationflag = False
+
+    def Animate_blackout(self):
+        if math.floor(self.frame) <= 2:
+            self.main_background_blended = self.buttondrawer.Get_BlendedImageFromImages(self.buttondrawer.img_background,
+                                                                                        self.buttondrawer.img_blackbackground,
+                                                                                        self.frame/3.0)
+        else:
+            self.main_background_blended = self.buttondrawer.img_blackbackground_raw
+            self.main_animationflag = False
+
+    def Animate_lolscene(self):
+        pass
+
+    ###########################
+
+    def Enable_mainlabels(self):
+        self.label_search.place(x=30, y=200)
+        self.label_rotation.place(x=440, y=200)
+        self.label_challenger.place(x=850, y=200)
+
+    def Disable_mainlabels(self):
+        self.label_search.place_forget()
+        self.label_rotation.place_forget()
+        self.label_challenger.place_forget()
+
     def __init__(self, in_mainWindow, in_buttondrawer):
         global parser
-
+        self.frame = 0.0
         self.buttondrawer = in_buttondrawer
 
         # main frame
         self.main_frame = Frame(in_mainWindow.window)
         self.notebook = in_mainWindow.notebook
-        self.notebook.add(self.main_frame, text="롤 전적검색")
+        self.notebook.add(self.main_frame, image = self.buttondrawer.img_tab_lol, text ="lol")
+        self.notebook.bind("<Button-1>", self.Event_tab_Click)
 
-        self.main_canvas = Canvas(self.main_frame, width = self.mainWidth, height = self.mainHeight, relief="raised")
+        self.main_canvas = Canvas(self.main_frame, width = self.mainWidth, height = self.mainHeight, bd = 0, relief="raised")
+        #in_mainWindow.window.wm_attributes("-transparentcolor", "SystemButtonFace")
         self.main_canvas.place(x=0, y=0)
-        self.image_background = parser.Get_ImageFromFile("./lol_images/background/background.png", (1230, 750))
-        self.main_canvas.create_image(615, 375, image = self.image_background, tags = "background")
-
+        self.main_canvas.create_image(615, 375, image = self.buttondrawer.img_blackbackground_raw, tags = "background")
+        # Main Scene label
         self.label_search = Label(self.main_canvas, width = 350, height = 350, bd = 0, image = self.buttondrawer.img_label_search)
         self.label_rotation = Label(self.main_canvas, width = 350, height = 350, bd = 0, image = self.buttondrawer.img_label_rotation)
         self.label_challenger = Label(self.main_canvas, width = 350, height = 350, bd = 0, image = self.buttondrawer.img_label_challenger)
 
-        self.label_search.place(x=30, y=200)
-        self.label_rotation.place(x=440, y=200)
-        self.label_challenger.place(x=850, y=200)
+        self.Enable_mainlabels()
 
         # 이벤트 함수 바인딩
         self.label_search.bind("<Enter>", self.Event_search_IN)
@@ -327,22 +418,29 @@ class MainWindow:
         self.label_challenger.bind("<Leave>", self.Event_challenger_OUT)
         self.label_challenger.bind("<Button-1>", self.Event_challenger_CLICK)
 
+        # main scene 관련 변수 선언
+        self.main_animationflag = False
+        self.main_animationtype = 0
+
         # rank 관련 변수 선언
         self.data_rank_rankerlist_raw = list()
         self.data_rank_rankerlist = list()
-        self.data_ranker_profileiconlist = list()
-        self.ranker_AnimationFlag = False
+        self.data_challenger_profileiconlist = list()
+        self.challenger_animationflag = False
+        self.challenger_frame = Frame(self.main_frame)
 
         # rotation 관련 변수 선언
+        self.rotation_frame = Frame(self.main_frame)
         self.data_rotation_imagelist = list()
 
         # search 관련 변수 선언
+        self.search_frame = Frame(self.main_frame)
+        self.search_canvas = Canvas(self.search_frame, width = self.mainWidth, height = self.mainHeight, bd= 0, relief="raised")
         self.search_isEmpty = True
-        self.search_AnimationFlag = True
+        self.search_animationflag = False
 
 
 
-        pass
 
     def SearchSummonerName(self, summonerName):
         global version_profileicon

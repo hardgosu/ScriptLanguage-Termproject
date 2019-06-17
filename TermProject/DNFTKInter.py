@@ -342,7 +342,7 @@ class DNFMarketProcess(Interface):
         self.mainWindowClass = mainWindow
         self.tabFrame1 = Frame(mainWindow.window)
         self.notebook = mainWindow.notebook
-        self.notebook.add(self.tabFrame1,text = "던파 경매장")
+        self.notebook.add(self.tabFrame1, image = buttondrawer.img_tab_market)
 
         self.image = PhotoImage(file = "mapleGold.png").subsample(8,8)
         self.imageLabel = Label(self.tabFrame1,image = self.image)
@@ -852,7 +852,7 @@ class DNFAPIProcess(Interface):
         #self.tabFrame2 = Frame(window)
         #self.tabFrame3 = Frame(window)
         #self.tabFrame4 = Frame(window)
-        self.notebook.add(self.tabFrame1,text = "던파 아이템 정보검색")
+        self.notebook.add(self.tabFrame1, image = buttondrawer.img_tab_dnf)
         #self.notebook.add(self.tabFrame2,text = "던파 경매장")
         #self.notebook.add(self.tabFrame3,text = "네이버 도서검색")
         #self.notebook.add(self.tabFrame4,text = "롤 전적검색")
