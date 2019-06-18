@@ -280,7 +280,6 @@ class MainWindow:
     def Event_search_OUT(self, event):
         self.label_search.configure(image = self.buttondrawer.img_label_search)
     def Event_search_CLICK(self, event):
-        self.search_frame.tkraise()
         pass
     def Event_rotation_IN(self, event):
         self.label_rotation.configure(image = self.buttondrawer.img_label_rotation_over)
@@ -430,12 +429,9 @@ class MainWindow:
         self.challenger_frame = Frame(self.main_frame)
 
         # rotation 관련 변수 선언
-        self.rotation_frame = Frame(self.main_frame)
         self.data_rotation_imagelist = list()
 
         # search 관련 변수 선언
-        self.search_frame = Frame(self.main_frame)
-        self.search_canvas = Canvas(self.search_frame, width = self.mainWidth, height = self.mainHeight, bd= 0, relief="raised")
         self.search_isEmpty = True
         self.search_animationflag = False
 
