@@ -92,7 +92,7 @@ def findChampionName(champID):
             return string
 
 
-def drawChampionImage(champName, img_width, img_height):
+def Draw_rotation_images(champName, img_width, img_height):
     # url로 챔피언 이미지를 가져와 image 객체를 리턴한다.
     global parser
     url = "http://ddragon.leagueoflegends.com/cdn/img/champion/loading/" + str(champName) + "_0.jpg"
@@ -109,18 +109,6 @@ class MainWindow:
 
     def ResetSearchData(self):
         pass
-
-    def MakeChampionLabels(self):
-        # 이미지 리스트와 라벨 리스트를 형성하고 라벨 리스트에 라벨 객체들을 적절하게 생성한다.
-        # 사이즈 조절 필요성이 있다. ##################################################
-        self.LabelList = list()
-        self.imageList = list()
-        n_Champion = self.rotation_NumberOfChampions
-        for idx in range(n_Champion):
-            self.imageList.append(drawChampionImage(self.rotation_FileNameList[idx], 86, 200))
-            self.LabelList.append(Label(self.RotationFrame, image=self.imageList[idx]))
-        for idx in range(n_Champion):
-            self.LabelList[idx].place(x=idx * 86, y=40)
 
     def GetRankingInfo(self):
         # 랭킹 정보를 가져옵니다.
@@ -253,24 +241,12 @@ class MainWindow:
         self.rank_Label_Fifth_WinRate.place(x=450, y=190 + 20 + 80 + 20)
         #########################################################################
 
-    def Button_ResetCanvas(self):
+    def Reset_Canvas(self):
         # 소환사 정보 출력부와 검색 엔트리를 초기화한다.
         pass
 
     def Button_SendEmail(self):
         # Gmail을 전송한다.
-        pass
-
-    def Button_OpenSearchFrame(self):
-        # 검색창 프레임을 활성화한다.
-        pass
-
-    def Button_OpenRotationInfo(self):
-        # 챔피언 로테이션창 프레임을 활성화한다.
-        pass
-
-    def Button_OpenRankingInfo(self):
-        # 랭킹 정보창 프레임을 활성화한다.
         pass
 
     ## 이벤트 함수 정의문 ####
@@ -320,6 +296,8 @@ class MainWindow:
         self.label_back.configure(image=self.buttondrawer.img_label_back)
     def Event_back_CLICK(self, event):
         self.Disable_searchscene()
+        self.Disable_rotationscene()
+        self.Disable_challengerscene()
         self.frame = 0.0
         self.gif_animationflag = False
         self.main_animationflag = True
@@ -340,6 +318,8 @@ class MainWindow:
             return
 
         self.Disable_searchscene()
+        self.Disable_rotationscene()
+        self.Disable_challengerscene()
 
         self.frame = 0.0
         self.main_animationflag = True
@@ -527,8 +507,19 @@ class MainWindow:
     # 로테이션 씬
     def Enable_rotationscene(self):
         self.label_back.place(x=50, y=50)
+
+        print(len(self.rotation_labellist))
+        # 로테이션 라벨
+        for idx in range(0, 7):
+            self.rotation_labellist[idx].place(x = 24 + idx * 172, y = 275)
+        for idx in range(7, 14):
+            self.rotation_labellist[idx].place(x = 24 + (idx - 7) * 172, y = 500)
     def Disable_rotationscene(self):
         self.label_back.place_forget()
+
+        # 로테이션 라벨
+        for idx in range(0, 14):
+            self.rotation_labellist[idx].place_forget()
 
     # 챌린져 씬
     def Enable_challengerscene(self):
@@ -591,14 +582,17 @@ class MainWindow:
         self.challenger_frame = Frame(self.main_frame)
 
         # rotation 관련 변수 선언
-        self.data_rotation_imagelist = list()
+        self.rotation_imagelist = list()
+        self.rotation_labellist = [Label(self.main_canvas, width = 150, height = 200, bd = 0) for idx in range(0, 14)]
         self.rotation_animationflag = False
+
+        self.Get_rotation()
+        self.Set_rotation_labels()
 
         # search 관련 변수 선언
         self.search_isEmpty = True
         self.search_animationflag = False
-        #self.search_
-
+        self.search_
 
     def SearchSummonerName(self, summonerName):
         global version_profileicon
@@ -676,9 +670,9 @@ class MainWindow:
             self.info_Canvas.create_oval(65, 65, 135, 135, fill="white", width=0, tags='info')
             self.info_Canvas.update()
 
-    def GetChampionRotation(self):
-        # url과 api-key를 이용해서 챔피언 id 리스트를 가져옵니다.
-        # 이를 통해 챔피언 이름 리스트(파일용으로 사용할 용도)를 생성합니다.
+    def Get_rotation(self):
+        # url과 api-key를 이용해서 챔피언 id 리스트를 가져온다.
+        # 이를 통해 챔피언 이름 리스트(파일용으로 사용할 용도)를 생성한다.
         self.rotation_FileNameList = list()
         self.rotation_IDList = list()
         self.rotation_NumberOfChampions = 0
@@ -690,4 +684,14 @@ class MainWindow:
             self.rotation_FileNameList.append(findChampionName(ID))
         self.rotation_NumberOfChampions = len(self.rotation_FileNameList)
         print(self.rotation_FileNameList)
+
+    def Set_rotation_labels(self):
+        n_Champion = self.rotation_NumberOfChampions
+        for idx in range(n_Champion):
+            self.rotation_imagelist.append(Draw_rotation_images(self.rotation_FileNameList[idx], 150, 200))
+
+        for idx in range(0, 7):
+            self.rotation_labellist[idx].configure(image = self.rotation_imagelist[idx])
+        for idx in range(7, 14):
+            self.rotation_labellist[idx].configure(image = self.rotation_imagelist[idx])
 
