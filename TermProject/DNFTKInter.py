@@ -590,7 +590,7 @@ class DNFMarketProcess(Interface):
                 self.colorIncreaseDirection = True
 
 
-        color = 0xFFF435 + self.colorCount * 11
+        color = 0xCCF435 + self.colorCount * 11
 
         colorString = str(hex(color))
 
@@ -598,6 +598,7 @@ class DNFMarketProcess(Interface):
         colorString = colorString.upper()
 
         self.canvas.configure(bg=colorString)
+
         self.tabFrame1.update()
         self.mainWindowClass.window.after(50,self.ItemBaseAnimation)
         ###
@@ -1106,6 +1107,7 @@ class DNFAPIProcess(Interface):
         
 ## 아이템 이미지
         self.itemImages = []
+        self.itemSideImage = None
         pass
 
     def LoadItemBaseImageFile(self):
@@ -1209,10 +1211,13 @@ class DNFAPIProcess(Interface):
         outfile = "images/" + "image_" +args.itemName + ".png"
         print(outfile)
         outfile = outfile.replace(":", "-")
-        image = PhotoImage(file =  outfile)
+
+        del self.itemSideImage
+
+        self.itemSideImage = PhotoImage(file =  outfile)
 
 
-        self.sideCanvas.create_image(50,50,image = image)
+        self.sideCanvas.create_image(50,50,image = self.itemSideImage)
 
         boldFont = Font(family="Helvetica", size=8, weight="bold")
 
@@ -1224,7 +1229,7 @@ class DNFAPIProcess(Interface):
         #검색 자동완성기능을 만들수있음
         #그건 패스
 
-        self.mainWindowClass.window.mainloop()
+        self.tabFrame1.update()
 
         pass
 
