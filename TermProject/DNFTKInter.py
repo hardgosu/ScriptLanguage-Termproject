@@ -590,7 +590,7 @@ class DNFMarketProcess(Interface):
                 self.colorIncreaseDirection = True
 
 
-        color = 0xCCF435 + self.colorCount * 11
+        color = 0xCCF435 + self.colorCount * 5
 
         colorString = str(hex(color))
 
@@ -598,7 +598,7 @@ class DNFMarketProcess(Interface):
         colorString = colorString.upper()
 
         self.canvas.configure(bg=colorString)
-        print(colorString)
+
 
         self.tabFrame1.update()
         self.mainWindowClass.window.after(50,self.ItemBaseAnimation)
