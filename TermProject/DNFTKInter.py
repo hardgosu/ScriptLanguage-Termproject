@@ -311,10 +311,14 @@ class ParsingData3():
         #시간차를 구한다!
         import datetime
         expire = datetime.datetime.strptime(self.expireData,'%Y-%m-%d %H:%M:%S')
+
         reg = datetime.datetime.now()
+        import spam
+
 
         difference = expire - reg
-        difference = difference.total_seconds() / 3600
+
+        difference = spam.division(difference.total_seconds(), 3600)
 
         difference = "%.1f" % difference
 
@@ -848,7 +852,7 @@ class DNFAPIProcess(Interface):
         self.notebook = mainWindow.notebook
 
 
-        self.tabFrame1 = Frame(mainWindow.window)
+        self.tabFrame1 = Canvas(mainWindow.window)
         #self.tabFrame2 = Frame(window)
         #self.tabFrame3 = Frame(window)
         #self.tabFrame4 = Frame(window)
@@ -856,8 +860,18 @@ class DNFAPIProcess(Interface):
         #self.notebook.add(self.tabFrame2,text = "던파 경매장")
         #self.notebook.add(self.tabFrame3,text = "네이버 도서검색")
         #self.notebook.add(self.tabFrame4,text = "롤 전적검색")
+        #self.tabFrame1.create_oval(0,0,55,55)
 
-        self.image = PhotoImage(file = "search2.png").subsample(6,6)
+        ### 프레임 애니메이션
+        self.frameImage = []
+        self.currentBackgroundFrame = 0
+        self.LoadItemBaseImageFile()
+
+        self.tabFrame1.create_image(615,375,image = self.frameImage[self.currentBackgroundFrame],tag = "background")
+        ###
+
+
+        self.image = PhotoImage(file = "search4.png").subsample(6,6)
         self.imageLabel = Label(self.tabFrame1,image = self.image)
         self.imageLabel.grid(row = 2,column = 0)
 
@@ -913,8 +927,10 @@ class DNFAPIProcess(Interface):
         self.canvasScrollbarWidth = 500
         self.canvasScrollbarHeight = 1000
 
-        self.innerFrame = Frame(self.tabFrame1,width = self.canvasWidth ,height = self.canvasHeight)
+
+        self.innerFrame = Canvas(self.tabFrame1,width = self.canvasWidth ,height = self.canvasHeight)
         self.innerFrame.place(x = 25,y = 100)
+
 
         #self.textBoard = Text(self.innerFrame)
         #self.textBoard.pack()
@@ -1010,7 +1026,28 @@ class DNFAPIProcess(Interface):
         # 이벤트 함수 바인딩
         self.gmailSendButton.bind("<Enter>", self.Change_Send_IN)
         self.gmailSendButton.bind("<Leave>", self.Change_Send_OUT)
+###
 
+        self.tabFrame1.update()
+
+        self.ItemBaseAnimation()
+        pass
+
+    def LoadItemBaseImageFile(self):
+        for i in range(1, 30):
+            fname = "great/great (" + str(i) + ").png"
+            self.frameImage += [PhotoImage(file=fname)]
+
+    def ItemBaseAnimation(self):
+
+
+        self.currentBackgroundFrame = (self.currentBackgroundFrame + 1) % 29
+        self.tabFrame1.delete("background")
+        ### 프레임 애니메이션
+        self.tabFrame1.create_image(615,375,image = self.frameImage[self.currentBackgroundFrame],tag = "background")
+        self.tabFrame1.update()
+        self.mainWindowClass.window.after(50,self.ItemBaseAnimation)
+        ###
 
         pass
 
