@@ -344,7 +344,7 @@ class DNFMarketProcess(Interface):
 
     def __init__(self,mainWindow):
         self.mainWindowClass = mainWindow
-        self.tabFrame1 = Frame(mainWindow.window)
+        self.tabFrame1 = Canvas(mainWindow.window)
         self.notebook = mainWindow.notebook
         self.notebook.add(self.tabFrame1, image = buttondrawer.img_tab_market)
 
@@ -356,6 +356,17 @@ class DNFMarketProcess(Interface):
 
         self.searchEntry = Entry(self.tabFrame1,font = tempFont, width = 50,relief = 'ridge',borderwidth = 5)
         self.searchEntry.grid(row = 2, column = 1)
+
+        ### 프레임 애니메이션
+        self.frameImage = []
+        self.currentBackgroundFrame = 0
+        self.LoadItemBaseImageFile()
+
+        self.tabFrame1.create_image(615,375,image = self.frameImage[self.currentBackgroundFrame],tag = "background")
+        ###
+
+
+
 
         # 검색
         self.searchButton = Button(self.tabFrame1, image = buttondrawer.img_button_search, bd = 0)
@@ -538,6 +549,28 @@ class DNFMarketProcess(Interface):
 
 ###
 
+### 이미지는 왜 업데이트를 해줘야해 귀찮게
+        self.tabFrame1.update()
+
+        self.ItemBaseAnimation()
+
+    def LoadItemBaseImageFile(self):
+        for i in range(1, 30):
+            fname = "great/great (" + str(i) + ").png"
+            self.frameImage += [PhotoImage(file=fname)]
+
+    def ItemBaseAnimation(self):
+
+
+        self.currentBackgroundFrame = (self.currentBackgroundFrame + 1) % 29
+        self.tabFrame1.delete("background")
+        ### 프레임 애니메이션
+        self.tabFrame1.create_image(615,375,image = self.frameImage[self.currentBackgroundFrame],tag = "background")
+        self.tabFrame1.update()
+        self.mainWindowClass.window.after(50,self.ItemBaseAnimation)
+        ###
+
+        pass
 
 
     def ResetCanvas(self):
@@ -1028,6 +1061,7 @@ class DNFAPIProcess(Interface):
         self.gmailSendButton.bind("<Leave>", self.Change_Send_OUT)
 ###
 
+## 배경 이미지 애니메이션의 시작
         self.tabFrame1.update()
 
         self.ItemBaseAnimation()
