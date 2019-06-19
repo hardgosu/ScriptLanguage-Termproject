@@ -590,7 +590,7 @@ class DNFMarketProcess(Interface):
                 self.colorIncreaseDirection = True
 
 
-        color = 0xCCF435 + self.colorCount * 11
+        color = 0xCCF435 + self.colorCount * 5
 
         colorString = str(hex(color))
 
