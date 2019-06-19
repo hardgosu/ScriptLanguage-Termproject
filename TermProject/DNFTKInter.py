@@ -554,6 +554,8 @@ class DNFMarketProcess(Interface):
 
         self.ItemBaseAnimation()
 
+        self.itemImages = []
+
     def LoadItemBaseImageFile(self):
         for i in range(1, 30):
             fname = "great/great (" + str(i) + ").png"
@@ -665,7 +667,7 @@ class DNFMarketProcess(Interface):
         self.ResetCanvas()
 
 
-        images = []
+        #images = []
 
 
 
@@ -676,19 +678,23 @@ class DNFMarketProcess(Interface):
         #s.pack()
         count = 0
 
+        self.itemImages.clear()
+
         for i in range(len(self.parsingDataList)):
             if (self.textCurrentY > self.textMaxHeight):
                 print("캔버스 높이 초과")
                 self.parsingDataList.pop()
-                self.mainWindowClass.window.mainloop()
+                #self.mainWindowClass.window.mainloop()
+                self.tabFrame1.update()
+                self.canvas.update()
                 return
 
             outfile = "images/" + "image_" + self.parsingDataList[i].itemName + ".png"
             print(outfile)
             outfile = outfile.replace(":", "-")
-            images.append(PhotoImage(file=outfile))
+            self.itemImages.append(PhotoImage(file=outfile))
 
-            self.canvas.create_image(self.imageOffsetX , self.imageOffsetY+ i*self.imageIntervalY , image=images[-1])
+            self.canvas.create_image(self.imageOffsetX , self.imageOffsetY+ i*self.imageIntervalY , image=self.itemImages[-1])
             self.canvas.create_rectangle(self.imageOffsetX - 20,self.imageOffsetY - 20 + i*self.imageIntervalY,self.imageOffsetX + 20, self.imageOffsetY + 20 + i*self.imageIntervalY , outline = "#FFB400" , width = 3)
 
 
@@ -717,8 +723,9 @@ class DNFMarketProcess(Interface):
         #검색 자동완성기능을 만들수있음
         #그건 패스
         self.DrawMarketGraph()
-        self.mainWindowClass.window.mainloop()
-
+        #self.mainWindowClass.window.mainloop()
+        self.tabFrame1.update()
+        self.canvas.update()
 
         pass
 
@@ -1065,6 +1072,10 @@ class DNFAPIProcess(Interface):
         self.tabFrame1.update()
 
         self.ItemBaseAnimation()
+###
+        
+## 아이템 이미지
+        self.itemImages = []
         pass
 
     def LoadItemBaseImageFile(self):
@@ -1196,7 +1207,8 @@ class DNFAPIProcess(Interface):
         self.ResetCanvas()
 
 
-        images = []
+        #images = []
+
 
 
 
@@ -1207,19 +1219,23 @@ class DNFAPIProcess(Interface):
         #s.pack()
         count = 0
 
+        self.itemImages.clear()
+
         for i in range(len(self.parsingDataList)):
             if (self.textCurrentY > self.textMaxHeight):
                 print("캔버스 높이 초과")
                 self.parsingDataList.pop()
-                self.mainWindowClass.window.mainloop()
+                #self.mainWindowClass.window.mainloop()
+                self.tabFrame1.update()
+                self.canvas.update()
                 return
 
             outfile = "images/" + "image_" + self.parsingDataList[i].itemName + ".png"
             print(outfile)
             outfile = outfile.replace(":", "-")
-            images.append(PhotoImage(file=outfile))
+            self.itemImages.append(PhotoImage(file=outfile))
 
-            self.canvas.create_image(self.textCurrentX - 300, self.textCurrentY, image=images[-1])
+            self.canvas.create_image(self.textCurrentX - 300, self.textCurrentY, image=self.itemImages[-1])
 
             boldFont = Font(family="Helvetica", size=12, weight="bold")
 
@@ -1236,12 +1252,13 @@ class DNFAPIProcess(Interface):
             self.detailButtonList[-1].pack()
             count +=1
 
+
         #trie 자료구조를 만들어야
         #검색 자동완성기능을 만들수있음
         #그건 패스
-        self.mainWindowClass.window.mainloop()
-
-
+        #self.mainWindowClass.window.mainloop()
+        self.tabFrame1.update()
+        self.canvas.update()
         pass
 
     def get(self,str):

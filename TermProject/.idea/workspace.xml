@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/DNFTKInter.py" line="896" />
+    <bookmark url="file://$PROJECT_DIR$/DNFTKInter.py" line="906" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3af47338-06a4-4d82-b557-0c7d8d858309" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DNFTKInter.py" beforeDir="false" afterPath="$PROJECT_DIR$/DNFTKInter.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -99,12 +100,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="1373" />
+          <entry key="py" value="1588" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="1373" />
+          <entry key="Python" value="1588" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -124,12 +125,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DNFTKInter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="620">
-              <caret line="365" column="11" selection-start-line="365" selection-start-column="11" selection-end-line="365" selection-end-column="11" />
+            <state relative-caret-position="611">
+              <caret line="692" column="27" selection-start-line="692" selection-start-column="27" selection-end-line="692" selection-end-column="27" />
               <folding>
                 <element signature="e#204#225#0" expanded="true" />
-                <marker date="1560943031470" expanded="true" signature="38248:38396" ph="..." />
-                <marker date="1560943031470" expanded="true" signature="38424:38819" ph="..." />
+                <marker date="1560944190877" expanded="true" signature="38497:38645" ph="..." />
+                <marker date="1560944190877" expanded="true" signature="38673:39068" ph="..." />
               </folding>
             </state>
           </provider>
@@ -171,6 +172,7 @@
       <find>search</find>
       <find>search2.pgn</find>
       <find>time</find>
+      <find>mainloop</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -518,12 +520,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/DNFTKInter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="620">
-          <caret line="365" column="11" selection-start-line="365" selection-start-column="11" selection-end-line="365" selection-end-column="11" />
+        <state relative-caret-position="611">
+          <caret line="692" column="27" selection-start-line="692" selection-start-column="27" selection-end-line="692" selection-end-column="27" />
           <folding>
             <element signature="e#204#225#0" expanded="true" />
-            <marker date="1560943031470" expanded="true" signature="38248:38396" ph="..." />
-            <marker date="1560943031470" expanded="true" signature="38424:38819" ph="..." />
+            <marker date="1560944190877" expanded="true" signature="38497:38645" ph="..." />
+            <marker date="1560944190877" expanded="true" signature="38673:39068" ph="..." />
           </folding>
         </state>
       </provider>
