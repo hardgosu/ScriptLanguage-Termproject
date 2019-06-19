@@ -11,40 +11,54 @@ import tkinter.ttk as ttk
 from tkinter.font import *
 import http.client
 
-## 송민수 코드 추가, 19.05.28 ##
-import LoLTKinter
+## 송민수 코드 추가, 19.06.16 ##
+import LOL_Mainframe
+import Animator
+import math
 ##############################
 
-# 민욱이가 제공한 LOL 기본 프로세스 클래스, 현재 사용 안하고 LoLTKinter 모듈을 받아서 객체로 인스턴싱하였음.
-#class LeagueOfLegendSearchProcess(Interface):
-#
-#    def __init__(self,mainWindow):
-#        super(LeagueOfLegendSearchProcess, self).__init__(mainWindow)
-#
-#    def __init__(self, mainWindow):
-#
-#        self.mainWindowClass = mainWindow
-#        self.tabFrame = Frame(mainWindow.window)
-#        self.notebook = mainWindow.notebook
-#        self.notebook.add(self.tabFrame, text = "롤 전적검색")
-#
-#    pass#
+_WINDOW_WIDTH = 1280
+_WINDOW_HEIGHT = 800
+_FRAME_WIDTH = 1230
+_FRAME_HEIGHT = 750
+
 
 class MainWindow:
+    global _WINDOW_HEIGHT, _WINDOW_WIDTH, _FRAME_HEIGHT, _FRAME_WIDTH
     def __init__(self):
         self.window = Tk()
-        self.window.resizable(False,False)
-        self.window.geometry("1280x800+100+100")
+        self.window.resizable(False, False)
+        self.frame = 1.0
+        self.count = 1
+
+        # 중앙 배치를 위한 오프셋 계산
+        _WINDOW_OFFSET_X = int(self.window.winfo_screenwidth()/2 - _WINDOW_WIDTH/2)
+        _WINDOW_OFFSET_Y = int(self.window.winfo_screenheight()/2 - _WINDOW_HEIGHT/2)
+        # 스크린 중앙 배치
+        setGeometry = "{0}x{1}+{2}+{3}".format(_WINDOW_WIDTH, _WINDOW_HEIGHT, _WINDOW_OFFSET_X, _WINDOW_OFFSET_Y)
+        self.window.geometry(setGeometry)
         self.window.wm_iconbitmap('DNF.ico')
         self.window.title("useful")
 
+        # 밑배경 애니메이션을 위한 캔버스
+        self.canvas = Canvas(self.window, bg="gray1", width = _WINDOW_WIDTH, height = _WINDOW_HEIGHT, bd = 0)
+        self.canvas.place(x = 0, y = 0)
+        self.canvas.after(0, self.frameAnimation)
 
-        self.notebook = ttk.Notebook(self.window,width = 1230,height = 750)
+        self.notebook = ttk.Notebook(self.window, width = _FRAME_WIDTH, height = _FRAME_HEIGHT, padding = 0)
         self.notebook.pack()
-        #self.window.mainloop()
+
+    def frameAnimation(self):
+        animSpeed = 1
+        self.frame += 0.016 * animSpeed
+        value = (math.sin(self.frame * 2 * 3.141592) + 1.0) * 0.5 * 99
+
+        self.count = int(value)
+        setBackground = "gray" + str(self.count)
+        self.canvas.configure(bg=setBackground)
+        self.canvas.after(16, self.frameAnimation)
 
 class Interface:
-
     def __init__(self,window):
         #self.window = window
         pass
@@ -53,7 +67,6 @@ class Interface:
         pass
     def Show(self):
         pass
-
     pass
 
 class ButtonFunction:
@@ -311,11 +324,25 @@ class ParsingData3():
         return "[ " + str(self.count) + " ]"
 
 class DNFMarketProcess(Interface):
+    # 버튼 이미지를 받아온다.
+    global buttondrawer
+
+    # 이벤트 함수 바인딩을 위해 정의했다. - 송민수#########################################
+    def Change_Search_IN(self, event):
+        self.searchButton.configure(image = buttondrawer.img_button_search_over_teal)
+    def Change_Search_OUT(self, event):
+        self.searchButton.configure(image = buttondrawer.img_button_search)
+    def Change_Reset_IN(self, event):
+        self.resetButton.configure(image = buttondrawer.img_button_reset_over_teal)
+    def Change_Reset_OUT(self, event):
+        self.resetButton.configure(image = buttondrawer.img_button_reset)
+    ###################################################################################
+
     def __init__(self,mainWindow):
         self.mainWindowClass = mainWindow
         self.tabFrame1 = Frame(mainWindow.window)
         self.notebook = mainWindow.notebook
-        self.notebook.add(self.tabFrame1,text = "던파 경매장")
+        self.notebook.add(self.tabFrame1, image = buttondrawer.img_tab_market)
 
         self.image = PhotoImage(file = "mapleGold.png").subsample(8,8)
         self.imageLabel = Label(self.tabFrame1,image = self.image)
@@ -326,16 +353,22 @@ class DNFMarketProcess(Interface):
         self.searchEntry = Entry(self.tabFrame1,font = tempFont, width = 50,relief = 'ridge',borderwidth = 5)
         self.searchEntry.grid(row = 2, column = 1)
 
-        self.searchButton = Button(self.tabFrame1, text = "검색")
+        # 검색
+        self.searchButton = Button(self.tabFrame1, image = buttondrawer.img_button_search, bd = 0)
         self.searchButton.grid(row = 2,column = 2)
 
+        # 이벤트 함수 바인딩
+        self.searchButton.bind("<Enter>", self.Change_Search_IN)
+        self.searchButton.bind("<Leave>", self.Change_Search_OUT)
 
 
-
-        self.resetButton = Button(self.tabFrame1,text = "리셋")
+        # 리셋
+        self.resetButton = Button(self.tabFrame1, image = buttondrawer.img_button_reset, bd = 0)
         self.resetButton.grid(row = 2,column = 3)
 
-
+        # 이벤트 함수 바인딩
+        self.resetButton.bind("<Enter>", self.Change_Reset_IN)
+        self.resetButton.bind("<Leave>", self.Change_Reset_OUT)
 
 
         #   오름차순,내림차순 정렬
@@ -787,6 +820,28 @@ class DNFMarketProcess(Interface):
 
 #503 시스템 점검
 class DNFAPIProcess(Interface):
+    global buttondrawer
+
+    # 이벤트 함수 바인딩을 위해 정의했다. - 송민수#########################################
+    def Change_Search_IN(self, event):
+        self.searchButton.configure(image=buttondrawer.img_button_search_over_teal)
+
+    def Change_Search_OUT(self, event):
+        self.searchButton.configure(image=buttondrawer.img_button_search)
+
+    def Change_Reset_IN(self, event):
+        self.resetButton.configure(image=buttondrawer.img_button_reset_over_teal)
+
+    def Change_Reset_OUT(self, event):
+        self.resetButton.configure(image=buttondrawer.img_button_reset)
+
+    def Change_Send_IN(self, event):
+        self.gmailSendButton.configure(image=buttondrawer.img_button_send_over_teal)
+
+    def Change_Send_OUT(self, event):
+        self.gmailSendButton.configure(image=buttondrawer.img_button_send)
+        ###################################################################################
+
     def __init__(self, mainWindow):
         self.mainWindowClass = mainWindow
 
@@ -797,7 +852,7 @@ class DNFAPIProcess(Interface):
         #self.tabFrame2 = Frame(window)
         #self.tabFrame3 = Frame(window)
         #self.tabFrame4 = Frame(window)
-        self.notebook.add(self.tabFrame1,text = "던파 아이템 정보검색")
+        self.notebook.add(self.tabFrame1, image = buttondrawer.img_tab_dnf)
         #self.notebook.add(self.tabFrame2,text = "던파 경매장")
         #self.notebook.add(self.tabFrame3,text = "네이버 도서검색")
         #self.notebook.add(self.tabFrame4,text = "롤 전적검색")
@@ -811,13 +866,19 @@ class DNFAPIProcess(Interface):
         self.searchEntry = Entry(self.tabFrame1,font = TempFont, width = 50,relief = 'solid',borderwidth = 5)
         self.searchEntry.grid(row = 2, column = 1)
 
-        self.searchButton = Button(self.tabFrame1, text = "검색")
+        self.searchButton = Button(self.tabFrame1, image = buttondrawer.img_button_search, bd = 0)
         self.searchButton.grid(row = 2,column = 2)
 
-        self.resetButton = Button(self.tabFrame1,text = "리셋",command = self.ClearCanvas)
+        # 이벤트 함수 바인딩
+        self.searchButton.bind("<Enter>", self.Change_Search_IN)
+        self.searchButton.bind("<Leave>", self.Change_Search_OUT)
+
+        self.resetButton = Button(self.tabFrame1,image = buttondrawer.img_button_reset, command = self.ClearCanvas, bd = 0)
         self.resetButton.grid(row = 2,column = 3)
 
-
+        # 이벤트 함수 바인딩
+        self.resetButton.bind("<Enter>", self.Change_Reset_IN)
+        self.resetButton.bind("<Leave>", self.Change_Reset_OUT)
 
 
 
@@ -943,9 +1004,13 @@ class DNFAPIProcess(Interface):
         self.gmailEntry = Entry(self.gmailFrame)
         self.gmailEntry.pack(side = LEFT)
 
-        self.gmailSendButton = Button(self.gmailFrame,text = "메일전송",command = lambda : self.SendEmail(self.gmailEntry.get()))
+        self.gmailSendButton = Button(self.gmailFrame, image = buttondrawer.img_button_send, command = lambda : self.SendEmail(self.gmailEntry.get()), bd = 0)
         self.gmailSendButton.pack(side = LEFT)
-        #self.
+
+        # 이벤트 함수 바인딩
+        self.gmailSendButton.bind("<Enter>", self.Change_Send_IN)
+        self.gmailSendButton.bind("<Leave>", self.Change_Send_OUT)
+
 
         pass
 
@@ -1242,16 +1307,25 @@ def Test():
     mainWindow.window.mainloop()
 
 bool = True
-mainWindow = MainWindow()
-
-gol = DNFAPIProcess(mainWindow)
-asd = DNFMarketProcess(mainWindow)
-lol = LoLTKinter.MainWindow(mainWindow)
 
 #a = DNFAPIProcess(mainWindow.window)
 
 #a.Run()
 #Test()
 
-mainWindow.window.mainloop()
+# 인트로 씬 재생
+introscene = Animator.IntroSceneAnimator()
+while introscene.animationFlag == True:
+    introscene.window.mainloop()
 
+
+
+# 씬이 끝나야 메인 윈도우 생성
+mainWindow = MainWindow()
+
+buttondrawer = Animator.ButtonDrawer(mainWindow)
+
+gol = DNFAPIProcess(mainWindow)
+asd = DNFMarketProcess(mainWindow)
+lol = LOL_Mainframe.MainWindow(mainWindow, buttondrawer)
+mainWindow.window.mainloop()

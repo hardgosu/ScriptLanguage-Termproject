@@ -1,10 +1,11 @@
-from tkinter import * # import tkinter
-import urllib.request
-import json # import json module
-from tkinter.font import *
+import json  # import json module
 import time
+import urllib.request
+from tkinter import *  # import tkinter
+from tkinter.font import *
 
-import LOL_ParseJson
+from TestFiles import LOL_ParseJson
+
 
 def URLtoJSONDecode(urlpath):
     # json 객체로 리턴하는 스태틱 함수
