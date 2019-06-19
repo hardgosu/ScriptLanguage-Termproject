@@ -70,17 +70,15 @@ class RankingSummoner:
 
     def SetProfileIcon(self, idx):
         if idx == 0:
-            self.iconSize = (150, 150)
+            self.iconSize = (200, 200)
         else:
-            self.iconSize = (60, 60)
+            self.iconSize = (100, 100)
 
         jsonData = parser.Get_API_Search_byName(self.name)
-
         self.id_Profile = jsonData['profileIconId']
         self.level = jsonData['summonerLevel']
-        # 프로필 아이콘 이미지를 리턴합니다.
+        # 프로필 아이콘 이미지를 리턴g한다.
         image = parser.Get_ProfileIcon(version_profileicon, self.id_Profile, self.iconSize)
-
         return image
 
 
@@ -110,21 +108,21 @@ class MainWindow:
     def ResetSearchData(self):
         pass
 
-    def GetRankingInfo(self):
+    def Get_rankinginfo(self):
         # 랭킹 정보를 가져옵니다.
         jsonData = parser.Get_API_Challengerleagues()
-        self.rawRankingList = jsonData['entries']
-        for idx in range(len(self.rawRankingList)):
-            self.TopRankingList.append(RankingSummoner(self.rawRankingList[idx]['summonerName'], self.rawRankingList[idx]['leaguePoints'], self.rawRankingList[idx]['wins'], self.rawRankingList[idx]['losses'], self.rawRankingList[idx]['summonerId']))
+        self.challenger_rankerlist_raw = jsonData['entries']
+        for idx in range(len(self.challenger_rankerlist_raw)):
+            self.challenger_rankerlist.append(RankingSummoner(self.challenger_rankerlist_raw[idx]['summonerName'], self.challenger_rankerlist_raw[idx]['leaguePoints'], self.challenger_rankerlist_raw[idx]['wins'], self.challenger_rankerlist_raw[idx]['losses'], self.challenger_rankerlist_raw[idx]['summonerId']))
 
-    def SortRankingInfo(self):
-        self.TopRankingList = sorted(self.TopRankingList, key = lambda val : val.lp, reverse = True) # 내림차순 정렬
+    def Sort_rankinginfo(self):
+        self.challenger_rankerlist = sorted(self.challenger_rankerlist, key = lambda val : val.lp, reverse = True) # 내림차순 정렬
         print("Sorting Complete")
 
-    def SetRankingProfileIcons(self):
+    def Set_challenger_profileicon(self):
         cycle = 5 # 5 순위까지
         for idx in range(cycle):
-            self.rank_img_profileIcon.append(self.TopRankingList[idx].SetProfileIcon(idx))
+            self.challenger_profileiconlist.append(self.challenger_rankerlist[idx].SetProfileIcon(idx))
 
     def ResetCanvas(self):
         self.isEmpty = True
@@ -137,108 +135,78 @@ class MainWindow:
 
         pass
 
-    def DrawRanking(self):
+    def Set_challengers(self):
         # 랭킹 프레임 그리기
         ## 상위 랭커 5위 출력 #####################################################
 
         # 1위
-        self.rank_Label_First_profileIcon = Label(self.RankingFrame, image=self.rank_img_profileIcon[0],
-                                                  relief="raised", bd=3)
-        self.rank_Label_First_Name = Label(self.RankingFrame, text=self.TopRankingList[0].name)
-        self.rank_Label_First_Level = Label(self.RankingFrame, text="Lv." + str(self.TopRankingList[0].level))
-        self.rank_Label_First_LeaguePoints = Label(self.RankingFrame, text=str(self.TopRankingList[0].lp) + " LP")
-        self.rank_Label_First_WinRate = Label(self.RankingFrame,
-                                              text="{0}전 {1}승 {2}패 승률:{3:.1f}%".format(self.TopRankingList[0].total,
-                                                                                       self.TopRankingList[0].win,
-                                                                                       self.TopRankingList[0].loss,
-                                                                                       self.TopRankingList[
+        self.rank_Label_First_profileIcon = Label(self.main_canvas, image=self.challenger_profileiconlist[0],
+                                                  relief="raised", bd=10, bg="black")
+        self.rank_Label_First_Name = Label(self.main_canvas, text=self.challenger_rankerlist[0].name, bg="black", fg="white")
+        self.rank_Label_First_Level = Label(self.main_canvas, text="Lv." + str(self.challenger_rankerlist[0].level), bg="black", fg="white")
+        self.rank_Label_First_LeaguePoints = Label(self.main_canvas, text=str(self.challenger_rankerlist[0].lp) + " LP", bg="black", fg="white")
+        self.rank_Label_First_WinRate = Label(self.main_canvas,
+                                              text="{0}전 {1}승 {2}패 승률:{3:.1f}%".format(self.challenger_rankerlist[0].total,
+                                                                                       self.challenger_rankerlist[0].win,
+                                                                                       self.challenger_rankerlist[0].loss,
+                                                                                       self.challenger_rankerlist[
                                                                                            0].win * 100 /
-                                                                                       self.TopRankingList[0].total))
+                                                                                       self.challenger_rankerlist[0].total), bg="black", fg="white")
         # 2위
-        self.rank_Label_Second_profileIcon = Label(self.RankingFrame, image=self.rank_img_profileIcon[1],
-                                                   relief="raised", bd=3)
-        self.rank_Label_Second_Name = Label(self.RankingFrame, text=self.TopRankingList[1].name)
-        self.rank_Label_Second_Level = Label(self.RankingFrame, text="Lv." + str(self.TopRankingList[1].level))
-        self.rank_Label_Second_LeaguePoints = Label(self.RankingFrame, text=str(self.TopRankingList[1].lp) + " LP")
-        self.rank_Label_Second_WinRate = Label(self.RankingFrame,
-                                               text="{0}전\n{1}승\n{2}패\n승률:{3:.1f}%".format(self.TopRankingList[1].total,
-                                                                                           self.TopRankingList[1].win,
-                                                                                           self.TopRankingList[1].loss,
-                                                                                           self.TopRankingList[
+        self.rank_Label_Second_profileIcon = Label(self.main_canvas, image=self.challenger_profileiconlist[1],
+                                                   relief="raised", bd=5, bg="black")
+        self.rank_Label_Second_Name = Label(self.main_canvas, text=self.challenger_rankerlist[1].name, bg="black", fg="white")
+        self.rank_Label_Second_Level = Label(self.main_canvas, text="Lv." + str(self.challenger_rankerlist[1].level), bg="black", fg="white")
+        self.rank_Label_Second_LeaguePoints = Label(self.main_canvas, text=str(self.challenger_rankerlist[1].lp) + " LP", bg="black", fg="white")
+        self.rank_Label_Second_WinRate = Label(self.main_canvas,
+                                               text="{0}전\n{1}승\n{2}패\n승률:{3:.1f}%".format(self.challenger_rankerlist[1].total,
+                                                                                           self.challenger_rankerlist[1].win,
+                                                                                           self.challenger_rankerlist[1].loss,
+                                                                                           self.challenger_rankerlist[
                                                                                                1].win * 100 /
-                                                                                           self.TopRankingList[
-                                                                                               1].total))
+                                                                                           self.challenger_rankerlist[
+                                                                                               1].total), bg="black", fg="white")
         # 3위
-        self.rank_Label_Third_profileIcon = Label(self.RankingFrame, image=self.rank_img_profileIcon[2],
-                                                  relief="raised", bd=3)
-        self.rank_Label_Third_Name = Label(self.RankingFrame, text=self.TopRankingList[2].name)
-        self.rank_Label_Third_Level = Label(self.RankingFrame, text="Lv." + str(self.TopRankingList[2].level))
-        self.rank_Label_Third_LeaguePoints = Label(self.RankingFrame, text=str(self.TopRankingList[2].lp) + " LP")
-        self.rank_Label_Third_WinRate = Label(self.RankingFrame,
-                                              text="{0}전\n{1}승\n{2}패\n승률:{3:.1f}%".format(self.TopRankingList[2].total,
-                                                                                          self.TopRankingList[2].win,
-                                                                                          self.TopRankingList[2].loss,
-                                                                                          self.TopRankingList[
+        self.rank_Label_Third_profileIcon = Label(self.main_canvas, image=self.challenger_profileiconlist[2],
+                                                  relief="raised", bd=5, bg="black")
+        self.rank_Label_Third_Name = Label(self.main_canvas, text=self.challenger_rankerlist[2].name, bg="black", fg="white")
+        self.rank_Label_Third_Level = Label(self.main_canvas, text="Lv." + str(self.challenger_rankerlist[2].level), bg="black", fg="white")
+        self.rank_Label_Third_LeaguePoints = Label(self.main_canvas, text=str(self.challenger_rankerlist[2].lp) + " LP", bg="black", fg="white")
+        self.rank_Label_Third_WinRate = Label(self.main_canvas,
+                                              text="{0}전\n{1}승\n{2}패\n승률:{3:.1f}%".format(self.challenger_rankerlist[2].total,
+                                                                                          self.challenger_rankerlist[2].win,
+                                                                                          self.challenger_rankerlist[2].loss,
+                                                                                          self.challenger_rankerlist[
                                                                                               2].win * 100 /
-                                                                                          self.TopRankingList[2].total))
+                                                                                          self.challenger_rankerlist[2].total), bg="black", fg="white")
         # 4위
-        self.rank_Label_Fourth_profileIcon = Label(self.RankingFrame, image=self.rank_img_profileIcon[3],
-                                                   relief="raised", bd=3)
-        self.rank_Label_Fourth_Name = Label(self.RankingFrame, text=self.TopRankingList[3].name)
-        self.rank_Label_Fourth_Level = Label(self.RankingFrame, text="Lv." + str(self.TopRankingList[3].level))
-        self.rank_Label_Fourth_LeaguePoints = Label(self.RankingFrame, text=str(self.TopRankingList[3].lp) + " LP")
-        self.rank_Label_Fourth_WinRate = Label(self.RankingFrame,
-                                               text="{0}전\n{1}승\n{2}패\n승률:{3:.1f}%".format(self.TopRankingList[3].total,
-                                                                                           self.TopRankingList[3].win,
-                                                                                           self.TopRankingList[3].loss,
-                                                                                           self.TopRankingList[
+        self.rank_Label_Fourth_profileIcon = Label(self.main_canvas, image=self.challenger_profileiconlist[3],
+                                                   relief="raised", bd=5, bg="black")
+        self.rank_Label_Fourth_Name = Label(self.main_canvas, text=self.challenger_rankerlist[3].name, bg="black", fg="white")
+        self.rank_Label_Fourth_Level = Label(self.main_canvas, text="Lv." + str(self.challenger_rankerlist[3].level), bg="black", fg="white")
+        self.rank_Label_Fourth_LeaguePoints = Label(self.main_canvas, text=str(self.challenger_rankerlist[3].lp) + " LP", bg="black", fg="white")
+        self.rank_Label_Fourth_WinRate = Label(self.main_canvas,
+                                               text="{0}전\n{1}승\n{2}패\n승률:{3:.1f}%".format(self.challenger_rankerlist[3].total,
+                                                                                           self.challenger_rankerlist[3].win,
+                                                                                           self.challenger_rankerlist[3].loss,
+                                                                                           self.challenger_rankerlist[
                                                                                                3].win * 100 /
-                                                                                           self.TopRankingList[
-                                                                                               3].total))
+                                                                                           self.challenger_rankerlist[
+                                                                                               3].total), bg="black", fg="white")
         # 5위
-        self.rank_Label_Fifth_profileIcon = Label(self.RankingFrame, image=self.rank_img_profileIcon[4],
-                                                  relief="raised", bd=3)
-        self.rank_Label_Fifth_Name = Label(self.RankingFrame, text=self.TopRankingList[4].name)
-        self.rank_Label_Fifth_Level = Label(self.RankingFrame, text="Lv." + str(self.TopRankingList[4].level))
-        self.rank_Label_Fifth_LeaguePoints = Label(self.RankingFrame, text=str(self.TopRankingList[4].lp) + " LP")
-        self.rank_Label_Fifth_WinRate = Label(self.RankingFrame,
-                                              text="{0}전\n{1}승\n{2}패\n승률:{3:.1f}%".format(self.TopRankingList[4].total,
-                                                                                          self.TopRankingList[4].win,
-                                                                                          self.TopRankingList[4].loss,
-                                                                                          self.TopRankingList[
+        self.rank_Label_Fifth_profileIcon = Label(self.main_canvas, image=self.challenger_profileiconlist[4],
+                                                  relief="raised", bd=5, bg="black")
+        self.rank_Label_Fifth_Name = Label(self.main_canvas, text=self.challenger_rankerlist[4].name, bg="black", fg="white")
+        self.rank_Label_Fifth_Level = Label(self.main_canvas, text="Lv." + str(self.challenger_rankerlist[4].level), bg="black", fg="white")
+        self.rank_Label_Fifth_LeaguePoints = Label(self.main_canvas, text=str(self.challenger_rankerlist[4].lp) + " LP", bg="black", fg="white")
+        self.rank_Label_Fifth_WinRate = Label(self.main_canvas,
+                                              text="{0}전\n{1}승\n{2}패\n승률:{3:.1f}%".format(self.challenger_rankerlist[4].total,
+                                                                                          self.challenger_rankerlist[4].win,
+                                                                                          self.challenger_rankerlist[4].loss,
+                                                                                          self.challenger_rankerlist[
                                                                                               4].win * 100 /
-                                                                                          self.TopRankingList[4].total))
+                                                                                          self.challenger_rankerlist[4].total), bg="black", fg="white")
 
-
-        self.rank_Label_First_profileIcon.place(x=320 - 150, y=20)
-        self.rank_Label_First_Name.place(x=320 + 10, y=20)
-        self.rank_Label_First_Level.place(x=320 + 10, y=40)
-        self.rank_Label_First_LeaguePoints.place(x=320 + 10, y=60)
-        self.rank_Label_First_WinRate.place(x=320 + 10, y=80)
-
-        self.rank_Label_Second_profileIcon.place(x=0, y=190 + 40)
-        self.rank_Label_Second_Name.place(x=70, y=190 + 20 + 20)
-        self.rank_Label_Second_Level.place(x=70, y=190 + 20 + 40)
-        self.rank_Label_Second_LeaguePoints.place(x=70, y=190 + 20 + 60)
-        self.rank_Label_Second_WinRate.place(x=0, y=190 + 20 + 80 + 20)
-
-        self.rank_Label_Third_profileIcon.place(x=100 + 50, y=190 + 40)
-        self.rank_Label_Third_Name.place(x=100 + 120, y=190 + 20 + 20)
-        self.rank_Label_Third_Level.place(x=100 + 120, y=190 + 20 + 40)
-        self.rank_Label_Third_LeaguePoints.place(x=100 + 120, y=190 + 20 + 60)
-        self.rank_Label_Third_WinRate.place(x=100 + 50, y=190 + 20 + 80 + 20)
-
-        self.rank_Label_Fourth_profileIcon.place(x=300, y=190 + 40)
-        self.rank_Label_Fourth_Name.place(x=100 + 270, y=190 + 20 + 20)
-        self.rank_Label_Fourth_Level.place(x=100 + 270, y=190 + 20 + 40)
-        self.rank_Label_Fourth_LeaguePoints.place(x=100 + 270, y=190 + 20 + 60)
-        self.rank_Label_Fourth_WinRate.place(x=300, y=190 + 20 + 80 + 20)
-
-        self.rank_Label_Fifth_profileIcon.place(x=450, y=190 + 40)
-        self.rank_Label_Fifth_Name.place(x=100 + 420, y=190 + 20 + 20)
-        self.rank_Label_Fifth_Level.place(x=100 + 420, y=190 + 20 + 40)
-        self.rank_Label_Fifth_LeaguePoints.place(x=100 + 420, y=190 + 20 + 60)
-        self.rank_Label_Fifth_WinRate.place(x=450, y=190 + 20 + 80 + 20)
         #########################################################################
 
     def Reset_Canvas(self):
@@ -263,6 +231,18 @@ class MainWindow:
         self.Disable_mainlabels()
         self.main_canvas.after(0, self.Animate_toSearch)
         print("\x1b[1;34mSearch Scene blend Start\x1b[0;m")
+
+    def Event_search_searchIN(self, event):
+        self.search_button_search.configure(image = self.buttondrawer.img_button_search_over_red)
+    def Event_search_searchOUT(self, event):
+        self.search_button_search.configure(image=self.buttondrawer.img_button_search)
+    def Event_search_searchCLICK(self, event):
+        #self.SearchSummonerName(self.search_entry.get())
+        self.gif_animationflag = False
+    def Event_search_resetIN(self, event):
+        self.search_button_reset.configure(image = self.buttondrawer.img_button_reset_over_red)
+    def Event_search_resetOUT(self, event):
+        self.search_button_reset.configure(image = self.buttondrawer.img_button_reset)
 
     def Event_rotation_IN(self, event):
         self.label_rotation.configure(image = self.buttondrawer.img_label_rotation_over)
@@ -295,9 +275,17 @@ class MainWindow:
     def Event_back_OUT(self, event):
         self.label_back.configure(image=self.buttondrawer.img_label_back)
     def Event_back_CLICK(self, event):
+        print("{0}, {1}".format(self.isAnimationing, self.challenger_isAnimationing))
+        if self.isAnimationing:
+            return
+        elif self.challenger_isAnimationing:
+            return
+        self.main_canvas.delete('search')
+        self.main_canvas.delete('challenger')
         self.Disable_searchscene()
         self.Disable_rotationscene()
         self.Disable_challengerscene()
+
         self.frame = 0.0
         self.gif_animationflag = False
         self.main_animationflag = True
@@ -317,6 +305,8 @@ class MainWindow:
         if self.search_animationflag:
             return
 
+        self.main_canvas.delete('search')
+        self.main_canvas.delete('challenger')
         self.Disable_searchscene()
         self.Disable_rotationscene()
         self.Disable_challengerscene()
@@ -332,11 +322,13 @@ class MainWindow:
 
     ## 애니메이션 함수 정의문 ####
 
-    def Animate_gif(self, counter):
+    def Animate_gif(self, in_counter):
         if not self.gif_animationflag:
             return
-        self.main_canvas.itemconfig(self.background_gif, image=self.buttondrawer.img_sequence[counter])
-        self.main_canvas.after(35, lambda: self.Animate_gif((counter + 1) % len(self.buttondrawer.img_sequence)))
+
+        self.search_button_search.update()
+        self.main_canvas.itemconfig(self.background_gif, image=self.buttondrawer.img_sequence[in_counter])
+        self.main_canvas.after(35, lambda: self.Animate_gif((in_counter + 1) % len(self.buttondrawer.img_sequence)))
 
     def Animate_toSearch(self):
         animSpeed = 2
@@ -425,8 +417,12 @@ class MainWindow:
                                                                 image=self.buttondrawer.img_sequence[0])
             print("\x1b[1;34mChallenger Scene blend Ended\x1b[0;m")
             self.Enable_challengerscene()
-            self.gif_animationflag = True
-            self.Animate_gif(0)
+            self.gif_animationflag = False
+            self.challenger_isAnimationing = True
+            self.main_canvas.delete('challenger')
+            self.Draw_ChallengerGraph()
+            #self.gif_animationflag = True
+            #self.Animate_gif(self.counter)
 
 
     def Animate_mainscene(self):
@@ -501,9 +497,35 @@ class MainWindow:
     # 검색 씬
     def Enable_searchscene(self):
         self.label_back.place(x=50, y=50)
+
+        # 검색 기능들
+        self.search_entry.place(x=465, y=100, width = 300)
+        self.search_button_search.place(x=780, y=105)
+        self.search_button_reset.place(x=820, y=105)
+        self.search_label_profileIcon.place(x=350, y=250)
+        self.search_label_Emblem.place(x=350, y=420)
+        self.search_label_Name.place(x=350+100+10, y=250)
+        self.search_label_Level.place(x=350+100+10, y=270)
+        self.search_label_WinRate.place(x=350+100+10, y=290)
+        self.search_label_Queuetype.place(x=350+140+10, y=420)
+        self.search_label_LeagueName.place(x=350+140+10, y=440)
+        self.search_label_LeaguePoints.place(x=350+140+10, y=460)
+
     def Disable_searchscene(self):
         self.label_back.place_forget()
 
+        # 검색 기능들
+        self.search_entry.place_forget()
+        self.search_button_search.place_forget()
+        self.search_button_reset.place_forget()
+        self.search_label_profileIcon.place_forget()
+        self.search_label_Emblem.place_forget()
+        self.search_label_Name.place_forget()
+        self.search_label_Level.place_forget()
+        self.search_label_WinRate.place_forget()
+        self.search_label_Queuetype.place_forget()
+        self.search_label_LeagueName.place_forget()
+        self.search_label_LeaguePoints.place_forget()
     # 로테이션 씬
     def Enable_rotationscene(self):
         self.label_back.place(x=50, y=50)
@@ -524,13 +546,73 @@ class MainWindow:
     # 챌린져 씬
     def Enable_challengerscene(self):
         self.label_back.place(x=50, y=50)
+
+        self.rank_Label_First_profileIcon.place(x=510, y=100)
+        self.rank_Label_First_Name.place(x=510 + 220, y=100)
+        self.rank_Label_First_Level.place(x=510 + 220, y=100+20)
+        self.rank_Label_First_LeaguePoints.place(x=510 + 220, y=100+40)
+        self.rank_Label_First_WinRate.place(x=510 + 220, y=100+60)
+
+        self.rank_Label_Second_profileIcon.place(x=162, y=375)
+        self.rank_Label_Second_Name.place(x=162+110, y=375)
+        self.rank_Label_Second_Level.place(x=162+110, y=375+20)
+        self.rank_Label_Second_LeaguePoints.place(x=162+110, y=375+40)
+        self.rank_Label_Second_WinRate.place(x=162+110, y=375+60)
+
+        self.rank_Label_Third_profileIcon.place(x=429, y=375)
+        self.rank_Label_Third_Name.place(x=429+110, y=375)
+        self.rank_Label_Third_Level.place(x=429+110, y=375+20)
+        self.rank_Label_Third_LeaguePoints.place(x=429+110,y=375+40)
+        self.rank_Label_Third_WinRate.place(x=429+110, y=375+60)
+
+        self.rank_Label_Fourth_profileIcon.place(x=696, y=375)
+        self.rank_Label_Fourth_Name.place(x=696+110, y=375)
+        self.rank_Label_Fourth_Level.place(x=696+110, y=375+20)
+        self.rank_Label_Fourth_LeaguePoints.place(x=696+110, y=375+40)
+        self.rank_Label_Fourth_WinRate.place(x=696+110,y=375+60)
+
+        self.rank_Label_Fifth_profileIcon.place(x=963, y=375)
+        self.rank_Label_Fifth_Name.place(x=963+110, y=375)
+        self.rank_Label_Fifth_Level.place(x=963+110, y=375+20)
+        self.rank_Label_Fifth_LeaguePoints.place(x=963+110, y=375+40)
+        self.rank_Label_Fifth_WinRate.place(x=963+110, y=375+60)
     def Disable_challengerscene(self):
         self.label_back.place_forget()
 
+        self.rank_Label_First_profileIcon.place_forget()
+        self.rank_Label_First_Name.place_forget()
+        self.rank_Label_First_Level.place_forget()
+        self.rank_Label_First_LeaguePoints.place_forget()
+        self.rank_Label_First_WinRate.place_forget()
+
+        self.rank_Label_Second_profileIcon.place_forget()
+        self.rank_Label_Second_Name.place_forget()
+        self.rank_Label_Second_Level.place_forget()
+        self.rank_Label_Second_LeaguePoints.place_forget()
+        self.rank_Label_Second_WinRate.place_forget()
+
+        self.rank_Label_Third_profileIcon.place_forget()
+        self.rank_Label_Third_Name.place_forget()
+        self.rank_Label_Third_Level.place_forget()
+        self.rank_Label_Third_LeaguePoints.place_forget()
+        self.rank_Label_Third_WinRate.place_forget()
+
+        self.rank_Label_Fourth_profileIcon.place_forget()
+        self.rank_Label_Fourth_Name.place_forget()
+        self.rank_Label_Fourth_Level.place_forget()
+        self.rank_Label_Fourth_LeaguePoints.place_forget()
+        self.rank_Label_Fourth_WinRate.place_forget()
+
+        self.rank_Label_Fifth_profileIcon.place_forget()
+        self.rank_Label_Fifth_Name.place_forget()
+        self.rank_Label_Fifth_Level.place_forget()
+        self.rank_Label_Fifth_LeaguePoints.place_forget()
+        self.rank_Label_Fifth_WinRate.place_forget()
 
     def __init__(self, in_mainWindow, in_buttondrawer):
         global parser
         self.frame = 0.0
+        self.counter = 0
         self.buttondrawer = in_buttondrawer
 
         # main frame
@@ -574,61 +656,93 @@ class MainWindow:
         self.label_back.bind("<Leave>", self.Event_back_OUT)
         self.label_back.bind("<Button-1>", self.Event_back_CLICK)
 
-        # rank 관련 변수 선언
-        self.data_rank_rankerlist_raw = list()
-        self.data_rank_rankerlist = list()
-        self.data_challenger_profileiconlist = list()
+        # rank 관련 변수 선언 ################
+        self.challenger_rankerlist_raw = list()
+        self.challenger_rankerlist = list()
+        self.challenger_profileiconlist = list()
         self.challenger_animationflag = False
-        self.challenger_frame = Frame(self.main_frame)
+        self.challenger_isAnimationing = False
 
-        # rotation 관련 변수 선언
+        self.Get_rankinginfo()
+        self.Sort_rankinginfo()
+        ####################################
+
+        # rotation 관련 변수 선언 ############
         self.rotation_imagelist = list()
         self.rotation_labellist = [Label(self.main_canvas, width = 150, height = 200, bd = 0) for idx in range(0, 14)]
         self.rotation_animationflag = False
 
         self.Get_rotation()
         self.Set_rotation_labels()
+        self.Set_challenger_profileicon()
+        self.Set_challengers()
+        ####################################
 
-        # search 관련 변수 선언
+        # search 관련 변수 선언 ##############
         self.search_isEmpty = True
         self.search_animationflag = False
-        self.search_
+        TempFont = Font(self.main_canvas, size=15, weight='bold', family='나눔고딕')
+        self.search_entry = Entry(self.main_canvas, font=TempFont, relief='solid', borderwidth=5)
+        #self.search_button_search = Button(self.main_canvas, image=self.buttondrawer.img_button_search)
+        self.search_button_search = Button(self.main_canvas, image = self.buttondrawer.img_button_search, command = lambda: self.SearchSummonerName(str(self.search_entry.get())))
+        self.search_button_reset = Button(self.main_canvas, image = self.buttondrawer.img_button_reset)
+        self.search_isClicked = False
+        self.isAnimationing = False
+        # 함수 바인딩
+        self.search_button_search.bind("<Enter>", self.Event_search_searchIN)
+        self.search_button_search.bind("<Leave>", self.Event_search_searchOUT)
+        self.search_button_search.bind("<Button-1>", self.Event_search_searchCLICK)
+        self.search_button_reset.bind("<Enter>", self.Event_search_resetIN)
+        self.search_button_reset.bind("<Leave>", self.Event_search_resetOUT)
+
+        self.search_label_profileIcon = Label(self.main_canvas, relief="sunken", bg = "black" , bd = 5)
+        self.search_label_Emblem = Label(self.main_canvas, relief="sunken", bg="black", bd = 5)
+        self.search_label_Name = Label(self.main_canvas, text="소환사 레벨:", bg = "black", fg = "white")
+        self.search_label_Level = Label(self.main_canvas, text="소환사 레벨:", bg = "black", fg = "white")
+        self.search_label_WinRate = Label(self.main_canvas, text="전 승 패", bg = "black", fg = "white")
+        self.search_label_Queuetype = Label(self.main_canvas, text="큐 정보", bg = "black", fg = "white")
+        self.search_label_LeagueName = Label(self.main_canvas, text="리그 정보", bg = "black", fg = "white")
+        self.search_label_LeaguePoints = Label(self.main_canvas, text="LP", bg = "black", fg = "white")
+        ####################################
 
     def SearchSummonerName(self, summonerName):
         global version_profileicon
 
         self.isEmpty = False
-        self.info_Canvas.delete('info')
-        self.info_Canvas.update()
+        self.main_canvas.delete('search')
+        self.main_canvas.update()
 
         jsonData = parser.Get_API_Search_byName(summonerName)
         if jsonData == None:
             self.isEmpty = True
+            self.gif_animationflag = True
+            self.Animate_gif(self.counter)
             return
         #print(jsonData)
         #print("검색 소환사명:" + jsonData['name'])
 
         self.data_summoner_searched = SearchedSummoner(jsonData['name'], jsonData['id'], jsonData['accountId'], jsonData['profileIconId'], jsonData['summonerLevel'] )
+
         # 이름 출력
-        self.info_Label_Name.config(text=self.data_summoner_searched.name)
+        self.search_label_Name.config(text=self.data_summoner_searched.name)
         # 레벨 출력
-        self.info_Label_Level.config(text="소환사 레벨: " + str(self.data_summoner_searched.level))
+        self.search_label_Level.config(text="소환사 레벨: " + str(self.data_summoner_searched.level))
         # 전적 텍스트 출력
         if self.data_summoner_searched.isActive:
-            self.info_Label_WinRate.config(text = str(self.data_summoner_searched.total) + "전 " + str(self.data_summoner_searched.win) + "승 " + str(self.data_summoner_searched.loss) + "패 승률:" + "{0:.1f}%".format(self.data_summoner_searched.win * 100 / self.data_summoner_searched.total))
-            self.info_Label_Queuetype.config(text = self.data_summoner_searched.queue)
-            self.info_Label_LeagueName.config(text = self.data_summoner_searched.tier + " " + self.data_summoner_searched.rank)
-            self.info_Label_LeaguePoints.config(text = str(self.data_summoner_searched.lp) + " LP")
+            self.search_label_WinRate.config(text = str(self.data_summoner_searched.total) + "전 " + str(self.data_summoner_searched.win) + "승 " + str(self.data_summoner_searched.loss) + "패 승률:" + "{0:.1f}%".format(self.data_summoner_searched.win * 100 / self.data_summoner_searched.total))
+            self.search_label_Queuetype.config(text = self.data_summoner_searched.queue)
+            self.search_label_LeagueName.config(text = self.data_summoner_searched.tier + " " + self.data_summoner_searched.rank)
+            self.search_label_LeaguePoints.config(text = str(self.data_summoner_searched.lp) + " LP")
         else:
-            self.info_Label_WinRate.config(text="승률 정보 없음")
-            self.info_Label_Queuetype.config(text="큐 정보 없음")
-            self.info_Label_LeagueName.config(text="배치 리그 정보 없음")
-            self.info_Label_LeaguePoints.config(text="리그 포인트 정보 없음")
+            self.search_label_WinRate.config(text="승률 정보 없음")
+            self.search_label_Queuetype.config(text="큐 정보 없음")
+            self.search_label_LeagueName.config(text="배치 리그 정보 없음")
+            self.search_label_LeaguePoints.config(text="리그 포인트 정보 없음")
         # ..
 
         # 프로필 아이콘 출력
-        self.info_img_profileIcon = parser.Get_ProfileIcon(version_profileicon, self.data_summoner_searched.id_Profile, (100,100))
-        self.info_Label_profileIcon.config(image = self.info_img_profileIcon, relief = "raised", bd = 3)
+        self.search_img_profileicon = parser.Get_ProfileIcon(version_profileicon, self.data_summoner_searched.id_Profile, (100, 100))
+        self.search_label_profileIcon.config(image = self.search_img_profileicon, relief = "raised", bd = 5)
 
         # 리그 아이콘 출력
         if self.data_summoner_searched.isActive:
@@ -636,39 +750,109 @@ class MainWindow:
         else:
             Emblemfilepath = "./lol_images/Emblem_" + "UNRANKED" + ".png"
 
-        self.img_Emblem = parser.Get_ImageFromFile(Emblemfilepath, (140, 159))
-        self.info_Label_Emblem.config(image = self.img_Emblem, relief = "flat")
-        self.info_Canvas.create_image(200, 200, image=self.background)
+        self.search_img_Emblem = parser.Get_ImageFromFile(Emblemfilepath, (140, 159))
+        self.search_label_Emblem.config(image = self.search_img_Emblem, relief = "raised", bd = 5)
 
         if self.data_summoner_searched.isActive:
             self.isAnimationing = True
             self.DrawGraph()
+
+        self.gif_animationflag = True
+        self.Animate_gif(self.counter)
 
     def DrawGraph(self):
         self.WinRate = self.data_summoner_searched.win * 360 / self.data_summoner_searched.total
         self.LossRate = 360 - self.WinRate
         self.currWinRate = 0.0
         self.currLossRate = 0.0
+        self.textWinRate = 0.0
+        TempFont = Font(self.main_canvas, size=50, weight='bold', family='나눔고딕')
         while self.isAnimationing:
 
             if ((self.currWinRate < self.WinRate) & (self.currLossRate < self.LossRate)):
                 time.sleep(0.0025)
                 self.currWinRate += float(self.WinRate) * 0.0025
                 self.currLossRate += float(self.LossRate) * 0.0025
-                self.info_Canvas.delete('info')
+                self.textWinRate = self.currWinRate
+                self.main_canvas.delete('search')
             else:
                 self.currWinRate = self.WinRate
                 self.currLossRate = self.LossRate
                 self.isAnimationing = False
-                self.currWinRate = 0.0
-                self.currLossRate = 0.0
+                #self.currWinRate = 0.0
+                #self.currLossRate = 0.0
 
-            self.info_Canvas.create_arc(5, 5, 195, 195, start=0, extent=self.currWinRate, fill="RoyalBlue2",
-                                        tags='info')
-            self.info_Canvas.create_arc(5, 5, 195, 195, start=self.WinRate, extent=self.currLossRate, fill="red3",
-                                        tags='info')
-            self.info_Canvas.create_oval(65, 65, 135, 135, fill="white", width=0, tags='info')
-            self.info_Canvas.update()
+            self.main_canvas.create_arc(700, 400, 1000, 700, start=0, extent=self.currWinRate, fill="RoyalBlue2",
+                                        tags='search')
+            self.main_canvas.create_arc(700, 400, 1000, 700, start=self.WinRate, extent=self.currLossRate, fill="red3",
+                                        tags='search')
+
+            self.main_canvas.create_text(880, 550, font=TempFont,text = str(int((self.textWinRate * 100) / 360)) + "%", fill='white', tags ='search')
+            self.main_canvas.update()
+
+    def Draw_ChallengerGraph(self):
+        self.challenger_isTopAnimationing = True
+        barWidth = 260
+        barheight = 70
+        self.c_WinRate = [self.challenger_rankerlist[idx].win * barWidth / self.challenger_rankerlist[idx].total for idx in range(1,5)]
+        self.c_LossRate = [barWidth - self.c_WinRate[idx] for idx in range(0, 4)]
+        self.c_currWinRate = [0.0 for x in range(0, 4)]
+        self.c_currLossRate = [0.0 for x in range(0, 4)]
+        self.c_textWinRate = [0.0 for x in range(0, 4)]
+        self.c_isWinAnimationing =  [False for x in range(0,4)]
+
+        print("{0},{1},{2},{3}".format(self.c_WinRate, self.c_LossRate, self.c_currWinRate, self.c_currLossRate))
+
+        self.first_WinRate = self.challenger_rankerlist[0].win * 360 / self.challenger_rankerlist[0].total
+        self.first_LossRate = 360 - self.first_WinRate
+        self.first_currWinRate = 0.0
+        self.first_currLossRate = 0.0
+        self.first_textWinRate = 0.0
+
+        while self.challenger_isAnimationing:
+            time.sleep(0.025)
+            if ((self.first_currWinRate < self.first_WinRate) & (self.first_currLossRate < self.first_LossRate)):
+
+                self.first_currWinRate += float(self.first_WinRate) * 0.025
+                self.first_currLossRate += float(self.first_LossRate) * 0.025
+                self.first_textWinRate = self.first_currWinRate
+                self.main_canvas.delete('challenger')
+            else:
+                self.challenger_isTopAnimationing = False
+                self.first_currWinRate = self.first_WinRate
+                self.first_currLossRate = self.first_LossRate
+            if not self.challenger_isTopAnimationing:
+                #self.main_canvas.delete('challenger')
+                if not((self.c_WinRate[0] < self.c_currWinRate[0]) and(self.c_WinRate[1] < self.c_currWinRate[1]) and(self.c_WinRate[2] < self.c_currWinRate[2]) and(self.c_WinRate[3] < self.c_currWinRate[3])):
+                    for idx in range(0,4):
+                        if (self.c_WinRate[idx] > self.c_currWinRate[idx]):
+                            self.c_currWinRate[idx] += self.c_WinRate[idx] * 0.025
+                        elif (self.c_WinRate[idx] < self.c_currWinRate[idx]):
+                            self.c_isWinAnimationing[idx] = True
+
+                if not((self.c_LossRate[0] < self.c_currLossRate[0]) and (self.c_LossRate[1] < self.c_currLossRate[1]) and (self.c_LossRate[2] < self.c_currLossRate[2]) and (self.c_LossRate[3] < self.c_currLossRate[3])):
+                    for idx in range(0, 4):
+                        if (self.c_LossRate[idx] > self.c_currLossRate[idx]):
+                            self.c_currLossRate[idx] += self.c_LossRate[idx] * 0.025
+
+                if (self.c_WinRate[0] <= self.c_currWinRate[0]) and (self.c_WinRate[1] <= self.c_currWinRate[1]) and (self.c_WinRate[2] <= self.c_currWinRate[2]) and (self.c_WinRate[3] <= self.c_currWinRate[3]) and (self.c_LossRate[0] <= self.c_currLossRate[0]) and(self.c_LossRate[1] <= self.c_currLossRate[1]) and(self.c_LossRate[2] <= self.c_currLossRate[2]) and (self.c_LossRate[3] <= self.c_currLossRate[3]):
+                    self.challenger_isAnimationing = False
+
+            self.main_canvas.create_arc(740, 215, 890, 365, start=0, extent=self.first_currWinRate, fill="RoyalBlue2",
+                                        tags='challenger')
+            self.main_canvas.create_arc(740, 215, 890, 365, start=self.first_WinRate, extent=self.first_currLossRate, fill="IndianRed1",
+                                        tags='challenger')
+            for idx in range(0, 4):
+                self.main_canvas.create_rectangle(85 + 267 * idx - 2, 510 - 5, 85 + 267 * idx + barWidth + 2, 510 + barheight +5, fill="black", tags="challenger")
+                #self.main_canvas.create_rectangle(85 + 267 * idx, 510, 85 + 267 * idx + barWidth, 510 + barheight, fill = "red", tags="challenger")
+                self.main_canvas.create_rectangle(85 + 267 * idx, 510, 85 + 267 * idx + self.c_currWinRate[idx], 510 + barheight, fill="DodgerBlue2", tags="challenger")
+                self.main_canvas.create_rectangle(85 + 267 * idx + self.c_currWinRate[idx], 511,
+                                                  85 + 267 * idx + self.c_currWinRate[idx] + self.c_currLossRate[idx], 580,
+                                                  fill="firebrick1", tags="challenger")
+            self.main_canvas.update()
+
+        self.gif_animationflag = True
+        self.Animate_gif(self.counter)
 
     def Get_rotation(self):
         # url과 api-key를 이용해서 챔피언 id 리스트를 가져온다.

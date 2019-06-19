@@ -311,10 +311,14 @@ class ParsingData3():
         #시간차를 구한다!
         import datetime
         expire = datetime.datetime.strptime(self.expireData,'%Y-%m-%d %H:%M:%S')
+
         reg = datetime.datetime.now()
+        import spam
+
 
         difference = expire - reg
-        difference = difference.total_seconds() / 3600
+
+        difference = spam.division(difference.total_seconds(), 3600)
 
         difference = "%.1f" % difference
 
@@ -340,7 +344,7 @@ class DNFMarketProcess(Interface):
 
     def __init__(self,mainWindow):
         self.mainWindowClass = mainWindow
-        self.tabFrame1 = Frame(mainWindow.window)
+        self.tabFrame1 = Canvas(mainWindow.window)
         self.notebook = mainWindow.notebook
         self.notebook.add(self.tabFrame1, image = buttondrawer.img_tab_market)
 
@@ -352,6 +356,24 @@ class DNFMarketProcess(Interface):
 
         self.searchEntry = Entry(self.tabFrame1,font = tempFont, width = 50,relief = 'ridge',borderwidth = 5)
         self.searchEntry.grid(row = 2, column = 1)
+
+        ### 색깔 애니메이션
+        self.colorCount = 0
+        self.colorCountLimit = 30
+        self.colorIncreaseDirection = True
+
+        ###
+
+        ### 프레임 애니메이션
+        self.frameImage = []
+        self.currentBackgroundFrame = 0
+        self.LoadItemBaseImageFile()
+
+        self.tabFrame1.create_image(615,375,image = self.frameImage[self.currentBackgroundFrame],tag = "background")
+        ###
+
+
+
 
         # 검색
         self.searchButton = Button(self.tabFrame1, image = buttondrawer.img_button_search, bd = 0)
@@ -534,6 +556,53 @@ class DNFMarketProcess(Interface):
 
 ###
 
+### 이미지는 왜 업데이트를 해줘야해 귀찮게
+        self.tabFrame1.update()
+
+        self.ItemBaseAnimation()
+
+        self.itemImages = []
+
+###
+
+
+    def LoadItemBaseImageFile(self):
+        for i in range(1, 30):
+            fname = "great/great (" + str(i) + ").png"
+            self.frameImage += [PhotoImage(file=fname)]
+
+    def ItemBaseAnimation(self):
+
+
+        self.currentBackgroundFrame = (self.currentBackgroundFrame + 1) % 29
+        self.tabFrame1.delete("background")
+        ### 프레임 애니메이션
+        self.tabFrame1.create_image(615,375,image = self.frameImage[self.currentBackgroundFrame],tag = "background")
+
+
+        if self.colorIncreaseDirection:
+            self.colorCount +=1
+            if self.colorCount >= self.colorCountLimit:
+                self.colorIncreaseDirection = False
+        else:
+            self.colorCount -=1
+            if self.colorCount <= 0:
+                self.colorIncreaseDirection = True
+
+
+        color = 0xFFF435 + self.colorCount * 11
+
+        colorString = str(hex(color))
+
+        colorString = colorString.replace("0x","#")
+        colorString = colorString.upper()
+
+        self.canvas.configure(bg=colorString)
+        self.tabFrame1.update()
+        self.mainWindowClass.window.after(50,self.ItemBaseAnimation)
+        ###
+
+        pass
 
 
     def ResetCanvas(self):
@@ -628,7 +697,7 @@ class DNFMarketProcess(Interface):
         self.ResetCanvas()
 
 
-        images = []
+        #images = []
 
 
 
@@ -639,19 +708,23 @@ class DNFMarketProcess(Interface):
         #s.pack()
         count = 0
 
+        self.itemImages.clear()
+
         for i in range(len(self.parsingDataList)):
             if (self.textCurrentY > self.textMaxHeight):
                 print("캔버스 높이 초과")
                 self.parsingDataList.pop()
-                self.mainWindowClass.window.mainloop()
+                #self.mainWindowClass.window.mainloop()
+                self.tabFrame1.update()
+                self.canvas.update()
                 return
 
             outfile = "images/" + "image_" + self.parsingDataList[i].itemName + ".png"
             print(outfile)
             outfile = outfile.replace(":", "-")
-            images.append(PhotoImage(file=outfile))
+            self.itemImages.append(PhotoImage(file=outfile))
 
-            self.canvas.create_image(self.imageOffsetX , self.imageOffsetY+ i*self.imageIntervalY , image=images[-1])
+            self.canvas.create_image(self.imageOffsetX , self.imageOffsetY+ i*self.imageIntervalY , image=self.itemImages[-1])
             self.canvas.create_rectangle(self.imageOffsetX - 20,self.imageOffsetY - 20 + i*self.imageIntervalY,self.imageOffsetX + 20, self.imageOffsetY + 20 + i*self.imageIntervalY , outline = "#FFB400" , width = 3)
 
 
@@ -680,8 +753,9 @@ class DNFMarketProcess(Interface):
         #검색 자동완성기능을 만들수있음
         #그건 패스
         self.DrawMarketGraph()
-        self.mainWindowClass.window.mainloop()
-
+        #self.mainWindowClass.window.mainloop()
+        self.tabFrame1.update()
+        self.canvas.update()
 
         pass
 
@@ -848,7 +922,7 @@ class DNFAPIProcess(Interface):
         self.notebook = mainWindow.notebook
 
 
-        self.tabFrame1 = Frame(mainWindow.window)
+        self.tabFrame1 = Canvas(mainWindow.window)
         #self.tabFrame2 = Frame(window)
         #self.tabFrame3 = Frame(window)
         #self.tabFrame4 = Frame(window)
@@ -856,8 +930,18 @@ class DNFAPIProcess(Interface):
         #self.notebook.add(self.tabFrame2,text = "던파 경매장")
         #self.notebook.add(self.tabFrame3,text = "네이버 도서검색")
         #self.notebook.add(self.tabFrame4,text = "롤 전적검색")
+        #self.tabFrame1.create_oval(0,0,55,55)
 
-        self.image = PhotoImage(file = "search2.png").subsample(6,6)
+        ### 프레임 애니메이션
+        self.frameImage = []
+        self.currentBackgroundFrame = 0
+        self.LoadItemBaseImageFile()
+
+        self.tabFrame1.create_image(615,375,image = self.frameImage[self.currentBackgroundFrame],tag = "background")
+        ###
+
+
+        self.image = PhotoImage(file = "search4.png").subsample(6,6)
         self.imageLabel = Label(self.tabFrame1,image = self.image)
         self.imageLabel.grid(row = 2,column = 0)
 
@@ -913,8 +997,10 @@ class DNFAPIProcess(Interface):
         self.canvasScrollbarWidth = 500
         self.canvasScrollbarHeight = 1000
 
-        self.innerFrame = Frame(self.tabFrame1,width = self.canvasWidth ,height = self.canvasHeight)
+
+        self.innerFrame = Canvas(self.tabFrame1,width = self.canvasWidth ,height = self.canvasHeight)
         self.innerFrame.place(x = 25,y = 100)
+
 
         #self.textBoard = Text(self.innerFrame)
         #self.textBoard.pack()
@@ -1010,7 +1096,33 @@ class DNFAPIProcess(Interface):
         # 이벤트 함수 바인딩
         self.gmailSendButton.bind("<Enter>", self.Change_Send_IN)
         self.gmailSendButton.bind("<Leave>", self.Change_Send_OUT)
+###
 
+## 배경 이미지 애니메이션의 시작
+        self.tabFrame1.update()
+
+        self.ItemBaseAnimation()
+###
+        
+## 아이템 이미지
+        self.itemImages = []
+        pass
+
+    def LoadItemBaseImageFile(self):
+        for i in range(1, 30):
+            fname = "great/great (" + str(i) + ").png"
+            self.frameImage += [PhotoImage(file=fname)]
+
+    def ItemBaseAnimation(self):
+
+
+        self.currentBackgroundFrame = (self.currentBackgroundFrame + 1) % 29
+        self.tabFrame1.delete("background")
+        ### 프레임 애니메이션
+        self.tabFrame1.create_image(615,375,image = self.frameImage[self.currentBackgroundFrame],tag = "background")
+        self.tabFrame1.update()
+        self.mainWindowClass.window.after(50,self.ItemBaseAnimation)
+        ###
 
         pass
 
@@ -1125,7 +1237,8 @@ class DNFAPIProcess(Interface):
         self.ResetCanvas()
 
 
-        images = []
+        #images = []
+
 
 
 
@@ -1136,19 +1249,23 @@ class DNFAPIProcess(Interface):
         #s.pack()
         count = 0
 
+        self.itemImages.clear()
+
         for i in range(len(self.parsingDataList)):
             if (self.textCurrentY > self.textMaxHeight):
                 print("캔버스 높이 초과")
                 self.parsingDataList.pop()
-                self.mainWindowClass.window.mainloop()
+                #self.mainWindowClass.window.mainloop()
+                self.tabFrame1.update()
+                self.canvas.update()
                 return
 
             outfile = "images/" + "image_" + self.parsingDataList[i].itemName + ".png"
             print(outfile)
             outfile = outfile.replace(":", "-")
-            images.append(PhotoImage(file=outfile))
+            self.itemImages.append(PhotoImage(file=outfile))
 
-            self.canvas.create_image(self.textCurrentX - 300, self.textCurrentY, image=images[-1])
+            self.canvas.create_image(self.textCurrentX - 300, self.textCurrentY, image=self.itemImages[-1])
 
             boldFont = Font(family="Helvetica", size=12, weight="bold")
 
@@ -1165,12 +1282,13 @@ class DNFAPIProcess(Interface):
             self.detailButtonList[-1].pack()
             count +=1
 
+
         #trie 자료구조를 만들어야
         #검색 자동완성기능을 만들수있음
         #그건 패스
-        self.mainWindowClass.window.mainloop()
-
-
+        #self.mainWindowClass.window.mainloop()
+        self.tabFrame1.update()
+        self.canvas.update()
         pass
 
     def get(self,str):

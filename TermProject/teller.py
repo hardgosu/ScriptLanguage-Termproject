@@ -62,8 +62,8 @@ def handle(msg):
     #elif text.startswith('확인'):
     #    print('try to 확인')
     #    check( chat_id )
-    #else:
-    #    noti.sendMessage(chat_id, '모르는 명령어입니다.')
+    else:
+        noti.sendMessage(chat_id, '유효하지 않은 명령어\n\"소환사 소환사이름\" 형태로 입력하시오.')
 
 
 today = date.today()
