@@ -280,36 +280,174 @@ class MainWindow:
     def Event_search_OUT(self, event):
         self.label_search.configure(image = self.buttondrawer.img_label_search)
     def Event_search_CLICK(self, event):
-        pass
+        if self.main_animationflag:
+            return
+        self.search_animationflag = True
+        self.frame = 0.0
+        self.Disable_mainlabels()
+        self.main_canvas.after(0, self.Animate_toSearch)
+        print("\x1b[1;34mSearch Scene blend Start\x1b[0;m")
+
     def Event_rotation_IN(self, event):
         self.label_rotation.configure(image = self.buttondrawer.img_label_rotation_over)
     def Event_rotation_OUT(self, event):
         self.label_rotation.configure(image = self.buttondrawer.img_label_rotation)
     def Event_rotation_CLICK(self, event):
-        pass
+        if self.main_animationflag:
+            return
+        self.rotation_animationflag = True
+        self.frame = 0.0
+        self.Disable_mainlabels()
+        self.main_canvas.after(0, self.Animate_toRotation)
+        print("\x1b[1;34mRotation Scene blend Start\x1b[0;m")
+
     def Event_challenger_IN(self, event):
         self.label_challenger.configure(image = self.buttondrawer.img_label_challenger_over)
     def Event_challenger_OUT(self, event):
         self.label_challenger.configure(image = self.buttondrawer.img_label_challenger)
     def Event_challenger_CLICK(self, event):
-        pass
+        if self.main_animationflag:
+            return
+        self.challenger_animationflag = True
+        self.frame = 0.0
+        self.Disable_mainlabels()
+        self.main_canvas.after(0, self.Animate_toChallenger)
+        print("\x1b[1;34mChallenger Scene blend Start\x1b[0;m")
+
+    def Event_back_IN(self, event):
+        self.label_back.configure(image = self.buttondrawer.img_label_back_over)
+    def Event_back_OUT(self, event):
+        self.label_back.configure(image=self.buttondrawer.img_label_back)
+    def Event_back_CLICK(self, event):
+        self.Disable_searchscene()
+        self.frame = 0.0
+        self.gif_animationflag = False
+        self.main_animationflag = True
+        self.main_animationtype = _WHITE_OUT
+        self.main_canvas.after(0, self.Animate_mainscene)
+        print("\x1b[1;34mTo main Scene blend Start\x1b[0;m")
 
     def Event_tab_Click(self, event):
         clicked_tab = self.notebook.tk.call(self.notebook._w, "identify", "tab", event.x, event.y)
         if clicked_tab != 2: # 2번째 인덱스로 더해졌기 때문에
+            self.gif_animationflag = False
+            self.main_animationflag = False
+            self.search_animationflag = False
             return
         if self.main_animationflag:
             return
+        if self.search_animationflag:
+            return
+
+        self.Disable_searchscene()
 
         self.frame = 0.0
         self.main_animationflag = True
         self.main_animationtype = _WHITE_OUT
+        self.Enable_mainlabels()
         self.main_canvas.after(0, self.Animate_mainscene)
         print("\x1b[1;34mLOL Scene blend Start\x1b[0;m")
 
     ########################
 
     ## 애니메이션 함수 정의문 ####
+
+    def Animate_gif(self, counter):
+        if not self.gif_animationflag:
+            return
+        self.main_canvas.itemconfig(self.background_gif, image=self.buttondrawer.img_sequence[counter])
+        self.main_canvas.after(35, lambda: self.Animate_gif((counter + 1) % len(self.buttondrawer.img_sequence)))
+
+    def Animate_toSearch(self):
+        animSpeed = 2
+        self.frame += 0.016 * animSpeed
+
+        if math.floor(self.frame) == 0:
+            self.main_background_blended = self.buttondrawer.Get_BlendedImageFromImages(self.buttondrawer.img_background,
+                                                                                        self.buttondrawer.img_whitebackground,
+                                                                                        self.frame - math.floor(self.frame))
+        elif math.floor(self.frame) == 1:
+            self.main_background_blended = self.buttondrawer.Get_BlendedImageFromImages(self.buttondrawer.img_whitebackground,
+                                                                                        self.buttondrawer.img_background_transparent,
+                                                                                        self.frame - math.floor(self.frame))
+        else:
+            self.main_background_blended = self.buttondrawer.img_background_transparent_raw
+            self.search_animationflag = False
+
+        self.main_canvas.delete("background")
+        self.main_canvas.create_image(615, 375, image=self.main_background_blended, tags="background")
+
+        if self.search_animationflag:
+            self.main_canvas.after(16, self.Animate_toSearch)
+        else:
+            self.background_gif = self.main_canvas.create_image(1230 / 2, 750 / 2, image=self.buttondrawer.img_sequence[0])
+            print("\x1b[1;34mSearch Scene blend Ended\x1b[0;m")
+            self.Enable_searchscene()
+            self.gif_animationflag = True
+            self.Animate_gif(0)
+
+    def Animate_toRotation(self):
+        animSpeed = 2
+        self.frame += 0.016 * animSpeed
+
+        if math.floor(self.frame) == 0:
+            self.main_background_blended = self.buttondrawer.Get_BlendedImageFromImages(
+                self.buttondrawer.img_background,
+                self.buttondrawer.img_whitebackground,
+                self.frame - math.floor(self.frame))
+        elif math.floor(self.frame) == 1:
+            self.main_background_blended = self.buttondrawer.Get_BlendedImageFromImages(
+                self.buttondrawer.img_whitebackground,
+                self.buttondrawer.img_background_transparent,
+                self.frame - math.floor(self.frame))
+        else:
+            self.main_background_blended = self.buttondrawer.img_background_transparent_raw
+            self.rotation_animationflag = False
+
+        self.main_canvas.delete("background")
+        self.main_canvas.create_image(615, 375, image=self.main_background_blended, tags="background")
+
+        if self.rotation_animationflag:
+            self.main_canvas.after(16, self.Animate_toRotation)
+        else:
+            self.background_gif = self.main_canvas.create_image(1230 / 2, 750 / 2,
+                                                                image=self.buttondrawer.img_sequence[0])
+            print("\x1b[1;34mRotation Scene blend Ended\x1b[0;m")
+            self.Enable_rotationscene()
+            self.gif_animationflag = True
+            self.Animate_gif(0)
+
+    def Animate_toChallenger(self):
+        animSpeed = 2
+        self.frame += 0.016 * animSpeed
+
+        if math.floor(self.frame) == 0:
+            self.main_background_blended = self.buttondrawer.Get_BlendedImageFromImages(
+                self.buttondrawer.img_background,
+                self.buttondrawer.img_whitebackground,
+                self.frame - math.floor(self.frame))
+        elif math.floor(self.frame) == 1:
+            self.main_background_blended = self.buttondrawer.Get_BlendedImageFromImages(
+                self.buttondrawer.img_whitebackground,
+                self.buttondrawer.img_background_transparent,
+                self.frame - math.floor(self.frame))
+        else:
+            self.main_background_blended = self.buttondrawer.img_background_transparent_raw
+            self.challenger_animationflag = False
+
+        self.main_canvas.delete("background")
+        self.main_canvas.create_image(615, 375, image=self.main_background_blended, tags="background")
+
+        if self.challenger_animationflag:
+            self.main_canvas.after(16, self.Animate_toChallenger)
+        else:
+            self.background_gif = self.main_canvas.create_image(1230 / 2, 750 / 2,
+                                                                image=self.buttondrawer.img_sequence[0])
+            print("\x1b[1;34mChallenger Scene blend Ended\x1b[0;m")
+            self.Enable_challengerscene()
+            self.gif_animationflag = True
+            self.Animate_gif(0)
+
 
     def Animate_mainscene(self):
         animSpeed = 5
@@ -342,7 +480,6 @@ class MainWindow:
             self.main_animationflag = False
 
     def Animate_whiteout(self):
-        #
         if math.floor(self.frame) <= 2:
             self.main_background_blended = self.buttondrawer.Get_BlendedImageFromImages(self.buttondrawer.img_whitebackground,
                                                                                         self.buttondrawer.img_background,
@@ -369,9 +506,6 @@ class MainWindow:
             self.main_background_blended = self.buttondrawer.img_blackbackground_raw
             self.main_animationflag = False
 
-    def Animate_lolscene(self):
-        pass
-
     ###########################
 
     def Enable_mainlabels(self):
@@ -383,6 +517,25 @@ class MainWindow:
         self.label_search.place_forget()
         self.label_rotation.place_forget()
         self.label_challenger.place_forget()
+
+    # 검색 씬
+    def Enable_searchscene(self):
+        self.label_back.place(x=50, y=50)
+    def Disable_searchscene(self):
+        self.label_back.place_forget()
+
+    # 로테이션 씬
+    def Enable_rotationscene(self):
+        self.label_back.place(x=50, y=50)
+    def Disable_rotationscene(self):
+        self.label_back.place_forget()
+
+    # 챌린져 씬
+    def Enable_challengerscene(self):
+        self.label_back.place(x=50, y=50)
+    def Disable_challengerscene(self):
+        self.label_back.place_forget()
+
 
     def __init__(self, in_mainWindow, in_buttondrawer):
         global parser
@@ -396,9 +549,9 @@ class MainWindow:
         self.notebook.bind("<Button-1>", self.Event_tab_Click)
 
         self.main_canvas = Canvas(self.main_frame, width = self.mainWidth, height = self.mainHeight, bd = 0, relief="raised")
-        #in_mainWindow.window.wm_attributes("-transparentcolor", "SystemButtonFace")
         self.main_canvas.place(x=0, y=0)
         self.main_canvas.create_image(615, 375, image = self.buttondrawer.img_blackbackground_raw, tags = "background")
+
         # Main Scene label
         self.label_search = Label(self.main_canvas, width = 350, height = 350, bd = 0, image = self.buttondrawer.img_label_search)
         self.label_rotation = Label(self.main_canvas, width = 350, height = 350, bd = 0, image = self.buttondrawer.img_label_rotation)
@@ -421,6 +574,15 @@ class MainWindow:
         self.main_animationflag = False
         self.main_animationtype = 0
 
+        # sub scene gif animation
+        self.gif_animationflag = False
+
+        # back button
+        self.label_back = Label(self.main_canvas, width = 50, height = 50, bd = 0, image = self.buttondrawer.img_label_back)
+        self.label_back.bind("<Enter>", self.Event_back_IN)
+        self.label_back.bind("<Leave>", self.Event_back_OUT)
+        self.label_back.bind("<Button-1>", self.Event_back_CLICK)
+
         # rank 관련 변수 선언
         self.data_rank_rankerlist_raw = list()
         self.data_rank_rankerlist = list()
@@ -430,12 +592,12 @@ class MainWindow:
 
         # rotation 관련 변수 선언
         self.data_rotation_imagelist = list()
+        self.rotation_animationflag = False
 
         # search 관련 변수 선언
         self.search_isEmpty = True
         self.search_animationflag = False
-
-
+        #self.search_
 
 
     def SearchSummonerName(self, summonerName):

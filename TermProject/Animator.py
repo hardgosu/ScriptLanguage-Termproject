@@ -272,8 +272,10 @@ class ButtonDrawer:
         self.img_whitebackground = self.Get_ImageFromFile("./lol_images/background/whitebackground.png", _LOL_SCENE_SIZE)
 
         # lol 기능 씬을 위한 이미지
-        self.img_background_transparent = self.Get_ImageFromFile_COMPLETE("./lol_images/background/background_transparent.png", _LOL_SCENE_SIZE)
+        self.img_background_transparent = self.Get_ImageFromFile("./lol_images/background/background_transparent.png", _LOL_SCENE_SIZE)
+        self.img_background_transparent_raw = self.Get_ImageFromFile_COMPLETE("./lol_images/background/background_transparent.png", _LOL_SCENE_SIZE)
         self.img_sequence = [ImageTk.PhotoImage(img.resize(_LOL_SCENE_SIZE)) for img in ImageSequence.Iterator(Image.open("./lol_images/background/background_lol.gif"))]
-
+        self.img_label_back = self.Get_ImageFromFile_COMPLETE("./buttonimages/back.png", (50, 50))
+        self.img_label_back_over = self.Get_ImageFromFile_COMPLETE("./buttonimages/back_over.png", (50, 50))
         print("\x1b[1;32mButton Image Loading COMPLETE\x1b[0;m")
 
